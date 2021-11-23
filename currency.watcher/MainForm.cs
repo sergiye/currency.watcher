@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,6 +16,7 @@ namespace currency.watcher {
 
   internal partial class MainForm : Form {
 
+    private readonly string _appTitle;
     private readonly Timer _timer;
     private DateTime _lastCurrencyChanged;
     private DateTime _lastMinfinStats;
@@ -78,7 +80,10 @@ namespace currency.watcher {
       ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
       ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
-      Icon = Icon.ExtractAssociatedIcon(AppSettings.GetAppPath());
+      Icon = Icon.ExtractAssociatedIcon(AppSettings.GetAppPath()); 
+
+      var asm = Assembly.GetExecutingAssembly();
+      _appTitle = $"{((AssemblyTitleAttribute)Attribute.GetCustomAttribute(asm, typeof(AssemblyTitleAttribute), false)).Title} Version: {asm.GetName().Version.ToString(3)}";
 
       //configure chart
       var chartArea = new ChartArea();
@@ -133,6 +138,7 @@ namespace currency.watcher {
 
       this.Load += (sender, args) => {
         
+        Text = _appTitle;
         LoadNbuRates();
 
         Left = AppSettings.Instance.Left;
@@ -311,7 +317,7 @@ namespace currency.watcher {
     private void UpdateNbuRateText(NbuRateItem[] nbuRateItems) {
       if (nbuRateItems == null || nbuRateItems.Length == 0) return;
       var lastItem = nbuRateItems[nbuRateItems.Length - 1];
-      Text = $"Sergiy's Informer (NBU rate = {lastItem.Rate:n2} at {lastItem.Date:M})";
+      Text = $"{_appTitle} (NBU rate = {lastItem.Rate:n2} at {lastItem.Date:M})";
     }
 
     private void UpdateBrowser() {
