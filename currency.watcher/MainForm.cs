@@ -84,6 +84,7 @@ namespace currency.watcher {
 
       var asm = Assembly.GetExecutingAssembly();
       _appTitle = $"{((AssemblyTitleAttribute)Attribute.GetCustomAttribute(asm, typeof(AssemblyTitleAttribute), false)).Title} Version: {asm.GetName().Version.ToString(3)}";
+      Text = _appTitle;
 
       //configure chart
       var chartArea = new ChartArea();
@@ -138,7 +139,6 @@ namespace currency.watcher {
 
       this.Load += (sender, args) => {
         
-        Text = _appTitle;
         LoadNbuRates();
 
         Left = AppSettings.Instance.Left;

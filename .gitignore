@@ -191,4 +191,4 @@ ModelManifest.xml
 .vs*/
 
 /.idea/
-/Sergiy.Informer/FodyWeavers.xsd
+/currency.watcher/FodyWeavers.xsd
