@@ -8,8 +8,8 @@
     <ProjectGuid>{B43658C9-450C-4726-A760-7C385527C98D}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sergiy.Informer</RootNamespace>
-    <AssemblyName>Informer</AssemblyName>
+    <RootNamespace>currency.watcher</RootNamespace>
+    <AssemblyName>currency.watcher</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>

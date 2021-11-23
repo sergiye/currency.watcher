@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Sergiy.Informer {
+namespace currency.watcher {
 
   static class Program {
 

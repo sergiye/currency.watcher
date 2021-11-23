@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Sergiy.Informer {
+namespace currency.watcher {
   public static class JsonExtensions {
 
     private static readonly JsonSerializerSettings settings;

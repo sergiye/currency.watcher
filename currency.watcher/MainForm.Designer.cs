@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace Sergiy.Informer
+namespace currency.watcher
 {
     partial class MainForm
     {
