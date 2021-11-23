@@ -513,7 +513,6 @@ namespace currency.watcher
       this.MinimumSize = new System.Drawing.Size(582, 300);
       this.Name = "MainForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-      this.Text = "Sergiy\'s Informer";
       this.ResizeEnd += new System.EventHandler(this.MainForm_ResizeEnd);
       this.panMain.ResumeLayout(false);
       this.panHistory.ResumeLayout(false);
