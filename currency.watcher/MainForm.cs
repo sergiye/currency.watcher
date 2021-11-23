@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
-namespace Sergiy.Informer {
+namespace currency.watcher {
 
   internal partial class MainForm : Form {
 

@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Sergiy.Informer {
+namespace currency.watcher {
 
   public class Privat24HistoryResponse {
     public Privat24HistoryData Data { get; set; }
