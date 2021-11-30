@@ -7,7 +7,7 @@ namespace currency.watcher {
 
   internal class Common {
 
-    internal const int WmSyscommand = 0x112;
+    internal const int WmSysCommand = 0x112;
     internal const int MfString = 0x0;
     internal const int MfSeparator = 0x800;
 

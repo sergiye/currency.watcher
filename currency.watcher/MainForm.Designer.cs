@@ -150,6 +150,7 @@ namespace currency.watcher
             this.columnHeader2,
             this.columnHeader4});
       this.lstFinanceHistory.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.lstFinanceHistory.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.lstFinanceHistory.FullRowSelect = true;
       this.lstFinanceHistory.GridLines = true;
       this.lstFinanceHistory.HideSelection = false;
@@ -163,17 +164,17 @@ namespace currency.watcher
       // columnHeader1
       // 
       this.columnHeader1.Text = "Time";
-      this.columnHeader1.Width = 38;
+      this.columnHeader1.Width = 43;
       // 
       // columnHeader2
       // 
       this.columnHeader2.Text = "Buy";
-      this.columnHeader2.Width = 52;
+      this.columnHeader2.Width = 48;
       // 
       // columnHeader4
       // 
       this.columnHeader4.Text = "Sale";
-      this.columnHeader4.Width = 52;
+      this.columnHeader4.Width = 48;
       // 
       // lblFinanceUa
       // 

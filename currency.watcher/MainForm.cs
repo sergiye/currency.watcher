@@ -40,7 +40,7 @@ namespace currency.watcher {
     protected override void WndProc(ref Message m) {
 
       base.WndProc(ref m);
-      if ((m.Msg == Common.WmSyscommand)) {
+      if ((m.Msg == Common.WmSysCommand)) {
         switch ((int)m.WParam) {
           case SysMenuAboutId:
             MessageBox.Show(Common.GetDeveloperText(), "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -441,8 +441,10 @@ namespace currency.watcher {
             continue;
           var timePart = currentItem[0].Split(' ')[1];
           var lvItem = new ListViewItem(timePart, 0) { UseItemStyleForSubItems = false };
-          lvItem.SubItems.Add(currentItem[1], lstFinanceHistory.ForeColor, GetDiffColor(currentItem[1], prevItem[1]), lstFinanceHistory.Font);
-          lvItem.SubItems.Add(currentItem[2], lstFinanceHistory.ForeColor, GetDiffColor(currentItem[2], prevItem[2]), lstFinanceHistory.Font);
+          decimal.TryParse(currentItem[1], out var buy);
+          decimal.TryParse(currentItem[2], out var sell);
+          lvItem.SubItems.Add(buy.ToString("n2"), lstFinanceHistory.ForeColor, GetDiffColor(currentItem[1], prevItem[1]), lstFinanceHistory.Font);
+          lvItem.SubItems.Add(sell.ToString("n2"), lstFinanceHistory.ForeColor, GetDiffColor(currentItem[2], prevItem[2]), lstFinanceHistory.Font);
           lstFinanceHistory.Items.Add(lvItem);
 
           currentItem = prevItem;
