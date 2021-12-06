@@ -231,7 +231,7 @@ namespace currency.watcher {
         var request = (HttpWebRequest)WebRequest.Create(uri);
         request.Method = method;
         request.Timeout = timeout * 1000;
-        request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";
+        //request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";
         //request.Accept = "text/xml,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
         request.ContentType = "application/json; charset=utf-8";
         request.BeginGetResponse(ar => {
@@ -441,8 +441,8 @@ namespace currency.watcher {
             continue;
           var timePart = currentItem[0].Split(' ')[1];
           var lvItem = new ListViewItem(timePart, 0) { UseItemStyleForSubItems = false };
-          decimal.TryParse(currentItem[1], out var buy);
-          decimal.TryParse(currentItem[2], out var sell);
+          decimal.TryParse(currentItem[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var buy);
+          decimal.TryParse(currentItem[2], NumberStyles.Float, CultureInfo.InvariantCulture, out var sell);
           lvItem.SubItems.Add(buy.ToString("n2"), lstFinanceHistory.ForeColor, GetDiffColor(currentItem[1], prevItem[1]), lstFinanceHistory.Font);
           lvItem.SubItems.Add(sell.ToString("n2"), lstFinanceHistory.ForeColor, GetDiffColor(currentItem[2], prevItem[2]), lstFinanceHistory.Font);
           lstFinanceHistory.Items.Add(lvItem);
