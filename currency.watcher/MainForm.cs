@@ -231,7 +231,7 @@ namespace currency.watcher {
         var request = (HttpWebRequest)WebRequest.Create(uri);
         request.Method = method;
         request.Timeout = timeout * 1000;
-        //request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";
+        request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36";
         //request.Accept = "text/xml,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
         request.ContentType = "application/json; charset=utf-8";
         request.BeginGetResponse(ar => {
@@ -280,6 +280,7 @@ namespace currency.watcher {
 
       for (var cIndex = 0; cIndex < 2; cIndex++) {
         var index = cIndex;
+        //https://charts.finance.ua/ua/currency/data-archive?for=official&source=1&indicator=usd
         GetJsonData($"https://minfin.com.ua/data/currency/nbu/nbu.{GetCurrencyName(index)}.stock.json", data => {
           if (string.IsNullOrEmpty(data)) return;
           var newRates = data.FromJson<NbuRateItem[]>();
@@ -301,7 +302,6 @@ namespace currency.watcher {
           }
         });
       }
-
       GetJsonData($"http://resources.finance.ua/chart/data?for=currency-order&currency={currencyText}", OnFinanceUaResponse);
 
       var nowDate = DateTime.Now;
@@ -321,8 +321,6 @@ namespace currency.watcher {
     }
 
     private void UpdateBrowser() {
-      //const string theHtml = "<div style=\"margin:-15;\"><a href=\"https://pogoda.yandex.ru/kharkiv\" target=\"_blank\"><img src=\"https://info.weather.yandex.net/kharkiv/3.ru.png\" border=\"0\" alt=\"Яндекс.Погода\"/></a></div>";
-      //Common.UpdateBrowser(browser, theHtml);
       Common.UpdateBrowser(browser, Properties.Resources.weather);
     }
 
