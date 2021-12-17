@@ -344,9 +344,9 @@ namespace currency.watcher {
         var item = filteredItems[i];
 
         var lvItem = new ListViewItem(item.Date, 0);
-        lvItem.SubItems.Add(item.Rate_B.ToString("F"));
+        lvItem.SubItems.Add(item.Rate_B.ToString("n3"));
         //lvItem.SubItems.Add(item.Rate_B_Delta.ToString("F"));
-        lvItem.SubItems.Add(item.Rate_S.ToString("F"));
+        lvItem.SubItems.Add(item.Rate_S.ToString("n3"));
         //lvItem.SubItems.Add(item.Rate_S_Delta.ToString("F"));
         lvItem.Tag = item;
         lvItem.BackColor = GetDiffColor(item.Rate_B_Delta);
@@ -434,15 +434,15 @@ namespace currency.watcher {
       if (chartData.Length > 1) {
         var currentItem = chartData[chartData.Length - 1];
         for (var i = chartData.Length - 2; i >= 0; i--) {
-          string[] prevItem = chartData[i];
+          var prevItem = chartData[i];
           if (currentItem[1] == prevItem[1] && currentItem[2] == prevItem[2])
             continue;
           var timePart = currentItem[0].Split(' ')[1];
           var lvItem = new ListViewItem(timePart, 0) { UseItemStyleForSubItems = false };
           decimal.TryParse(currentItem[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var buy);
           decimal.TryParse(currentItem[2], NumberStyles.Float, CultureInfo.InvariantCulture, out var sell);
-          lvItem.SubItems.Add(buy.ToString("n2"), lstFinanceHistory.ForeColor, GetDiffColor(currentItem[1], prevItem[1]), lstFinanceHistory.Font);
-          lvItem.SubItems.Add(sell.ToString("n2"), lstFinanceHistory.ForeColor, GetDiffColor(currentItem[2], prevItem[2]), lstFinanceHistory.Font);
+          lvItem.SubItems.Add(buy.ToString("n3"), lstFinanceHistory.ForeColor, GetDiffColor(currentItem[1], prevItem[1]), lstFinanceHistory.Font);
+          lvItem.SubItems.Add(sell.ToString("n3"), lstFinanceHistory.ForeColor, GetDiffColor(currentItem[2], prevItem[2]), lstFinanceHistory.Font);
           lstFinanceHistory.Items.Add(lvItem);
 
           currentItem = prevItem;
