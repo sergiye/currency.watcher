@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace currency.watcher {
+namespace currency {
   public static class JsonExtensions {
 
     private static readonly JsonSerializerSettings settings;

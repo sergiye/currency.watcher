@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="currency.mobile.Views.NbuPage"
+             Title="NBU"
+             xmlns:local="clr-namespace:currency.mobile.ViewModels"  
+             xmlns:currency="clr-namespace:currency;assembly=currency.common">
+
+    <!--
+      x:DataType enables compiled bindings for better performance and compile time validation of binding expressions.
+      https://docs.microsoft.com/xamarin/xamarin-forms/app-fundamentals/data-binding/compiled-bindings
+    -->
+    <RefreshView x:DataType="local:NbuViewModel" Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+        <CollectionView x:Name="ItemsListView"
+                ItemsSource="{Binding Items}"
+                BackgroundColor="{StaticResource Primary}"
+                SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10" x:DataType="currency:NbuRateModel">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Grid.Row="0"
+                               Padding="0,24,0,0"
+                               Text="{Binding DateFormatted}" FontSize="16" TextTransform="Default" 
+                               TextColor="LightSkyBlue" 
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1" Grid.Row="0"
+                               Text="{Binding RateFormatted}" FontSize="16" FontAttributes="Bold"
+                               TextColor="{Binding Color}" 
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="2" Grid.Row="0"
+                               Text="{Binding Direction}" TextColor="{Binding Color}" FontSize="25" 
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                        <!-- <Grid.GestureRecognizers> -->
+                        <!--     <TapGestureRecognizer  -->
+                        <!--         NumberOfTapsRequired="1" -->
+                        <!--         Command="{Binding Source={RelativeSource AncestorType={x:Type local:ItemsViewModel}}, Path=ItemTapped}"		 -->
+                        <!--         CommandParameter="{Binding .}"> -->
+                        <!--     </TapGestureRecognizer> -->
+                        <!-- </Grid.GestureRecognizers> -->
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </RefreshView>
+
+    <!-- <ContentPage.ToolbarItems> -->
+    <!--     <ToolbarItem Text="New" Command="{Binding AddItemCommand}" /> -->
+    <!-- </ContentPage.ToolbarItems> -->
+
+</ContentPage>

@@ -1,29 +1,9 @@
 ﻿using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
-namespace currency.watcher {
-
-  public class Privat24HistoryResponse {
-    public Privat24HistoryData Data { get; set; }
-  }
-
-  public class Privat24HistoryData {
-    public Privat24HistoryItem[] History { get; set; }
-  }
-
-  public class Privat24HistoryItem {
-    public string Date { get; set; }
-    public DateTime DateParsed { get; set; }
-    public string CurrencyCode { get; set; }
-    public decimal NbuRate { get; set; }
-    public decimal Rate_S { get; set; }
-    public decimal Rate_S_Delta { get; set; }
-    public decimal Rate_B { get; set; }
-    public decimal Rate_B_Delta { get; set; }
-  }
+namespace currency {
 
   public partial class MinfinItem {
+
     public string Currency { get; set; }
     //public long City_Id { get; set; }
     public string Rate_Type { get; set; }
@@ -45,19 +25,5 @@ namespace currency.watcher {
     public long Count_Sell { get; set; }
     public long Count_Buy { get; set; }
     //public object Organization { get; set; }
-  }
-
-  public class NbuRateItem {
-    
-    [JsonConverter(typeof(DateFormatConverter), "yyyy-MM-dd")]
-    public DateTime Date { get; set; }
-    
-    public decimal Rate { get; set; }
-  }
-
-  public class DateFormatConverter : IsoDateTimeConverter {
-    public DateFormatConverter(string format) {
-      DateTimeFormat = format;
-    }
   }
 }

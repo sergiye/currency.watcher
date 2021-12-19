@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -16,14 +13,13 @@ namespace currency.watcher {
 
   internal partial class MainForm : Form {
 
-    private readonly string _appTitle;
-    private readonly Timer _timer;
-    private DateTime _lastCurrencyChanged;
-    private DateTime _lastMinfinStats;
-    private DateTime _lastPrivat24HistoryGet;
+    private readonly string appTitle;
+    private readonly Timer timer;
+    private DateTime lastCurrencyChanged;
+    private DateTime lastMinfinStats;
+    private DateTime lastPrivat24HistoryGet;
     
-    private readonly List<string> _nbuRatesFile = new List<string>();
-    private List<NbuRateItem[]> _nbuRates;
+    private NbuProvider nbuProvider;
 
     #region form decoration
 
@@ -76,15 +72,11 @@ namespace currency.watcher {
 
       InitializeComponent();
 
-      ServicePointManager.Expect100Continue = false;
-      ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-      ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
-
       Icon = Icon.ExtractAssociatedIcon(AppSettings.GetAppPath()); 
 
       var asm = Assembly.GetExecutingAssembly();
-      _appTitle = $"{((AssemblyTitleAttribute)Attribute.GetCustomAttribute(asm, typeof(AssemblyTitleAttribute), false)).Title} Version: {asm.GetName().Version.ToString(3)}";
-      Text = _appTitle;
+      appTitle = $"{((AssemblyTitleAttribute)Attribute.GetCustomAttribute(asm, typeof(AssemblyTitleAttribute), false)).Title} Version: {asm.GetName().Version.ToString(3)}";
+      Text = appTitle;
 
       //configure chart
       var chartArea = new ChartArea();
@@ -112,15 +104,15 @@ namespace currency.watcher {
         });
       }
 
-      _timer = new Timer();
-      _timer.Tick += (sender, args) => UpdateData();
-      _timer.Interval = 10 * 60 * 1000;
-      _timer.Enabled = true;
+      timer = new Timer();
+      timer.Tick += (sender, args) => UpdateData();
+      timer.Interval = 10 * 60 * 1000;
+      timer.Enabled = true;
 
       btnRefresh.Click += btnRefresh_Click;
 
       cmbCurrency.SelectedIndexChanged += (sender, args) => {
-        _lastCurrencyChanged = DateTime.Now;
+        lastCurrencyChanged = DateTime.Now;
         UpdateData();
         numTaxesSource_ValueChanged(sender, args);
       };
@@ -138,8 +130,12 @@ namespace currency.watcher {
       };
 
       this.Load += (sender, args) => {
-        
-        LoadNbuRates();
+
+        nbuProvider = new NbuProvider(AppSettings.GetAppPath());
+        nbuProvider.OnDataChanged += (o, index) => {
+          if (index == cmbCurrency.SelectedIndex)
+            UpdateNbuRateText(index);
+        };
 
         Left = AppSettings.Instance.Left;
         Top = AppSettings.Instance.Top;
@@ -147,7 +143,7 @@ namespace currency.watcher {
         Width = AppSettings.Instance.Width;
         Opacity = AppSettings.Instance.Opacity;
         cmbCurrency.SelectedIndex = AppSettings.Instance.CurrencyIndex;
-        _timer.Interval = AppSettings.Instance.RefreshInterval * 60 * 1000;
+        timer.Interval = AppSettings.Instance.RefreshInterval * 60 * 1000;
         cmbChartMode.SelectedIndex = AppSettings.Instance.ChartViewMode;
         cbxChartGridMode.Checked = AppSettings.Instance.ChartLines;
         cbxStickEdges.Checked = AppSettings.Instance.StickToEdges;
@@ -204,56 +200,18 @@ namespace currency.watcher {
       lstHistory.DoubleClick += (s, e) => {
         Process.Start("https://minfin.com.ua/currency/auction/usd/sell/kharkov/?compact=true");
       };
-
-      _nbuRatesFile.Add($"{Path.GetDirectoryName(AppSettings.GetAppPath())}\\nbu.rates.{GetCurrencyName(0)}.json");
-      _nbuRatesFile.Add($"{Path.GetDirectoryName(AppSettings.GetAppPath())}\\nbu.rates.{GetCurrencyName(1)}.json");
-    }
-
-    private void LoadNbuRates() {
-      _nbuRates = new List<NbuRateItem[]>();
-      for (var i = 0; i < cmbCurrency.Items.Count; i++) {
-        _nbuRates.Add(new NbuRateItem[0]);
-        if (File.Exists(_nbuRatesFile[i]))
-          _nbuRates[i] = File.ReadAllText(_nbuRatesFile[i]).FromJson<NbuRateItem[]>();
-      }
-    }
-
-    private void SaveNbuRates(int currencyIndex) {
-      var data = _nbuRates[currencyIndex].ToJson();
-      File.WriteAllText(_nbuRatesFile[currencyIndex], data);
-      if (currencyIndex == cmbCurrency.SelectedIndex)
-        UpdateNbuRateText(_nbuRates[currencyIndex]);
     }
 
     private void GetJsonData(string uri, Action<string> onResponse, int timeout = 10, string method = "GET") {
 
-      Task.Factory.StartNew(() => { 
-        var request = (HttpWebRequest)WebRequest.Create(uri);
-        request.Method = method;
-        request.Timeout = timeout * 1000;
-        request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36";
-        //request.Accept = "text/xml,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
-        request.ContentType = "application/json; charset=utf-8";
-        request.BeginGetResponse(ar => {
-          try {
-            using (var webResp = (HttpWebResponse)request.EndGetResponse(ar)) {
-              using (var stream = webResp.GetResponseStream()) {
-                if (stream == null) return;
-                var answer = new StreamReader(stream, Encoding.UTF8);
-                var result = answer.ReadToEnd();
-                if (string.IsNullOrWhiteSpace(result)) return;
-                if (this.InvokeRequired)
-                  this.Invoke(new Action<string>(onResponse), result);
-                else
-                  onResponse(result);
-              }
-            }
-          }
-          catch (Exception ex) {
-            Console.WriteLine(ex);
-            //onResponse(null);
-          }
-        }, null);
+      Task.Factory.StartNew(async () => {
+        var result = await Helper.GetJsonData(uri, timeout, method);
+        if (result != null) {
+          if (InvokeRequired)
+            Invoke(new Action<string>(onResponse), result);
+          else
+            onResponse(result);
+        }
       });
     }
 
@@ -275,49 +233,27 @@ namespace currency.watcher {
       UpdateBrowser();
 
       var currencyIndex = cmbCurrency.SelectedIndex;
-      var currencyText = GetCurrencyName(currencyIndex);
-      UpdateNbuRateText(_nbuRates[currencyIndex]);
+      UpdateNbuRateText(currencyIndex);
 
       for (var cIndex = 0; cIndex < 2; cIndex++) {
-        var index = cIndex;
-        //https://charts.finance.ua/ua/currency/data-archive?for=official&source=1&indicator=usd
-        GetJsonData($"https://minfin.com.ua/data/currency/nbu/nbu.{GetCurrencyName(index)}.stock.json", data => {
-          if (string.IsNullOrEmpty(data)) return;
-          var newRates = data.FromJson<NbuRateItem[]>();
-          if (newRates == null || newRates.Length == 0)
-            return;
-
-          if (_nbuRates[index] == null || _nbuRates[index].Length == 0) {
-            _nbuRates[index] = newRates;
-            SaveNbuRates(index);
-          }
-          else {
-            if (newRates[newRates.Length - 1].Date.Date > _nbuRates[index][_nbuRates[index].Length - 1].Date.Date) {
-              var newItems = new List<NbuRateItem>();
-              newItems.AddRange(_nbuRates[index]);
-              newItems.AddRange(newRates.Where(i => i.Date.Date > _nbuRates[index][_nbuRates[index].Length - 1].Date.Date).ToList());
-              _nbuRates[index] = newItems.ToArray();
-              SaveNbuRates(index);
-            }
-          }
-        });
+        var task = nbuProvider.Refresh(cIndex);
       }
-      GetJsonData($"http://resources.finance.ua/chart/data?for=currency-order&currency={currencyText}", OnFinanceUaResponse);
+      GetJsonData($"http://resources.finance.ua/chart/data?for=currency-order&currency={Helper.GetCurrencyName(currencyIndex)}", OnFinanceUaResponse);
 
       var nowDate = DateTime.Now;
-      if (_lastCurrencyChanged > _lastPrivat24HistoryGet || _lastPrivat24HistoryGet.Date != nowDate.Date) {
+      if (lastCurrencyChanged > lastPrivat24HistoryGet || lastPrivat24HistoryGet.Date != nowDate.Date) {
         GetJsonData("https://otp24.privatbank.ua/v3/api/1/info/currency/history", OnPrivat24HistoryResponse, 30, "POST");
       }
 
-      if (_lastCurrencyChanged > _lastMinfinStats || _lastMinfinStats.AddMinutes(30) < nowDate) {
+      if (lastCurrencyChanged > lastMinfinStats || lastMinfinStats.AddMinutes(30) < nowDate) {
         UpdateMinfinChartData();
       }
     }
 
-    private void UpdateNbuRateText(NbuRateItem[] nbuRateItems) {
-      if (nbuRateItems == null || nbuRateItems.Length == 0) return;
-      var lastItem = nbuRateItems[nbuRateItems.Length - 1];
-      Text = $"{_appTitle} (NBU rate = {lastItem.Rate:n2} at {lastItem.Date:M})";
+    private void UpdateNbuRateText(int currencyIndex) {
+      var lastItem = nbuProvider.GetLastItem(currencyIndex);
+      if (lastItem == null) return;
+      Text = $"{appTitle} (NBU rate = {lastItem.Rate:n2} at {lastItem.Date:M})";
     }
 
     private void UpdateBrowser() {
@@ -326,7 +262,7 @@ namespace currency.watcher {
 
     private void OnPrivat24HistoryResponse(string response) {
       if (string.IsNullOrEmpty(response)) return;
-      var currencyCode = GetCurrencyName(cmbCurrency.SelectedIndex);
+      var currencyCode = Helper.GetCurrencyName(cmbCurrency.SelectedIndex);
       var historyData = response.FromJson<Privat24HistoryResponse>();
       if (historyData?.Data?.History == null) return;
       if (historyData.Data.History.Length <= 0) return;
@@ -354,14 +290,14 @@ namespace currency.watcher {
       }
 
       if (filteredItems[0].DateParsed.Date == DateTime.Today)
-        _lastPrivat24HistoryGet = DateTime.Now;
+        lastPrivat24HistoryGet = DateTime.Now;
       // if (_lastPrivat24HistoryGet < filteredItems[0].DateParsed) {
       //   _lastPrivat24HistoryGet = filteredItems[0].DateParsed;
       // }
     }
 
     private void UpdateMinfinChartData() {
-      var currencyCode = GetCurrencyName(cmbCurrency.SelectedIndex).ToLower();
+      var currencyCode = Helper.GetCurrencyName(cmbCurrency.SelectedIndex).ToLower();
       var city = 22;
       var nowDate = DateTime.Today;
       DateTime startDate;
@@ -385,7 +321,7 @@ namespace currency.watcher {
       if (historyData == null || historyData.Count == 0) return;
 
       var currencyIndex = cmbCurrency.SelectedIndex;
-      var showNbu = _nbuRates[currencyIndex] != null && _nbuRates[currencyIndex].Length > 0;
+      var showNbu = !nbuProvider.IsEmpty(currencyIndex);
       if (!showNbu)
         cbxShowNbu.Checked = false;
       cbxShowNbu.Visible = showNbu;
@@ -397,7 +333,7 @@ namespace currency.watcher {
         chart.Series[0].Points.AddXY(item.Date, item.Rate_Buy);
         chart.Series[1].Points.AddXY(item.Date, item.Rate_Sell);
         if (showNbu) {
-          var nbuValue = _nbuRates[currencyIndex].FirstOrDefault(i=>i.Date.Date == item.Date.Date);
+          var nbuValue = nbuProvider.GetByDate(currencyIndex, item.Date);
           if (nbuValue != null) {
             chart.Series[2].Points.AddXY(item.Date, nbuValue.Rate);
           }
@@ -422,7 +358,7 @@ namespace currency.watcher {
       chart.ChartAreas[0].AxisY.Maximum = chartMax + space;
 
       //if (historyData.Last().Value.Date == DateTime.Now.Date)
-      _lastMinfinStats = DateTime.Now;
+      lastMinfinStats = DateTime.Now;
     }
 
     private void OnFinanceUaResponse(string response) {
@@ -448,13 +384,6 @@ namespace currency.watcher {
           currentItem = prevItem;
         }
       }
-    }
-
-    private string GetCurrencyName(int currencyIndex, bool lower =true) {
-      var result = currencyIndex == 0 ? "USD" : "EUR";
-      if (lower)
-        result = result.ToLower();
-      return result;
     }
 
     private void btnRefresh_Click(object sender, EventArgs e) {
@@ -507,8 +436,8 @@ namespace currency.watcher {
       var usd = numTaxesSource.Value;
       var date = dtTaxesSource.Value;
       var currencyIndex = cmbCurrency.SelectedIndex;
-      if (_nbuRates != null && _nbuRates[currencyIndex] != null && _nbuRates[currencyIndex].Length != 0) {
-        var nbuRate = _nbuRates[currencyIndex].FirstOrDefault(i => i.Date.Date == date.Date);
+      if (!nbuProvider.IsEmpty(currencyIndex)) {
+        var nbuRate = nbuProvider.GetByDate(currencyIndex, date);
         if (nbuRate != null) {
           var uah = usd * nbuRate.Rate;
           txtUahResult.Text = uah.ToString("n2");
