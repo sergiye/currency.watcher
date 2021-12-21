@@ -13,6 +13,7 @@ namespace currency.mobile.Droid {
 
       Xamarin.Essentials.Platform.Init(this, savedInstanceState);
       global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+      OxyPlot.Xamarin.Forms.Platform.Android.PlotViewRenderer.Init();
 
       this.Window.AddFlags(WindowManagerFlags.Fullscreen);
       LoadApplication(new App());
