@@ -28,7 +28,6 @@ namespace currency.mobile.Models {
   public class NbuRateModel {
     
     public DateTime Date { get; private set; }
-    public string DateFormatted { get; private set; }
     public NbuRateItemModel[] Items { get; private set; }
 
     public string Rate1 => Items[0].RateFormatted;
@@ -40,7 +39,6 @@ namespace currency.mobile.Models {
 
     public NbuRateModel(DateTime date, decimal rate, decimal rate2) {
       Date = date;
-      DateFormatted = Date.ToString("dd-MM-yyyy");
       Items = new NbuRateItemModel[2];
       Items[0] = new NbuRateItemModel(rate);
       Items[1] = new NbuRateItemModel(rate2);

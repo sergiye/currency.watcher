@@ -1,6 +1,4 @@
-﻿using System;
-using currency.mobile.Services;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace currency.mobile {
   public partial class App : Application {
@@ -8,9 +6,9 @@ namespace currency.mobile {
     public App() {
       InitializeComponent();
 
-      DependencyService.Register<DataStore>();
+      // DependencyService.Register<DataStore>();
 
-      var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+      var appDataPath = "";//Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
       var nbuProvider = new NbuProvider(appDataPath);
       DependencyService.RegisterSingleton<ICurrencyProvider<NbuRateItem>>(nbuProvider);
       DependencyService.RegisterSingleton(nbuProvider);

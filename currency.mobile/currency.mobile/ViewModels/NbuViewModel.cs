@@ -10,7 +10,7 @@ namespace currency.mobile.ViewModels {
 
     public ObservableCollection<NbuRateModel> Items { get; }
     public Command LoadItemsCommand { get; }
-    public Command<NbuRateModel> ItemTapped { get; }
+    // public Command<NbuRateModel> ItemTapped { get; }
     // public Command AddItemCommand { get; }
 
     private readonly ICurrencyProvider<NbuRateItem> nbuProvider;
@@ -19,15 +19,15 @@ namespace currency.mobile.ViewModels {
       Items = new ObservableCollection<NbuRateModel>();
       LoadItemsCommand = new Command(ExecuteLoadItemsCommand);
 
-      ItemTapped = new Command<NbuRateModel>(item => {
-        if (item == null) return;
-        // await Shell.Current.GoToAsync($"{nameof(ItemDetailPage)}?{nameof(ItemDetailViewModel.ItemId)}={item.Date}");
-      });
+      // ItemTapped = new Command<NbuRateModel>(item => {
+      //   if (item == null) return;
+      //   await Shell.Current.GoToAsync($"{nameof(ItemDetailPage)}?{nameof(ItemDetailViewModel.ItemId)}={item.Date}");
+      // });
 
       // AddItemCommand = new Command(async () => await Shell.Current.GoToAsync(nameof(NewItemPage)));
 
       nbuProvider = DependencyService.Get<ICurrencyProvider<NbuRateItem>>();
-      ExecuteLoadItemsCommand(); //todo: auto-load data
+      ExecuteLoadItemsCommand();
     }
     
     public void OnAppearing() {
@@ -70,11 +70,11 @@ namespace currency.mobile.ViewModels {
           var last = nbuProvider.GetLastItem(0);
           var last2 = nbuProvider.GetByDate(1, last.Date);
           Items.Add(new NbuRateModel(last.Date, last.Rate, last2?.Rate ?? 0));
-          while (Items.Count < 365) {
+          while (Items.Count < 100) {
             var prevIndex = Items.Count - 1;
             var item = nbuProvider.GetByDate(0, Items[prevIndex].Date.AddDays(-1));
             var item2 = nbuProvider.GetByDate(1, Items[prevIndex].Date.AddDays(-1));
-            if (item == null && item2 == null) break;
+            if (item == null) break;
             var newItem = new NbuRateModel(item.Date, item?.Rate ?? 0, item2?.Rate ?? 0);
             Items[prevIndex].Items[0].UpdateDelta(newItem.Items[0].Rate);
             Items[prevIndex].Items[1].UpdateDelta(newItem.Items[1].Rate);

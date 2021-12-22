@@ -29,7 +29,7 @@
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Grid.Row="0"
-                               Text="{Binding DateFormatted}" FontSize="15"
+                               Text="{Binding Date, StringFormat='{0:dd-MM-yyyy}'}" FontSize="15"
                                TextColor="LightSkyBlue" 
                                HorizontalOptions="Center" VerticalOptions="Center" />
                         <Label Grid.Column="1" Grid.Row="0"
