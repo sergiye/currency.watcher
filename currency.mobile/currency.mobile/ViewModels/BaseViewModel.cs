@@ -1,15 +1,10 @@
-﻿using currency.mobile.Models;
-using currency.mobile.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Xamarin.Forms;
 
 namespace currency.mobile.ViewModels {
   public class BaseViewModel : INotifyPropertyChanged {
-
-    public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
 
     private bool isBusy;
     public bool IsBusy {

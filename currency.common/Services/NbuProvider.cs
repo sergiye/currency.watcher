@@ -43,15 +43,13 @@ namespace currency {
     public event EventHandler<int> OnDataChanged;
 
     private void LoadNbuRates() {
-      nbuRates = new List<NbuRateItem[]>();
-      if (nbuRatesFile.Count == 0)
-        nbuRates.Add(Array.Empty<NbuRateItem>());
-      else {
-        for (var i = 0; i < nbuRatesFile.Count; i++) {
-          nbuRates.Add(Array.Empty<NbuRateItem>());
-          if (File.Exists(nbuRatesFile[i]))
-            nbuRates[i] = File.ReadAllText(nbuRatesFile[i]).FromJson<NbuRateItem[]>();
-        }
+      nbuRates = new List<NbuRateItem[]> {
+        Array.Empty<NbuRateItem>(),
+        Array.Empty<NbuRateItem>()
+      };
+      for (var i = 0; i < nbuRatesFile.Count; i++) {
+        if (!File.Exists(nbuRatesFile[i])) continue;
+        nbuRates[i] = File.ReadAllText(nbuRatesFile[i]).FromJson<NbuRateItem[]>();
       }
     }
 

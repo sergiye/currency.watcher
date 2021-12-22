@@ -12,13 +12,9 @@ namespace currency.mobile {
       Routing.RegisterRoute(nameof(AboutPage), typeof(AboutPage));
       Routing.RegisterRoute(nameof(MenuPage), typeof(MenuPage));
 
-      //additional pages
-      Routing.RegisterRoute(nameof(ItemDetailPage), typeof(ItemDetailPage));
-      Routing.RegisterRoute(nameof(NewItemPage), typeof(NewItemPage));
-
       //main tabs
-      mainTab.Children.Add(new NbuPage());
       mainTab.Children.Add(new PrivatPage());
+      mainTab.Children.Add(new NbuPage());
       mainTab.Children.Add(new AboutPage());
       // mainTab.Children.Add(new MenuPage());
     }
