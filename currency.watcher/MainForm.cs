@@ -131,7 +131,7 @@ namespace currency.watcher {
 
       this.Load += (sender, args) => {
 
-        nbuProvider = new NbuProvider(AppSettings.GetAppPath());
+        nbuProvider = new NbuProvider(null);//AppSettings.GetAppPath());
         nbuProvider.OnDataChanged += (o, index) => {
           if (index == cmbCurrency.SelectedIndex)
             UpdateNbuRateText(index);
@@ -279,13 +279,14 @@ namespace currency.watcher {
       for (var i = 0; i < filteredItems.Length && i < 9; i++) {
         var item = filteredItems[i];
 
+        var rateDelta = (i+1 < filteredItems.Length) ? item.Rate_B - filteredItems[i+1].Rate_B: item.Rate_B_Delta;
         var lvItem = new ListViewItem(item.Date, 0);
         lvItem.SubItems.Add(item.Rate_B.ToString("n3"));
         //lvItem.SubItems.Add(item.Rate_B_Delta.ToString("F"));
         lvItem.SubItems.Add(item.Rate_S.ToString("n3"));
         //lvItem.SubItems.Add(item.Rate_S_Delta.ToString("F"));
         lvItem.Tag = item;
-        lvItem.BackColor = GetDiffColor(item.Rate_B_Delta);
+        lvItem.BackColor = GetDiffColor(rateDelta);
         lstHistory.Items.Add(lvItem);
       }
 
