@@ -75,7 +75,7 @@ namespace currency.watcher {
       Icon = Icon.ExtractAssociatedIcon(AppSettings.GetAppPath()); 
 
       var asm = Assembly.GetExecutingAssembly();
-      appTitle = $"{((AssemblyTitleAttribute)Attribute.GetCustomAttribute(asm, typeof(AssemblyTitleAttribute), false)).Title} Version: {asm.GetName().Version.ToString(3)}";
+      appTitle = $"{((AssemblyTitleAttribute)Attribute.GetCustomAttribute(asm, typeof(AssemblyTitleAttribute), false)).Title} {asm.GetName().Version.ToString(3)}";
       Text = appTitle;
 
       //configure chart
@@ -253,7 +253,7 @@ namespace currency.watcher {
     private void UpdateNbuRateText(int currencyIndex) {
       var lastItem = nbuProvider.GetLastItem(currencyIndex);
       if (lastItem == null) return;
-      Text = $"{appTitle} (NBU rate = {lastItem.Rate:n2} at {lastItem.Date:M})";
+      Text = $"{appTitle} (NBU: {lastItem.Rate:n2} / {lastItem.Date:M})";
     }
 
     private void UpdateBrowser() {
@@ -394,9 +394,7 @@ namespace currency.watcher {
     private void chart_MouseMove(object sender, MouseEventArgs e) {
 
       // var chart = sender as Chart;
-      if (chart == null) return;
-      var ta = chart.Annotations[0] as CalloutAnnotation;
-      if (ta == null) return;
+      if (!(chart?.Annotations[0] is CalloutAnnotation ta)) return;
 
       var result = chart.HitTest(e.X, e.Y);
       switch (result.ChartElementType) {
