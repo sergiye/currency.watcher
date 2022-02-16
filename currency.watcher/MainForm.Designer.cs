@@ -78,7 +78,6 @@ namespace currency.watcher {
       // btnRefresh
       // 
       this.btnRefresh.Dock = System.Windows.Forms.DockStyle.Left;
-      this.btnRefresh.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.btnRefresh.Location = new System.Drawing.Point(73, 0);
       this.btnRefresh.Name = "btnRefresh";
       this.btnRefresh.Size = new System.Drawing.Size(25, 26);
@@ -89,7 +88,6 @@ namespace currency.watcher {
       // btnTop
       // 
       this.btnTop.Dock = System.Windows.Forms.DockStyle.Left;
-      this.btnTop.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.btnTop.Location = new System.Drawing.Point(98, 0);
       this.btnTop.Name = "btnTop";
       this.btnTop.Size = new System.Drawing.Size(25, 26);
@@ -102,14 +100,13 @@ namespace currency.watcher {
       // 
       this.cmbCurrency.Dock = System.Windows.Forms.DockStyle.Left;
       this.cmbCurrency.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbCurrency.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.cmbCurrency.FormattingEnabled = true;
       this.cmbCurrency.Items.AddRange(new object[] {
             "USD",
             "EUR"});
       this.cmbCurrency.Location = new System.Drawing.Point(0, 0);
       this.cmbCurrency.Name = "cmbCurrency";
-      this.cmbCurrency.Size = new System.Drawing.Size(73, 29);
+      this.cmbCurrency.Size = new System.Drawing.Size(73, 25);
       this.cmbCurrency.TabIndex = 0;
       // 
       // browser
@@ -131,7 +128,7 @@ namespace currency.watcher {
       this.panMain.Dock = System.Windows.Forms.DockStyle.Left;
       this.panMain.Location = new System.Drawing.Point(3, 3);
       this.panMain.Name = "panMain";
-      this.panMain.Size = new System.Drawing.Size(159, 197);
+      this.panMain.Size = new System.Drawing.Size(159, 199);
       this.panMain.TabIndex = 17;
       // 
       // lstFinanceHistory
@@ -147,7 +144,7 @@ namespace currency.watcher {
       this.lstFinanceHistory.HideSelection = false;
       this.lstFinanceHistory.Location = new System.Drawing.Point(0, 110);
       this.lstFinanceHistory.Name = "lstFinanceHistory";
-      this.lstFinanceHistory.Size = new System.Drawing.Size(159, 87);
+      this.lstFinanceHistory.Size = new System.Drawing.Size(159, 89);
       this.lstFinanceHistory.TabIndex = 1;
       this.lstFinanceHistory.UseCompatibleStateImageBehavior = false;
       this.lstFinanceHistory.View = System.Windows.Forms.View.Details;
@@ -155,17 +152,17 @@ namespace currency.watcher {
       // columnHeader1
       // 
       this.columnHeader1.Text = "Time";
-      this.columnHeader1.Width = 50;
+      this.columnHeader1.Width = 40;
       // 
       // columnHeader2
       // 
       this.columnHeader2.Text = "Buy";
-      this.columnHeader2.Width = 55;
+      this.columnHeader2.Width = 50;
       // 
       // columnHeader3
       // 
       this.columnHeader3.Text = "Sale";
-      this.columnHeader3.Width = 55;
+      this.columnHeader3.Width = 50;
       // 
       // lstHistory
       // 
@@ -179,9 +176,9 @@ namespace currency.watcher {
       this.lstHistory.FullRowSelect = true;
       this.lstHistory.GridLines = true;
       this.lstHistory.HideSelection = false;
-      this.lstHistory.Location = new System.Drawing.Point(3, 22);
+      this.lstHistory.Location = new System.Drawing.Point(3, 21);
       this.lstHistory.Name = "lstHistory";
-      this.lstHistory.Size = new System.Drawing.Size(385, 172);
+      this.lstHistory.Size = new System.Drawing.Size(387, 175);
       this.lstHistory.TabIndex = 0;
       this.lstHistory.UseCompatibleStateImageBehavior = false;
       this.lstHistory.View = System.Windows.Forms.View.Details;
@@ -207,7 +204,7 @@ namespace currency.watcher {
       this.panHistory.Dock = System.Windows.Forms.DockStyle.Fill;
       this.panHistory.Location = new System.Drawing.Point(0, 0);
       this.panHistory.Name = "panHistory";
-      this.panHistory.Size = new System.Drawing.Size(564, 235);
+      this.panHistory.Size = new System.Drawing.Size(566, 235);
       this.panHistory.TabIndex = 19;
       // 
       // tabControl
@@ -220,7 +217,7 @@ namespace currency.watcher {
       this.tabControl.Multiline = true;
       this.tabControl.Name = "tabControl";
       this.tabControl.SelectedIndex = 0;
-      this.tabControl.Size = new System.Drawing.Size(564, 235);
+      this.tabControl.Size = new System.Drawing.Size(566, 235);
       this.tabControl.TabIndex = 0;
       this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
       // 
@@ -228,10 +225,10 @@ namespace currency.watcher {
       // 
       this.tabPageMain.Controls.Add(this.panPrivat24Business);
       this.tabPageMain.Controls.Add(this.panMain);
-      this.tabPageMain.Location = new System.Drawing.Point(4, 28);
+      this.tabPageMain.Location = new System.Drawing.Point(4, 26);
       this.tabPageMain.Name = "tabPageMain";
       this.tabPageMain.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageMain.Size = new System.Drawing.Size(556, 203);
+      this.tabPageMain.Size = new System.Drawing.Size(558, 205);
       this.tabPageMain.TabIndex = 1;
       this.tabPageMain.Text = "Rates";
       this.tabPageMain.UseVisualStyleBackColor = true;
@@ -242,7 +239,7 @@ namespace currency.watcher {
       this.panPrivat24Business.Dock = System.Windows.Forms.DockStyle.Fill;
       this.panPrivat24Business.Location = new System.Drawing.Point(162, 3);
       this.panPrivat24Business.Name = "panPrivat24Business";
-      this.panPrivat24Business.Size = new System.Drawing.Size(391, 197);
+      this.panPrivat24Business.Size = new System.Drawing.Size(393, 199);
       this.panPrivat24Business.TabIndex = 18;
       this.panPrivat24Business.TabStop = false;
       this.panPrivat24Business.Text = "Privat 24 business";
@@ -250,10 +247,10 @@ namespace currency.watcher {
       // tabPageGraphic
       // 
       this.tabPageGraphic.Controls.Add(this.chart);
-      this.tabPageGraphic.Location = new System.Drawing.Point(4, 25);
+      this.tabPageGraphic.Location = new System.Drawing.Point(4, 26);
       this.tabPageGraphic.Name = "tabPageGraphic";
       this.tabPageGraphic.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageGraphic.Size = new System.Drawing.Size(556, 206);
+      this.tabPageGraphic.Size = new System.Drawing.Size(558, 205);
       this.tabPageGraphic.TabIndex = 0;
       this.tabPageGraphic.Text = "Graphic";
       this.tabPageGraphic.UseVisualStyleBackColor = true;
@@ -263,7 +260,7 @@ namespace currency.watcher {
       this.chart.Dock = System.Windows.Forms.DockStyle.Fill;
       this.chart.Location = new System.Drawing.Point(3, 3);
       this.chart.Name = "chart";
-      this.chart.Size = new System.Drawing.Size(550, 200);
+      this.chart.Size = new System.Drawing.Size(552, 199);
       this.chart.TabIndex = 20;
       this.chart.MouseMove += new System.Windows.Forms.MouseEventHandler(this.chart_MouseMove);
       // 
@@ -277,10 +274,10 @@ namespace currency.watcher {
       this.tabTaxes.Controls.Add(this.txtUahResult);
       this.tabTaxes.Controls.Add(this.txtTaxesResult);
       this.tabTaxes.Controls.Add(this.dtTaxesSource);
-      this.tabTaxes.Location = new System.Drawing.Point(4, 25);
+      this.tabTaxes.Location = new System.Drawing.Point(4, 26);
       this.tabTaxes.Name = "tabTaxes";
       this.tabTaxes.Padding = new System.Windows.Forms.Padding(3);
-      this.tabTaxes.Size = new System.Drawing.Size(556, 206);
+      this.tabTaxes.Size = new System.Drawing.Size(558, 205);
       this.tabTaxes.TabIndex = 2;
       this.tabTaxes.Text = "Taxes calculator";
       this.tabTaxes.UseVisualStyleBackColor = true;
@@ -288,25 +285,23 @@ namespace currency.watcher {
       // lblUsd
       // 
       this.lblUsd.AutoSize = true;
-      this.lblUsd.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.lblUsd.Location = new System.Drawing.Point(8, 8);
+      this.lblUsd.Location = new System.Drawing.Point(8, 18);
       this.lblUsd.Name = "lblUsd";
-      this.lblUsd.Size = new System.Drawing.Size(67, 23);
+      this.lblUsd.Size = new System.Drawing.Size(54, 19);
       this.lblUsd.TabIndex = 0;
       this.lblUsd.Text = "Income";
       // 
       // numTaxesSource
       // 
       this.numTaxesSource.DecimalPlaces = 2;
-      this.numTaxesSource.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.numTaxesSource.Location = new System.Drawing.Point(81, 3);
+      this.numTaxesSource.Location = new System.Drawing.Point(81, 12);
       this.numTaxesSource.Maximum = new decimal(new int[] {
             1000000,
             0,
             0,
             0});
       this.numTaxesSource.Name = "numTaxesSource";
-      this.numTaxesSource.Size = new System.Drawing.Size(154, 32);
+      this.numTaxesSource.Size = new System.Drawing.Size(154, 25);
       this.numTaxesSource.TabIndex = 1;
       this.numTaxesSource.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
       this.numTaxesSource.Value = new decimal(new int[] {
@@ -319,61 +314,55 @@ namespace currency.watcher {
       // lblTaxesResult
       // 
       this.lblTaxesResult.AutoSize = true;
-      this.lblTaxesResult.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.lblTaxesResult.Location = new System.Drawing.Point(8, 123);
+      this.lblTaxesResult.Location = new System.Drawing.Point(8, 111);
       this.lblTaxesResult.Name = "lblTaxesResult";
-      this.lblTaxesResult.Size = new System.Drawing.Size(50, 23);
+      this.lblTaxesResult.Size = new System.Drawing.Size(40, 19);
       this.lblTaxesResult.TabIndex = 6;
       this.lblTaxesResult.Text = "Taxes";
       // 
       // lblUah
       // 
       this.lblUah.AutoSize = true;
-      this.lblUah.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.lblUah.Location = new System.Drawing.Point(8, 85);
+      this.lblUah.Location = new System.Drawing.Point(8, 80);
       this.lblUah.Name = "lblUah";
-      this.lblUah.Size = new System.Drawing.Size(45, 23);
+      this.lblUah.Size = new System.Drawing.Size(38, 19);
       this.lblUah.TabIndex = 4;
       this.lblUah.Text = "UAH";
       // 
       // lblDate
       // 
       this.lblDate.AutoSize = true;
-      this.lblDate.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.lblDate.Location = new System.Drawing.Point(8, 47);
+      this.lblDate.Location = new System.Drawing.Point(8, 49);
       this.lblDate.Name = "lblDate";
-      this.lblDate.Size = new System.Drawing.Size(46, 23);
+      this.lblDate.Size = new System.Drawing.Size(38, 19);
       this.lblDate.TabIndex = 2;
       this.lblDate.Text = "Date";
       // 
       // txtUahResult
       // 
-      this.txtUahResult.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.txtUahResult.Location = new System.Drawing.Point(81, 79);
+      this.txtUahResult.Location = new System.Drawing.Point(81, 74);
       this.txtUahResult.Name = "txtUahResult";
       this.txtUahResult.ReadOnly = true;
-      this.txtUahResult.Size = new System.Drawing.Size(154, 32);
+      this.txtUahResult.Size = new System.Drawing.Size(154, 25);
       this.txtUahResult.TabIndex = 5;
       this.txtUahResult.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
       // 
       // txtTaxesResult
       // 
-      this.txtTaxesResult.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.txtTaxesResult.Location = new System.Drawing.Point(81, 117);
+      this.txtTaxesResult.Location = new System.Drawing.Point(81, 105);
       this.txtTaxesResult.Name = "txtTaxesResult";
       this.txtTaxesResult.ReadOnly = true;
-      this.txtTaxesResult.Size = new System.Drawing.Size(154, 32);
+      this.txtTaxesResult.Size = new System.Drawing.Size(154, 25);
       this.txtTaxesResult.TabIndex = 7;
       this.txtTaxesResult.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
       // 
       // dtTaxesSource
       // 
       this.dtTaxesSource.CustomFormat = "dd-MM-yyyy";
-      this.dtTaxesSource.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.dtTaxesSource.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-      this.dtTaxesSource.Location = new System.Drawing.Point(81, 41);
+      this.dtTaxesSource.Location = new System.Drawing.Point(81, 43);
       this.dtTaxesSource.Name = "dtTaxesSource";
-      this.dtTaxesSource.Size = new System.Drawing.Size(154, 32);
+      this.dtTaxesSource.Size = new System.Drawing.Size(154, 25);
       this.dtTaxesSource.TabIndex = 3;
       this.dtTaxesSource.ValueChanged += new System.EventHandler(this.numTaxesSource_ValueChanged);
       // 
@@ -388,16 +377,16 @@ namespace currency.watcher {
       this.panStatus.Dock = System.Windows.Forms.DockStyle.Bottom;
       this.panStatus.Location = new System.Drawing.Point(0, 235);
       this.panStatus.Name = "panStatus";
-      this.panStatus.Size = new System.Drawing.Size(564, 26);
+      this.panStatus.Size = new System.Drawing.Size(566, 26);
       this.panStatus.TabIndex = 20;
       // 
       // cbxWeather
       // 
       this.cbxWeather.AutoSize = true;
       this.cbxWeather.Dock = System.Windows.Forms.DockStyle.Left;
-      this.cbxWeather.Location = new System.Drawing.Point(222, 0);
+      this.cbxWeather.Location = new System.Drawing.Point(219, 0);
       this.cbxWeather.Name = "cbxWeather";
-      this.cbxWeather.Size = new System.Drawing.Size(82, 26);
+      this.cbxWeather.Size = new System.Drawing.Size(79, 26);
       this.cbxWeather.TabIndex = 4;
       this.cbxWeather.Text = "Weather";
       this.cbxWeather.UseVisualStyleBackColor = true;
@@ -408,9 +397,9 @@ namespace currency.watcher {
       this.panGridOptions.Controls.Add(this.cmbChartMode);
       this.panGridOptions.Controls.Add(this.cbxChartGridMode);
       this.panGridOptions.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.panGridOptions.Location = new System.Drawing.Point(222, 0);
+      this.panGridOptions.Location = new System.Drawing.Point(219, 0);
       this.panGridOptions.Name = "panGridOptions";
-      this.panGridOptions.Size = new System.Drawing.Size(342, 26);
+      this.panGridOptions.Size = new System.Drawing.Size(347, 26);
       this.panGridOptions.TabIndex = 5;
       this.panGridOptions.Visible = false;
       // 
@@ -420,9 +409,9 @@ namespace currency.watcher {
       this.cbxShowNbu.Checked = true;
       this.cbxShowNbu.CheckState = System.Windows.Forms.CheckState.Checked;
       this.cbxShowNbu.Dock = System.Windows.Forms.DockStyle.Right;
-      this.cbxShowNbu.Location = new System.Drawing.Point(74, 0);
+      this.cbxShowNbu.Location = new System.Drawing.Point(85, 0);
       this.cbxShowNbu.Name = "cbxShowNbu";
-      this.cbxShowNbu.Size = new System.Drawing.Size(59, 26);
+      this.cbxShowNbu.Size = new System.Drawing.Size(56, 26);
       this.cbxShowNbu.TabIndex = 0;
       this.cbxShowNbu.Text = "NBU";
       this.cbxShowNbu.UseVisualStyleBackColor = true;
@@ -436,18 +425,18 @@ namespace currency.watcher {
             "1 month",
             "3 months",
             "6 months"});
-      this.cmbChartMode.Location = new System.Drawing.Point(133, 0);
+      this.cmbChartMode.Location = new System.Drawing.Point(141, 0);
       this.cmbChartMode.Name = "cmbChartMode";
-      this.cmbChartMode.Size = new System.Drawing.Size(121, 27);
+      this.cmbChartMode.Size = new System.Drawing.Size(121, 25);
       this.cmbChartMode.TabIndex = 1;
       // 
       // cbxChartGridMode
       // 
       this.cbxChartGridMode.AutoSize = true;
       this.cbxChartGridMode.Dock = System.Windows.Forms.DockStyle.Right;
-      this.cbxChartGridMode.Location = new System.Drawing.Point(254, 0);
+      this.cbxChartGridMode.Location = new System.Drawing.Point(262, 0);
       this.cbxChartGridMode.Name = "cbxChartGridMode";
-      this.cbxChartGridMode.Size = new System.Drawing.Size(88, 26);
+      this.cbxChartGridMode.Size = new System.Drawing.Size(85, 26);
       this.cbxChartGridMode.TabIndex = 2;
       this.cbxChartGridMode.Text = "Grid lines";
       this.cbxChartGridMode.UseVisualStyleBackColor = true;
@@ -458,17 +447,17 @@ namespace currency.watcher {
       this.cbxStickEdges.Dock = System.Windows.Forms.DockStyle.Left;
       this.cbxStickEdges.Location = new System.Drawing.Point(123, 0);
       this.cbxStickEdges.Name = "cbxStickEdges";
-      this.cbxStickEdges.Size = new System.Drawing.Size(99, 26);
+      this.cbxStickEdges.Size = new System.Drawing.Size(96, 26);
       this.cbxStickEdges.TabIndex = 3;
       this.cbxStickEdges.Text = "Stick edges";
       this.cbxStickEdges.UseVisualStyleBackColor = true;
       // 
       // MainForm
       // 
-      this.ClientSize = new System.Drawing.Size(564, 261);
+      this.ClientSize = new System.Drawing.Size(566, 261);
       this.Controls.Add(this.panHistory);
       this.Controls.Add(this.panStatus);
-      this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this.MaximizeBox = false;
       this.MinimumSize = new System.Drawing.Size(582, 300);

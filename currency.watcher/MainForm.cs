@@ -120,6 +120,8 @@ namespace currency.watcher {
       panStatus.MouseWheel += (sender, e) => {
         if (e.Button != MouseButtons.None) return;
         var delta = e.Delta > 0 ? 0.05 : -0.05;
+        // Font = new Font(Font.FontFamily, Font.Size + (float)delta);
+        // return;
         Opacity += delta;
         if (Opacity < 0.2)
           Opacity = 0.2;
