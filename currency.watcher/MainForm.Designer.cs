@@ -62,6 +62,7 @@ namespace currency.watcher {
       this.cmbChartMode = new System.Windows.Forms.ComboBox();
       this.cbxChartGridMode = new System.Windows.Forms.CheckBox();
       this.cbxStickEdges = new System.Windows.Forms.CheckBox();
+      this.splitter1 = new System.Windows.Forms.Splitter();
       this.panMain.SuspendLayout();
       this.panHistory.SuspendLayout();
       this.tabControl.SuspendLayout();
@@ -223,6 +224,7 @@ namespace currency.watcher {
       // 
       // tabPageMain
       // 
+      this.tabPageMain.Controls.Add(this.splitter1);
       this.tabPageMain.Controls.Add(this.panPrivat24Business);
       this.tabPageMain.Controls.Add(this.panMain);
       this.tabPageMain.Location = new System.Drawing.Point(4, 26);
@@ -452,6 +454,14 @@ namespace currency.watcher {
       this.cbxStickEdges.Text = "Stick edges";
       this.cbxStickEdges.UseVisualStyleBackColor = true;
       // 
+      // splitter1
+      // 
+      this.splitter1.Location = new System.Drawing.Point(162, 3);
+      this.splitter1.Name = "splitter1";
+      this.splitter1.Size = new System.Drawing.Size(3, 193);
+      this.splitter1.TabIndex = 1;
+      this.splitter1.TabStop = false;
+      // 
       // MainForm
       // 
       this.ClientSize = new System.Drawing.Size(566, 261);
@@ -519,5 +529,6 @@ namespace currency.watcher {
     private TextBox txtUahResult;
     private CheckBox cbxWeather;
     private TabPage tabTaxes;
+    private Splitter splitter1;
   }
 }
