@@ -144,6 +144,14 @@ namespace currency.watcher {
         Height = AppSettings.Instance.Height;
         Width = AppSettings.Instance.Width;
         Opacity = AppSettings.Instance.Opacity;
+
+
+        panMain.Width = AppSettings.Instance.MainPanWidth;
+        for (var i = 0; i < 3; i++) {
+          lstFinanceHistory.Columns[i].Width = AppSettings.Instance.FinanceHistorySizes[i];
+          lstHistory.Columns[i].Width = AppSettings.Instance.HistorySizes[i];
+        }
+
         cmbCurrency.SelectedIndex = AppSettings.Instance.CurrencyIndex;
         timer.Interval = AppSettings.Instance.RefreshInterval * 60 * 1000;
         cmbChartMode.SelectedIndex = AppSettings.Instance.ChartViewMode;
@@ -158,6 +166,13 @@ namespace currency.watcher {
         AppSettings.Instance.Height = Height;
         AppSettings.Instance.Width = Width;
         AppSettings.Instance.Opacity = Opacity;
+
+        AppSettings.Instance.MainPanWidth = panMain.Width;
+        for (var i = 0; i < 3; i++) {
+          AppSettings.Instance.FinanceHistorySizes[i] = lstFinanceHistory.Columns[i].Width;
+          AppSettings.Instance.HistorySizes[i] = lstHistory.Columns[i].Width;
+        }
+
         AppSettings.Instance.CurrencyIndex = cmbCurrency.SelectedIndex;
         AppSettings.Instance.Weather = cbxWeather.Checked;
 

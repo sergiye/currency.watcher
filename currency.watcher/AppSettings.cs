@@ -24,6 +24,10 @@ namespace currency.watcher {
     public int CurrencyIndex;
     public readonly int RefreshInterval;
 
+    public int MainPanWidth;
+    public int[] FinanceHistorySizes;
+    public int[] HistorySizes;
+
     public AppSettings() {
       Left = Screen.PrimaryScreen.WorkingArea.Left;// Screen.PrimaryScreen.WorkingArea.Right - Width;
       Top = Screen.PrimaryScreen.WorkingArea.Top;
@@ -38,6 +42,10 @@ namespace currency.watcher {
 
       CurrencyIndex = 0;
       RefreshInterval = 30;
+
+      MainPanWidth = 159;
+      FinanceHistorySizes = new int[3] { 40, 50, 50 };
+      HistorySizes = new int[3] { 85, 55, 55 };
     }
 
     #region Load/Save
