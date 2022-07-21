@@ -24,12 +24,20 @@ namespace currency.watcher {
     #region form decoration
 
     private const int SysMenuAboutId = 0x1;
+    private const int SysMenuTopMost = 0x2;
 
     protected override void OnHandleCreated(EventArgs e) {
 
       base.OnHandleCreated(e);
+
       var hSysMenu = Common.GetSystemMenu(Handle, false);
+
+      //Common.DeleteMenu(hSysMenu, Common.SC_SIZE, Common.MfByCommand); // Disable resizing
+      //Common.DeleteMenu(hSysMenu, Common.SC_MINIMIZE, Common.MfByCommand); // Disable minimizing
+      Common.DeleteMenu(hSysMenu, Common.SC_MAXIMIZE, Common.MfByCommand); // Disable maximizing
+
       Common.AppendMenu(hSysMenu, Common.MfSeparator, 0, string.Empty);
+      Common.AppendMenu(hSysMenu, Common.MfString, SysMenuTopMost, "&Always on top");
       Common.AppendMenu(hSysMenu, Common.MfString, SysMenuAboutId, "&About…");
     }
 
@@ -40,6 +48,11 @@ namespace currency.watcher {
         switch ((int)m.WParam) {
           case SysMenuAboutId:
             MessageBox.Show(Common.GetDeveloperText(), "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            break;
+          case SysMenuTopMost:
+            TopMost = !TopMost;
+            var hSysMenu = Common.GetSystemMenu(Handle, false);
+            Common.CheckMenuItem(hSysMenu, SysMenuTopMost, TopMost ? Common.MfChecked : Common.MfUnchecked);
             break;
         }
       }
@@ -52,18 +65,6 @@ namespace currency.watcher {
       if (Common.DoSnap(Top, scn.WorkingArea.Top)) Top = scn.WorkingArea.Top;
       if (Common.DoSnap(scn.WorkingArea.Right, Right)) Left = scn.WorkingArea.Right - Width;
       if (Common.DoSnap(scn.WorkingArea.Bottom, Bottom)) Top = scn.WorkingArea.Bottom - Height;
-    }
-
-    private void btnTop_Click(object sender, EventArgs e) {
-
-      if (btnTop.BackColor == Color.GreenYellow) {
-        TopMost = false;
-        btnTop.BackColor = BackColor;
-      }
-      else {
-        TopMost = true;
-        btnTop.BackColor = Color.GreenYellow;
-      }
     }
 
     #endregion form decoration
