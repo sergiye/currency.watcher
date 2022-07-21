@@ -27,8 +27,8 @@ namespace currency.watcher {
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent() {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
       this.btnRefresh = new System.Windows.Forms.Button();
-      this.btnTop = new System.Windows.Forms.Button();
       this.cmbCurrency = new System.Windows.Forms.ComboBox();
       this.browser = new System.Windows.Forms.WebBrowser();
       this.panMain = new System.Windows.Forms.Panel();
@@ -43,6 +43,7 @@ namespace currency.watcher {
       this.panHistory = new System.Windows.Forms.Panel();
       this.tabControl = new System.Windows.Forms.TabControl();
       this.tabPageMain = new System.Windows.Forms.TabPage();
+      this.splitter1 = new System.Windows.Forms.Splitter();
       this.panPrivat24Business = new System.Windows.Forms.GroupBox();
       this.tabPageGraphic = new System.Windows.Forms.TabPage();
       this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -62,7 +63,6 @@ namespace currency.watcher {
       this.cmbChartMode = new System.Windows.Forms.ComboBox();
       this.cbxChartGridMode = new System.Windows.Forms.CheckBox();
       this.cbxStickEdges = new System.Windows.Forms.CheckBox();
-      this.splitter1 = new System.Windows.Forms.Splitter();
       this.panMain.SuspendLayout();
       this.panHistory.SuspendLayout();
       this.tabControl.SuspendLayout();
@@ -78,24 +78,14 @@ namespace currency.watcher {
       // 
       // btnRefresh
       // 
+      this.btnRefresh.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnRefresh.BackgroundImage")));
+      this.btnRefresh.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
       this.btnRefresh.Dock = System.Windows.Forms.DockStyle.Left;
       this.btnRefresh.Location = new System.Drawing.Point(73, 0);
       this.btnRefresh.Name = "btnRefresh";
       this.btnRefresh.Size = new System.Drawing.Size(25, 26);
       this.btnRefresh.TabIndex = 1;
-      this.btnRefresh.Text = "R";
-      this.btnRefresh.UseVisualStyleBackColor = false;
-      // 
-      // btnTop
-      // 
-      this.btnTop.Dock = System.Windows.Forms.DockStyle.Left;
-      this.btnTop.Location = new System.Drawing.Point(98, 0);
-      this.btnTop.Name = "btnTop";
-      this.btnTop.Size = new System.Drawing.Size(25, 26);
-      this.btnTop.TabIndex = 2;
-      this.btnTop.Text = "T";
-      this.btnTop.UseVisualStyleBackColor = false;
-      this.btnTop.Click += new System.EventHandler(this.btnTop_Click);
+      this.btnRefresh.UseVisualStyleBackColor = true;
       // 
       // cmbCurrency
       // 
@@ -235,6 +225,14 @@ namespace currency.watcher {
       this.tabPageMain.Text = "Rates";
       this.tabPageMain.UseVisualStyleBackColor = true;
       // 
+      // splitter1
+      // 
+      this.splitter1.Location = new System.Drawing.Point(162, 3);
+      this.splitter1.Name = "splitter1";
+      this.splitter1.Size = new System.Drawing.Size(3, 199);
+      this.splitter1.TabIndex = 1;
+      this.splitter1.TabStop = false;
+      // 
       // panPrivat24Business
       // 
       this.panPrivat24Business.Controls.Add(this.lstHistory);
@@ -249,10 +247,10 @@ namespace currency.watcher {
       // tabPageGraphic
       // 
       this.tabPageGraphic.Controls.Add(this.chart);
-      this.tabPageGraphic.Location = new System.Drawing.Point(4, 26);
+      this.tabPageGraphic.Location = new System.Drawing.Point(4, 22);
       this.tabPageGraphic.Name = "tabPageGraphic";
       this.tabPageGraphic.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageGraphic.Size = new System.Drawing.Size(558, 205);
+      this.tabPageGraphic.Size = new System.Drawing.Size(558, 209);
       this.tabPageGraphic.TabIndex = 0;
       this.tabPageGraphic.Text = "Graphic";
       this.tabPageGraphic.UseVisualStyleBackColor = true;
@@ -262,7 +260,7 @@ namespace currency.watcher {
       this.chart.Dock = System.Windows.Forms.DockStyle.Fill;
       this.chart.Location = new System.Drawing.Point(3, 3);
       this.chart.Name = "chart";
-      this.chart.Size = new System.Drawing.Size(552, 199);
+      this.chart.Size = new System.Drawing.Size(552, 203);
       this.chart.TabIndex = 20;
       this.chart.MouseMove += new System.Windows.Forms.MouseEventHandler(this.chart_MouseMove);
       // 
@@ -276,10 +274,10 @@ namespace currency.watcher {
       this.tabTaxes.Controls.Add(this.txtUahResult);
       this.tabTaxes.Controls.Add(this.txtTaxesResult);
       this.tabTaxes.Controls.Add(this.dtTaxesSource);
-      this.tabTaxes.Location = new System.Drawing.Point(4, 26);
+      this.tabTaxes.Location = new System.Drawing.Point(4, 22);
       this.tabTaxes.Name = "tabTaxes";
       this.tabTaxes.Padding = new System.Windows.Forms.Padding(3);
-      this.tabTaxes.Size = new System.Drawing.Size(558, 205);
+      this.tabTaxes.Size = new System.Drawing.Size(558, 209);
       this.tabTaxes.TabIndex = 2;
       this.tabTaxes.Text = "Taxes calculator";
       this.tabTaxes.UseVisualStyleBackColor = true;
@@ -373,7 +371,6 @@ namespace currency.watcher {
       this.panStatus.Controls.Add(this.cbxWeather);
       this.panStatus.Controls.Add(this.panGridOptions);
       this.panStatus.Controls.Add(this.cbxStickEdges);
-      this.panStatus.Controls.Add(this.btnTop);
       this.panStatus.Controls.Add(this.btnRefresh);
       this.panStatus.Controls.Add(this.cmbCurrency);
       this.panStatus.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -386,7 +383,7 @@ namespace currency.watcher {
       // 
       this.cbxWeather.AutoSize = true;
       this.cbxWeather.Dock = System.Windows.Forms.DockStyle.Left;
-      this.cbxWeather.Location = new System.Drawing.Point(219, 0);
+      this.cbxWeather.Location = new System.Drawing.Point(194, 0);
       this.cbxWeather.Name = "cbxWeather";
       this.cbxWeather.Size = new System.Drawing.Size(79, 26);
       this.cbxWeather.TabIndex = 4;
@@ -399,9 +396,9 @@ namespace currency.watcher {
       this.panGridOptions.Controls.Add(this.cmbChartMode);
       this.panGridOptions.Controls.Add(this.cbxChartGridMode);
       this.panGridOptions.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.panGridOptions.Location = new System.Drawing.Point(219, 0);
+      this.panGridOptions.Location = new System.Drawing.Point(194, 0);
       this.panGridOptions.Name = "panGridOptions";
-      this.panGridOptions.Size = new System.Drawing.Size(347, 26);
+      this.panGridOptions.Size = new System.Drawing.Size(372, 26);
       this.panGridOptions.TabIndex = 5;
       this.panGridOptions.Visible = false;
       // 
@@ -411,7 +408,7 @@ namespace currency.watcher {
       this.cbxShowNbu.Checked = true;
       this.cbxShowNbu.CheckState = System.Windows.Forms.CheckState.Checked;
       this.cbxShowNbu.Dock = System.Windows.Forms.DockStyle.Right;
-      this.cbxShowNbu.Location = new System.Drawing.Point(85, 0);
+      this.cbxShowNbu.Location = new System.Drawing.Point(110, 0);
       this.cbxShowNbu.Name = "cbxShowNbu";
       this.cbxShowNbu.Size = new System.Drawing.Size(56, 26);
       this.cbxShowNbu.TabIndex = 0;
@@ -427,7 +424,7 @@ namespace currency.watcher {
             "1 month",
             "3 months",
             "6 months"});
-      this.cmbChartMode.Location = new System.Drawing.Point(141, 0);
+      this.cmbChartMode.Location = new System.Drawing.Point(166, 0);
       this.cmbChartMode.Name = "cmbChartMode";
       this.cmbChartMode.Size = new System.Drawing.Size(121, 25);
       this.cmbChartMode.TabIndex = 1;
@@ -436,7 +433,7 @@ namespace currency.watcher {
       // 
       this.cbxChartGridMode.AutoSize = true;
       this.cbxChartGridMode.Dock = System.Windows.Forms.DockStyle.Right;
-      this.cbxChartGridMode.Location = new System.Drawing.Point(262, 0);
+      this.cbxChartGridMode.Location = new System.Drawing.Point(287, 0);
       this.cbxChartGridMode.Name = "cbxChartGridMode";
       this.cbxChartGridMode.Size = new System.Drawing.Size(85, 26);
       this.cbxChartGridMode.TabIndex = 2;
@@ -447,20 +444,12 @@ namespace currency.watcher {
       // 
       this.cbxStickEdges.AutoSize = true;
       this.cbxStickEdges.Dock = System.Windows.Forms.DockStyle.Left;
-      this.cbxStickEdges.Location = new System.Drawing.Point(123, 0);
+      this.cbxStickEdges.Location = new System.Drawing.Point(98, 0);
       this.cbxStickEdges.Name = "cbxStickEdges";
       this.cbxStickEdges.Size = new System.Drawing.Size(96, 26);
       this.cbxStickEdges.TabIndex = 3;
       this.cbxStickEdges.Text = "Stick edges";
       this.cbxStickEdges.UseVisualStyleBackColor = true;
-      // 
-      // splitter1
-      // 
-      this.splitter1.Location = new System.Drawing.Point(162, 3);
-      this.splitter1.Name = "splitter1";
-      this.splitter1.Size = new System.Drawing.Size(3, 193);
-      this.splitter1.TabIndex = 1;
-      this.splitter1.TabStop = false;
       // 
       // MainForm
       // 
@@ -495,7 +484,6 @@ namespace currency.watcher {
     #endregion
 
     private Button btnRefresh;
-    private Button btnTop;
     private ComboBox cmbCurrency;
     private WebBrowser browser;
     private Panel panMain;
