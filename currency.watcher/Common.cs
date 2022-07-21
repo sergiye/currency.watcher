@@ -8,6 +8,8 @@ namespace currency.watcher {
   internal class Common {
 
     internal const int WmSysCommand = 0x112;
+    internal const int HWND_BROADCAST = 0xffff;
+    internal static readonly int WM_SHOWME = RegisterWindowMessage("WM_SHOWME");
 
     internal const int SC_SIZE = 0xF000;
     internal const int SC_MINIMIZE = 0xF020;
@@ -45,6 +47,11 @@ namespace currency.watcher {
     //https://docs.microsoft.com/en-us/windows/console/getconsolewindow
     [DllImport("kernel32.dll", ExactSpelling = true)]
     internal static extern IntPtr GetConsoleWindow();
+
+    [DllImport("user32")]
+    internal static extern bool PostMessage(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam);
+    [DllImport("user32")]
+    internal static extern int RegisterWindowMessage(string message);
 
     internal static string GetDeveloperText() {
       return Encoding.ASCII.GetString(new byte[]

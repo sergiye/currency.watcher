@@ -44,7 +44,7 @@ namespace currency.watcher {
     protected override void WndProc(ref Message m) {
 
       base.WndProc(ref m);
-      if ((m.Msg == Common.WmSysCommand)) {
+      if (m.Msg == Common.WmSysCommand) {
         switch ((int)m.WParam) {
           case SysMenuAboutId:
             MessageBox.Show(Common.GetDeveloperText(), "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -55,6 +55,13 @@ namespace currency.watcher {
             Common.CheckMenuItem(hSysMenu, SysMenuTopMost, TopMost ? Common.MfChecked : Common.MfUnchecked);
             break;
         }
+      } else if (m.Msg == Common.WM_SHOWME) {
+        if (WindowState == FormWindowState.Minimized)
+          WindowState = FormWindowState.Normal;
+        Activate();
+        //bool top = TopMost;
+        //TopMost = true;
+        //TopMost = top;
       }
     }
 
