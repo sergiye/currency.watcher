@@ -200,6 +200,7 @@ namespace currency.watcher {
       // 
       // tabControl
       // 
+      this.tabControl.Alignment = System.Windows.Forms.TabAlignment.Bottom;
       this.tabControl.Controls.Add(this.tabPageMain);
       this.tabControl.Controls.Add(this.tabPageGraphic);
       this.tabControl.Controls.Add(this.tabTaxes);
@@ -217,7 +218,7 @@ namespace currency.watcher {
       this.tabPageMain.Controls.Add(this.splitter1);
       this.tabPageMain.Controls.Add(this.panPrivat24Business);
       this.tabPageMain.Controls.Add(this.panMain);
-      this.tabPageMain.Location = new System.Drawing.Point(4, 26);
+      this.tabPageMain.Location = new System.Drawing.Point(4, 4);
       this.tabPageMain.Name = "tabPageMain";
       this.tabPageMain.Padding = new System.Windows.Forms.Padding(3);
       this.tabPageMain.Size = new System.Drawing.Size(558, 205);
@@ -247,10 +248,10 @@ namespace currency.watcher {
       // tabPageGraphic
       // 
       this.tabPageGraphic.Controls.Add(this.chart);
-      this.tabPageGraphic.Location = new System.Drawing.Point(4, 22);
+      this.tabPageGraphic.Location = new System.Drawing.Point(4, 4);
       this.tabPageGraphic.Name = "tabPageGraphic";
       this.tabPageGraphic.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageGraphic.Size = new System.Drawing.Size(558, 209);
+      this.tabPageGraphic.Size = new System.Drawing.Size(558, 205);
       this.tabPageGraphic.TabIndex = 0;
       this.tabPageGraphic.Text = "Graphic";
       this.tabPageGraphic.UseVisualStyleBackColor = true;
@@ -260,7 +261,7 @@ namespace currency.watcher {
       this.chart.Dock = System.Windows.Forms.DockStyle.Fill;
       this.chart.Location = new System.Drawing.Point(3, 3);
       this.chart.Name = "chart";
-      this.chart.Size = new System.Drawing.Size(552, 203);
+      this.chart.Size = new System.Drawing.Size(552, 199);
       this.chart.TabIndex = 20;
       this.chart.MouseMove += new System.Windows.Forms.MouseEventHandler(this.chart_MouseMove);
       // 
@@ -274,10 +275,10 @@ namespace currency.watcher {
       this.tabTaxes.Controls.Add(this.txtUahResult);
       this.tabTaxes.Controls.Add(this.txtTaxesResult);
       this.tabTaxes.Controls.Add(this.dtTaxesSource);
-      this.tabTaxes.Location = new System.Drawing.Point(4, 22);
+      this.tabTaxes.Location = new System.Drawing.Point(4, 4);
       this.tabTaxes.Name = "tabTaxes";
       this.tabTaxes.Padding = new System.Windows.Forms.Padding(3);
-      this.tabTaxes.Size = new System.Drawing.Size(558, 209);
+      this.tabTaxes.Size = new System.Drawing.Size(558, 205);
       this.tabTaxes.TabIndex = 2;
       this.tabTaxes.Text = "Taxes calculator";
       this.tabTaxes.UseVisualStyleBackColor = true;
