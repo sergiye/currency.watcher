@@ -377,7 +377,7 @@ namespace currency.watcher {
       this.panStatus.Dock = System.Windows.Forms.DockStyle.Bottom;
       this.panStatus.Location = new System.Drawing.Point(0, 235);
       this.panStatus.Name = "panStatus";
-      this.panStatus.Size = new System.Drawing.Size(566, 26);
+      this.panStatus.Size = new System.Drawing.Size(566, 30);
       this.panStatus.TabIndex = 20;
       // 
       // cbxWeather
