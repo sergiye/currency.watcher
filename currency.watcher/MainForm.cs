@@ -325,26 +325,27 @@ namespace currency.watcher {
     private void UpdateMinfinChartData() {
       var currencyCode = Helper.GetCurrencyName(cmbCurrency.SelectedIndex).ToLower();
       var city = 22;
-      var nowDate = DateTime.Today;
-      DateTime startDate;
+      string filter;
       switch (cmbChartMode.SelectedIndex) {
         case 1:
-          startDate = nowDate.AddMonths(-3);
+          filter = "period=month&group=day";
           break;
         case 2:
-          startDate = nowDate.AddMonths(-6);
+          filter = "period=3month&group=day"; //group=week
           break;
         default:
-          startDate = nowDate.AddMonths(-1);
+          filter = "period=week"; //&group=hour
           break;
       }
-      GetJsonData($"https://va-backend.treeum.net/api/currency_rates/get_rates/{currencyCode}/{city}/{startDate:yyyy-MM-dd}/{nowDate:yyyy-MM-dd}", OnMinfinHistoryResponse);
+      GetJsonData($"https://va-rates.treeumapp.net/api/v1/rates?currency={currencyCode}&{filter}&city={city}", OnMinfinHistoryResponse);
     }
 
     private void OnMinfinHistoryResponse(string response) {
       if (string.IsNullOrEmpty(response)) return;
-      var historyData = response.FromJson<Dictionary<string, MinfinItem>>();
-      if (historyData == null || historyData.Count == 0) return;
+      var historyData = response.FromJson<MinfinHistoryResponse>();
+
+      if (cmbCurrency.SelectedIndex == 0 && historyData?.Items?.Usd?.Length == 0) return;
+      if (cmbCurrency.SelectedIndex == 1 && historyData?.Items?.Eur?.Length == 0) return;
 
       var currencyIndex = cmbCurrency.SelectedIndex;
       var showNbu = !nbuProvider.IsEmpty(currencyIndex);
@@ -355,9 +356,10 @@ namespace currency.watcher {
       foreach (var s in chart.Series)
         s.Points.Clear();
 
-      foreach (var item in historyData.Values) {
-        chart.Series[0].Points.AddXY(item.Date, item.Rate_Buy);
-        chart.Series[1].Points.AddXY(item.Date, item.Rate_Sell);
+      var values = cmbCurrency.SelectedIndex == 0 ? historyData?.Items?.Usd : historyData?.Items?.Eur;
+      foreach (var item in values) {
+        chart.Series[0].Points.AddXY(item.Date, item.Buy);
+        chart.Series[1].Points.AddXY(item.Date, item.Sell);
         if (showNbu) {
           var nbuValue = nbuProvider.GetByDate(currencyIndex, item.Date);
           if (nbuValue != null) {

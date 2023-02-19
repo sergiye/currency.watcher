@@ -422,9 +422,9 @@ namespace currency.watcher {
       this.cmbChartMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmbChartMode.FormattingEnabled = true;
       this.cmbChartMode.Items.AddRange(new object[] {
+            "1 week",
             "1 month",
-            "3 months",
-            "6 months"});
+            "3 months"});
       this.cmbChartMode.Location = new System.Drawing.Point(166, 0);
       this.cmbChartMode.Name = "cmbChartMode";
       this.cmbChartMode.Size = new System.Drawing.Size(121, 25);

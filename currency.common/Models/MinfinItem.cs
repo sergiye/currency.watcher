@@ -2,28 +2,28 @@
 
 namespace currency {
 
-  public partial class MinfinItem {
+  public class MinfinHistoryResponse {
+    public string Start { get; set; }
+    public string End { get; set; }
+    public string Group { get; set; }
+    public MinfinHistorys Items { get; set; }
+  }
 
-    public string Currency { get; set; }
-    //public long City_Id { get; set; }
-    public string Rate_Type { get; set; }
+  public class MinfinHistorys {
+    public MinfinHistory[] Usd { get; set; }
+    public MinfinHistory[] Eur { get; set; }
+  }
+
+  public class MinfinHistory {
     public DateTime Date { get; set; }
-    public double Rate_Sell { get; set; }
-    public double Rate_Buy { get; set; }
-    //public double Trend_Sell { get; set; }
-    //public long Trend_Sell_Count { get; set; }
-    //public double Trend_Buy { get; set; }
-    //public long Trend_Buy_Count { get; set; }
-    //public long Trade_Buy_Count { get; set; }
-    //public long Trade_Sell_Count { get; set; }
-    //public double Trend_Trade_Sell { get; set; }
-    //public double Trend_Trade_Buy { get; set; }
-    //public long Trend_Trade_Buy_Count { get; set; }
-    //public long Trend_Trade_Sell_Count { get; set; }
-    //public double Trade_Sell { get; set; }
-    //public double Trade_Buy { get; set; }
-    public long Count_Sell { get; set; }
-    public long Count_Buy { get; set; }
-    //public object Organization { get; set; }
+    public string Currency { get; set; }
+    public float Sell { get; set; }
+    public float Sell_dx { get; set; }
+    public float Sell_n { get; set; }
+    public float Sell_n_dx { get; set; }
+    public float Buy { get; set; }
+    public float Buy_dx { get; set; }
+    public float Buy_n { get; set; }
+    public float Buy_n_dx { get; set; }
   }
 }
