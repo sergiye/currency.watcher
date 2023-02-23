@@ -208,6 +208,7 @@ namespace currency.watcher {
 
       cbxShowNbu.CheckedChanged += (s, e) => {
         chart.Series[2].Enabled = cbxShowNbu.Checked;
+        UpdateChartBounds();
       };
 
       cbxStickEdges.CheckedChanged += (s, e) => {
@@ -368,11 +369,19 @@ namespace currency.watcher {
         }
         //todo: process "count_sell": 3, "count_buy": 7,
       }
+      UpdateChartBounds();
 
+      //if (historyData.Last().Value.Date == DateTime.Now.Date)
+      lastMinfinStats = DateTime.Now;
+    }
+
+    private void UpdateChartBounds() {
+      if (chart.Series[0].Points.Count == 0) return;
       //chart.ChartAreas[0].RecalculateAxesScale();
       var chartMin = chart.Series[0].Points.Min(p => p.YValues[0]);
       var chartMax = chart.Series[0].Points.Max(p => p.YValues[0]);
-      for (int i = 1; i < chart.Series.Count; i++) {
+      var maxSeries = chart.Series[2].Enabled ? chart.Series.Count : chart.Series.Count - 1;
+      for (int i = 1; i < maxSeries; i++) {
         if (chart.Series[i].Points.Count == 0) continue;
         var min = chart.Series[i].Points.Min(p => p.YValues[0]);
         if (chartMin > min)
@@ -384,9 +393,6 @@ namespace currency.watcher {
       var space = 0;//(chartMax-chartMin) * 0.05;
       chart.ChartAreas[0].AxisY.Minimum = chartMin - space;
       chart.ChartAreas[0].AxisY.Maximum = chartMax + space;
-
-      //if (historyData.Last().Value.Date == DateTime.Now.Date)
-      lastMinfinStats = DateTime.Now;
     }
 
     private void OnFinanceUaResponse(string response) {
