@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Currency Watcher")]
-[assembly: AssemblyDescription("Currency Watcher")]
+[assembly: AssemblyTitle("Exchange Rate Watcher")]
+[assembly: AssemblyDescription("Exchange Rate Watcher")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Sergiy Yegoshyn")]
-[assembly: AssemblyProduct("Currency Watcher")]
+[assembly: AssemblyProduct("Exchange Rate Watcher")]
 [assembly: AssemblyCopyright("Copyright © Sergiy Yegoshyn 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

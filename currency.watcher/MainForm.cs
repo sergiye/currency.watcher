@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -47,7 +46,8 @@ namespace currency.watcher {
       if (m.Msg == Common.WmSysCommand) {
         switch ((int)m.WParam) {
           case SysMenuAboutId:
-            MessageBox.Show(Common.GetDeveloperText(), "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            var asm = Assembly.GetExecutingAssembly();
+            MessageBox.Show($"{((AssemblyTitleAttribute)Attribute.GetCustomAttribute(asm, typeof(AssemblyTitleAttribute), false)).Title} {asm.GetName().Version.ToString(3)} {(Environment.Is64BitProcess ? "x64" : "x32")}\nWritten by Sergiy Egoshyn (egoshin.sergey@gmail.com)", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
             break;
           case SysMenuTopMost:
             TopMost = !TopMost;
@@ -83,7 +83,7 @@ namespace currency.watcher {
       Icon = Icon.ExtractAssociatedIcon(AppSettings.GetAppPath()); 
 
       var asm = Assembly.GetExecutingAssembly();
-      appTitle = $"{((AssemblyTitleAttribute)Attribute.GetCustomAttribute(asm, typeof(AssemblyTitleAttribute), false)).Title} {asm.GetName().Version.ToString(3)}";
+      appTitle = $"{((AssemblyTitleAttribute)Attribute.GetCustomAttribute(asm, typeof(AssemblyTitleAttribute), false)).Title} ";
       Text = appTitle;
 
       //configure chart
@@ -121,6 +121,7 @@ namespace currency.watcher {
 
       cmbCurrency.SelectedIndexChanged += (sender, args) => {
         lastCurrencyChanged = DateTime.Now;
+        AppSettings.Instance.CurrencyIndex = cmbCurrency.SelectedIndex;
         UpdateData();
         numTaxesSource_ValueChanged(sender, args);
       };
@@ -143,7 +144,7 @@ namespace currency.watcher {
 
         nbuProvider = new NbuProvider(null);//AppSettings.GetAppPath());
         nbuProvider.OnDataChanged += (o, index) => {
-          if (index == cmbCurrency.SelectedIndex)
+          if (index == AppSettings.Instance.CurrencyIndex)
             UpdateNbuRateText(index);
         };
 
@@ -165,7 +166,6 @@ namespace currency.watcher {
         cmbChartMode.SelectedIndex = AppSettings.Instance.ChartViewMode;
         cbxChartGridMode.Checked = AppSettings.Instance.ChartLines;
         cbxStickEdges.Checked = AppSettings.Instance.StickToEdges;
-        cbxWeather.Checked = AppSettings.Instance.Weather;
       };
 
       this.Closing += (sender, args) => {
@@ -181,8 +181,7 @@ namespace currency.watcher {
           AppSettings.Instance.HistorySizes[i] = lstHistory.Columns[i].Width;
         }
 
-        AppSettings.Instance.CurrencyIndex = cmbCurrency.SelectedIndex;
-        AppSettings.Instance.Weather = cbxWeather.Checked;
+        // AppSettings.Instance.CurrencyIndex = cmbCurrency.SelectedIndex;
 
         AppSettings.Instance.ChartViewMode = cmbChartMode.SelectedIndex;
         AppSettings.Instance.ChartLines = cbxChartGridMode.Checked;
@@ -213,11 +212,6 @@ namespace currency.watcher {
 
       cbxStickEdges.CheckedChanged += (s, e) => {
         AppSettings.Instance.StickToEdges = cbxStickEdges.Checked;
-      };
-
-      cbxWeather.CheckedChanged += (s, e) => {
-        AppSettings.Instance.Weather = cbxWeather.Checked;
-        browser.Visible = cbxWeather.Checked;
       };
 
       lstFinanceHistory.DoubleClick += (s, e) => {
@@ -256,9 +250,7 @@ namespace currency.watcher {
     }
 
     private void UpdateData() {
-      UpdateBrowser();
-
-      var currencyIndex = cmbCurrency.SelectedIndex;
+      var currencyIndex = AppSettings.Instance.CurrencyIndex;
       UpdateNbuRateText(currencyIndex);
 
       for (var cIndex = 0; cIndex < 2; cIndex++) {
@@ -277,18 +269,19 @@ namespace currency.watcher {
     }
 
     private void UpdateNbuRateText(int currencyIndex) {
+      if (InvokeRequired) {
+        Invoke(new Action<int>(UpdateNbuRateText), currencyIndex);
+        return;
+      }
+
       var lastItem = nbuProvider.GetLastItem(currencyIndex);
       if (lastItem == null) return;
-      Text = $"{appTitle} (NBU: {lastItem.Rate:n2} / {lastItem.Date:M})";
-    }
-
-    private void UpdateBrowser() {
-      Common.UpdateBrowser(browser, Properties.Resources.weather);
+      Text = $"{appTitle} (NBU: {lastItem.Rate:n3} {lastItem.Date:M})";
     }
 
     private void OnPrivat24HistoryResponse(string response) {
       if (string.IsNullOrEmpty(response)) return;
-      var currencyCode = Helper.GetCurrencyName(cmbCurrency.SelectedIndex);
+      var currencyCode = Helper.GetCurrencyName(AppSettings.Instance.CurrencyIndex);
       var historyData = response.FromJson<Privat24HistoryResponse>();
       if (historyData?.Data?.History == null) return;
       if (historyData.Data.History.Length <= 0) return;
@@ -324,7 +317,7 @@ namespace currency.watcher {
     }
 
     private void UpdateMinfinChartData() {
-      var currencyCode = Helper.GetCurrencyName(cmbCurrency.SelectedIndex).ToLower();
+      var currencyCode = Helper.GetCurrencyName(AppSettings.Instance.CurrencyIndex).ToLower();
       var city = 22;
       string filter;
       switch (cmbChartMode.SelectedIndex) {
@@ -345,10 +338,10 @@ namespace currency.watcher {
       if (string.IsNullOrEmpty(response)) return;
       var historyData = response.FromJson<MinfinHistoryResponse>();
 
-      if (cmbCurrency.SelectedIndex == 0 && historyData?.Items?.Usd?.Length == 0) return;
-      if (cmbCurrency.SelectedIndex == 1 && historyData?.Items?.Eur?.Length == 0) return;
+      var currencyIndex = AppSettings.Instance.CurrencyIndex;
+      if (currencyIndex == 0 && historyData?.Items?.Usd?.Length == 0) return;
+      if (currencyIndex == 1 && historyData?.Items?.Eur?.Length == 0) return;
 
-      var currencyIndex = cmbCurrency.SelectedIndex;
       var showNbu = !nbuProvider.IsEmpty(currencyIndex);
       if (!showNbu)
         cbxShowNbu.Checked = false;
@@ -357,7 +350,7 @@ namespace currency.watcher {
       foreach (var s in chart.Series)
         s.Points.Clear();
 
-      var values = cmbCurrency.SelectedIndex == 0 ? historyData?.Items?.Usd : historyData?.Items?.Eur;
+      var values = currencyIndex == 0 ? historyData?.Items?.Usd : historyData?.Items?.Eur;
       foreach (var item in values) {
         chart.Series[0].Points.AddXY(item.Date, item.Buy);
         chart.Series[1].Points.AddXY(item.Date, item.Sell);
@@ -467,7 +460,7 @@ namespace currency.watcher {
     private void numTaxesSource_ValueChanged(object sender, EventArgs e) {
       var usd = numTaxesSource.Value;
       var date = dtTaxesSource.Value;
-      var currencyIndex = cmbCurrency.SelectedIndex;
+      var currencyIndex = AppSettings.Instance.CurrencyIndex;
       if (!nbuProvider.IsEmpty(currencyIndex)) {
         var nbuRate = nbuProvider.GetByDate(currencyIndex, date);
         if (nbuRate != null) {

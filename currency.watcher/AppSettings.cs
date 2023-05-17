@@ -16,7 +16,6 @@ namespace currency.watcher {
     public int Width;
     public double Opacity;
     public bool StickToEdges;
-    public bool Weather;
     
     public int ChartViewMode;
     public bool ChartLines;
@@ -35,7 +34,6 @@ namespace currency.watcher {
       Width = 175;
       Opacity = 1;
       StickToEdges = true;
-      Weather = false;
     
       ChartViewMode = 0;
       ChartLines = false;

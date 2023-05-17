@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 namespace currency.watcher {
@@ -44,38 +43,15 @@ namespace currency.watcher {
     [DllImport("user32.dll")]
     internal static extern int DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
 
-    //https://docs.microsoft.com/en-us/windows/console/getconsolewindow
-    [DllImport("kernel32.dll", ExactSpelling = true)]
-    internal static extern IntPtr GetConsoleWindow();
-
     [DllImport("user32")]
     internal static extern bool PostMessage(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam);
     [DllImport("user32")]
     internal static extern int RegisterWindowMessage(string message);
 
-    internal static string GetDeveloperText() {
-      return Encoding.ASCII.GetString(new byte[]
-      {
-                0x57, 0x72, 0x69, 0x74, 0x74, 0x65, 0x6E, 0x20, 0x62, 0x79, 0x20, 0x53, 0x65, 0x72, 0x67, 0x65,
-                0x79, 0x20, 0x45, 0x67, 0x6F, 0x73, 0x68, 0x69, 0x6E, 0x20, 0x28, 0x65, 0x67, 0x6F, 0x73, 0x68,
-                0x69, 0x6E, 0x2E, 0x73, 0x65, 0x72, 0x67, 0x65, 0x79, 0x40, 0x67, 0x6D, 0x61, 0x69, 0x6C, 0x2E,
-                0x63, 0x6F, 0x6D, 0x29
-      });
-    }
-
     internal static bool DoSnap(int pos, int edge) {
       const int snapDist = 50;
       var delta = Math.Abs(pos - edge);
       return delta <= snapDist;
-    }
-
-    internal static void UpdateBrowser(WebBrowser browser, string documentData) {
-      browser.DocumentText = "0";
-      if (browser.Document != null) {
-        browser.Document.OpenNew(true);
-        browser.Document.Write(documentData);
-      }
-      browser.Refresh();
     }
   }
 }

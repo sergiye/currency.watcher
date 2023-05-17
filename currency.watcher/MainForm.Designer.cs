@@ -30,7 +30,6 @@ namespace currency.watcher {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
       this.btnRefresh = new System.Windows.Forms.Button();
       this.cmbCurrency = new System.Windows.Forms.ComboBox();
-      this.browser = new System.Windows.Forms.WebBrowser();
       this.panMain = new System.Windows.Forms.Panel();
       this.lstFinanceHistory = new System.Windows.Forms.ListView();
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -57,7 +56,6 @@ namespace currency.watcher {
       this.txtTaxesResult = new System.Windows.Forms.TextBox();
       this.dtTaxesSource = new System.Windows.Forms.DateTimePicker();
       this.panStatus = new System.Windows.Forms.Panel();
-      this.cbxWeather = new System.Windows.Forms.CheckBox();
       this.panGridOptions = new System.Windows.Forms.Panel();
       this.cbxShowNbu = new System.Windows.Forms.CheckBox();
       this.cmbChartMode = new System.Windows.Forms.ComboBox();
@@ -100,22 +98,9 @@ namespace currency.watcher {
       this.cmbCurrency.Size = new System.Drawing.Size(73, 25);
       this.cmbCurrency.TabIndex = 0;
       // 
-      // browser
-      // 
-      this.browser.Dock = System.Windows.Forms.DockStyle.Top;
-      this.browser.IsWebBrowserContextMenuEnabled = false;
-      this.browser.Location = new System.Drawing.Point(0, 0);
-      this.browser.MinimumSize = new System.Drawing.Size(20, 20);
-      this.browser.Name = "browser";
-      this.browser.ScrollBarsEnabled = false;
-      this.browser.Size = new System.Drawing.Size(159, 110);
-      this.browser.TabIndex = 0;
-      this.browser.Visible = false;
-      // 
       // panMain
       // 
       this.panMain.Controls.Add(this.lstFinanceHistory);
-      this.panMain.Controls.Add(this.browser);
       this.panMain.Dock = System.Windows.Forms.DockStyle.Left;
       this.panMain.Location = new System.Drawing.Point(3, 3);
       this.panMain.Name = "panMain";
@@ -369,7 +354,6 @@ namespace currency.watcher {
       // 
       // panStatus
       // 
-      this.panStatus.Controls.Add(this.cbxWeather);
       this.panStatus.Controls.Add(this.panGridOptions);
       this.panStatus.Controls.Add(this.cbxStickEdges);
       this.panStatus.Controls.Add(this.btnRefresh);
@@ -379,17 +363,6 @@ namespace currency.watcher {
       this.panStatus.Name = "panStatus";
       this.panStatus.Size = new System.Drawing.Size(566, 30);
       this.panStatus.TabIndex = 20;
-      // 
-      // cbxWeather
-      // 
-      this.cbxWeather.AutoSize = true;
-      this.cbxWeather.Dock = System.Windows.Forms.DockStyle.Left;
-      this.cbxWeather.Location = new System.Drawing.Point(194, 0);
-      this.cbxWeather.Name = "cbxWeather";
-      this.cbxWeather.Size = new System.Drawing.Size(79, 26);
-      this.cbxWeather.TabIndex = 4;
-      this.cbxWeather.Text = "Weather";
-      this.cbxWeather.UseVisualStyleBackColor = true;
       // 
       // panGridOptions
       // 
@@ -486,7 +459,6 @@ namespace currency.watcher {
 
     private Button btnRefresh;
     private ComboBox cmbCurrency;
-    private WebBrowser browser;
     private Panel panMain;
     private ListView lstHistory;
     private ColumnHeader colBuy;
@@ -516,7 +488,6 @@ namespace currency.watcher {
     private Label lblUsd;
     private Label lblTaxesResult;
     private TextBox txtUahResult;
-    private CheckBox cbxWeather;
     private TabPage tabTaxes;
     private Splitter splitter1;
   }
