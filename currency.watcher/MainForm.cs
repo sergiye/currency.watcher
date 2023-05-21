@@ -80,8 +80,10 @@ namespace currency.watcher {
 
       InitializeComponent();
 
-      Icon = Icon.ExtractAssociatedIcon(AppSettings.GetAppPath()); 
+      Icon = Icon.ExtractAssociatedIcon(AppSettings.GetAppPath());
 
+      this.ApplyColorScheme();
+        
       var asm = Assembly.GetExecutingAssembly();
       appTitle = $"{((AssemblyTitleAttribute)Attribute.GetCustomAttribute(asm, typeof(AssemblyTitleAttribute), false)).Title} ";
       Text = appTitle;
@@ -155,7 +157,7 @@ namespace currency.watcher {
         Opacity = AppSettings.Instance.Opacity;
 
 
-        panMain.Width = AppSettings.Instance.MainPanWidth;
+        lstFinanceHistory.Width = AppSettings.Instance.MainPanWidth;
         for (var i = 0; i < 3; i++) {
           lstFinanceHistory.Columns[i].Width = AppSettings.Instance.FinanceHistorySizes[i];
           lstHistory.Columns[i].Width = AppSettings.Instance.HistorySizes[i];
@@ -175,7 +177,7 @@ namespace currency.watcher {
         AppSettings.Instance.Width = Width;
         AppSettings.Instance.Opacity = Opacity;
 
-        AppSettings.Instance.MainPanWidth = panMain.Width;
+        AppSettings.Instance.MainPanWidth = lstFinanceHistory.Width;
         for (var i = 0; i < 3; i++) {
           AppSettings.Instance.FinanceHistorySizes[i] = lstFinanceHistory.Columns[i].Width;
           AppSettings.Instance.HistorySizes[i] = lstHistory.Columns[i].Width;
@@ -235,18 +237,22 @@ namespace currency.watcher {
       });
     }
 
+    private Color GreenColor => ColorScheme.AppsUseLightTheme ? Color.LightGreen : Color.DarkGreen;
+
+    private Color RedColor => ColorScheme.AppsUseLightTheme ? Color.Plum : Color.DarkRed;
+
     private Color GetDiffColor(IComparable lastValue, IComparable prevValue) {
       if (lastValue == null || prevValue == null)
-        return Color.LightGray;
-      return lastValue.CompareTo(prevValue) == 1 ? Color.LightGreen
-          : lastValue.CompareTo(prevValue) == -1 ? Color.Plum
-          : Color.LightGray;
+        return ColorScheme.InputBackColor;
+      return lastValue.CompareTo(prevValue) == 1 ? GreenColor
+          : lastValue.CompareTo(prevValue) == -1 ? RedColor
+          : ColorScheme.InputBackColor;
     }
 
     private Color GetDiffColor(decimal delta) {
-      return delta > 0 ? Color.LightGreen
-          : delta < 0 ? Color.Plum
-          : Color.LightGray;
+      return delta > 0 ? GreenColor
+          : delta < 0 ? RedColor
+          : ColorScheme.InputBackColor;
     }
 
     private void UpdateData() {
@@ -401,11 +407,16 @@ namespace currency.watcher {
           if (currentItem[1] == prevItem[1] && currentItem[2] == prevItem[2])
             continue;
           var timePart = currentItem[0].Split(' ')[1];
-          var lvItem = new ListViewItem(timePart, 0) { UseItemStyleForSubItems = false };
+          var lvItem = new ListViewItem(timePart, 0) {
+            UseItemStyleForSubItems = !ColorScheme.AppsUseLightTheme
+          };
           decimal.TryParse(currentItem[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var buy);
           decimal.TryParse(currentItem[2], NumberStyles.Float, CultureInfo.InvariantCulture, out var sell);
           lvItem.SubItems.Add(buy.ToString("n3"), lstFinanceHistory.ForeColor, GetDiffColor(currentItem[1], prevItem[1]), lstFinanceHistory.Font);
-          lvItem.SubItems.Add(sell.ToString("n3"), lstFinanceHistory.ForeColor, GetDiffColor(currentItem[2], prevItem[2]), lstFinanceHistory.Font);
+          lvItem.SubItems.Add(sell.ToString("n3"), ColorScheme.InputForeColor, GetDiffColor(currentItem[2], prevItem[2]), lstFinanceHistory.Font);
+          if (!ColorScheme.AppsUseLightTheme)
+            lvItem.BackColor = GetDiffColor(currentItem[2], prevItem[2]);
+
           lstFinanceHistory.Items.Add(lvItem);
 
           currentItem = prevItem;
