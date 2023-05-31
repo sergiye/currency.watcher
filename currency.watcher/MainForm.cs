@@ -191,6 +191,7 @@ namespace currency.watcher {
         AppSettings.Instance.Save();
       };
 
+      //chart.ChartAreas[0].BackColor = Color.Black;
       chart.Annotations.Add(new CalloutAnnotation{
         CalloutStyle = CalloutStyle.RoundedRectangle,
         Font = new Font(this.Font.FontFamily, this.Font.Size + 2, FontStyle.Bold),
@@ -203,6 +204,7 @@ namespace currency.watcher {
         //chart.ChartAreas[0].AxisX.LabelStyle.Enabled = checkState;
         chart.ChartAreas[0].AxisY.MajorGrid.Enabled = checkState;
         chart.ChartAreas[0].AxisY.LabelStyle.Enabled = checkState;
+        chart.ChartAreas[0].AxisY.LabelStyle.Format = "{#.##}";
         //chart.ChartAreas[0].AxisX.MinorGrid.Enabled = checkState;
         //chart.ChartAreas[0].AxisY.MinorGrid.Enabled = checkState;
       };
