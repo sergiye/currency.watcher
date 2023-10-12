@@ -85,7 +85,7 @@ namespace currency.watcher {
       this.ApplyColorScheme();
         
       var asm = Assembly.GetExecutingAssembly();
-      appTitle = $"{((AssemblyTitleAttribute)Attribute.GetCustomAttribute(asm, typeof(AssemblyTitleAttribute), false)).Title} ";
+      appTitle = $"{((AssemblyTitleAttribute)Attribute.GetCustomAttribute(asm, typeof(AssemblyTitleAttribute), false)).Title} {(Environment.Is64BitProcess ? "x64" : "x32")} ";
       Text = appTitle;
 
       //configure chart
@@ -146,8 +146,9 @@ namespace currency.watcher {
 
         nbuProvider = new NbuProvider(null);//AppSettings.GetAppPath());
         nbuProvider.OnDataChanged += (o, index) => {
-          if (index == AppSettings.Instance.CurrencyIndex)
-            UpdateNbuRateText(index);
+          if (index == AppSettings.Instance.CurrencyIndex) {
+            UpdateNbuRates(index);
+          }
         };
 
         Left = AppSettings.Instance.Left;
@@ -162,6 +163,10 @@ namespace currency.watcher {
           lstFinanceHistory.Columns[i].Width = AppSettings.Instance.FinanceHistorySizes[i];
           lstHistory.Columns[i].Width = AppSettings.Instance.HistorySizes[i];
         }
+
+        lstNbuRates.Width = AppSettings.Instance.NbuHistoryWidth;
+        lstNbuRates.Columns[0].Width = AppSettings.Instance.NbuHistorySizes[0];
+        lstNbuRates.Columns[1].Width = AppSettings.Instance.NbuHistorySizes[1];
 
         cmbCurrency.SelectedIndex = AppSettings.Instance.CurrencyIndex;
         timer.Interval = AppSettings.Instance.RefreshInterval * 60 * 1000;
@@ -182,6 +187,10 @@ namespace currency.watcher {
           AppSettings.Instance.FinanceHistorySizes[i] = lstFinanceHistory.Columns[i].Width;
           AppSettings.Instance.HistorySizes[i] = lstHistory.Columns[i].Width;
         }
+
+        AppSettings.Instance.NbuHistoryWidth = lstNbuRates.Width;
+        AppSettings.Instance.NbuHistorySizes[0] = lstNbuRates.Columns[0].Width;
+        AppSettings.Instance.NbuHistorySizes[1] = lstNbuRates.Columns[1].Width;
 
         // AppSettings.Instance.CurrencyIndex = cmbCurrency.SelectedIndex;
 
@@ -239,27 +248,27 @@ namespace currency.watcher {
       });
     }
 
-    private Color GreenColor => ColorScheme.AppsUseLightTheme ? Color.LightGreen : Color.DarkGreen;
+    private Color ColorGreater => ColorScheme.AppsUseLightTheme ? Color.FromArgb(0xF7CF18) : Color.DarkGreen;
 
-    private Color RedColor => ColorScheme.AppsUseLightTheme ? Color.Plum : Color.DarkRed;
+    private Color ColorLower => ColorScheme.AppsUseLightTheme ? Color.FromArgb(0x8AB1F2) : Color.DarkRed;
 
     private Color GetDiffColor(IComparable lastValue, IComparable prevValue) {
       if (lastValue == null || prevValue == null)
         return ColorScheme.InputBackColor;
-      return lastValue.CompareTo(prevValue) == 1 ? GreenColor
-          : lastValue.CompareTo(prevValue) == -1 ? RedColor
+      return lastValue.CompareTo(prevValue) == 1 ? ColorGreater
+          : lastValue.CompareTo(prevValue) == -1 ? ColorLower
           : ColorScheme.InputBackColor;
     }
 
     private Color GetDiffColor(decimal delta) {
-      return delta > 0 ? GreenColor
-          : delta < 0 ? RedColor
+      return delta > 0 ? ColorGreater
+          : delta < 0 ? ColorLower
           : ColorScheme.InputBackColor;
     }
 
     private void UpdateData() {
       var currencyIndex = AppSettings.Instance.CurrencyIndex;
-      UpdateNbuRateText(currencyIndex);
+      UpdateNbuRates(currencyIndex);
 
       for (var cIndex = 0; cIndex < 2; cIndex++) {
         var task = nbuProvider.Refresh(cIndex);
@@ -276,15 +285,36 @@ namespace currency.watcher {
       }
     }
 
-    private void UpdateNbuRateText(int currencyIndex) {
+    private void UpdateNbuRates(int currencyIndex) {
       if (InvokeRequired) {
-        Invoke(new Action<int>(UpdateNbuRateText), currencyIndex);
+        Invoke(new Action<int>(UpdateNbuRates), currencyIndex);
         return;
       }
 
       var lastItem = nbuProvider.GetLastItem(currencyIndex);
       if (lastItem == null) return;
-      Text = $"{appTitle} (NBU: {lastItem.Rate:n3} {lastItem.Date:M})";
+      //Text = $"{appTitle} (NBU: {lastItem.Rate:n3} {lastItem.Date:M})";
+
+      lstNbuRates.Items.Clear();
+
+      var data = nbuProvider.GetLastItems(currencyIndex, 100);
+      if (data == null || data.Length == 0) return;
+
+      var currentItem = data[data.Length - 1];
+      for (var i = data.Length - 2; i >= 0; i--) {
+        var prevItem = data[i];
+        var timePart = currentItem.Date;
+        var lvItem = new ListViewItem(timePart.ToString("dd:MM:yy"), 0) {
+          UseItemStyleForSubItems = !ColorScheme.AppsUseLightTheme
+        };
+        lvItem.SubItems.Add(currentItem.Rate.ToString("n3"), lstNbuRates.ForeColor, GetDiffColor(currentItem.Rate, prevItem.Rate), lstNbuRates.Font);
+        if (!ColorScheme.AppsUseLightTheme)
+          lvItem.BackColor = GetDiffColor(currentItem.Rate, prevItem.Rate);
+
+        lstNbuRates.Items.Add(lvItem);
+
+        currentItem = prevItem;
+      }
     }
 
     private void OnPrivat24HistoryResponse(string response) {

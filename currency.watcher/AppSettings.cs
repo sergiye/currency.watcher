@@ -26,6 +26,8 @@ namespace currency.watcher {
     public int MainPanWidth;
     public int[] FinanceHistorySizes;
     public int[] HistorySizes;
+    public int NbuHistoryWidth;
+    public int[] NbuHistorySizes;
 
     public AppSettings() {
       Left = Screen.PrimaryScreen.WorkingArea.Left;// Screen.PrimaryScreen.WorkingArea.Right - Width;
@@ -44,6 +46,8 @@ namespace currency.watcher {
       MainPanWidth = 159;
       FinanceHistorySizes = new int[3] { 40, 50, 50 };
       HistorySizes = new int[3] { 85, 55, 55 };
+      NbuHistoryWidth = 200;
+      NbuHistorySizes = new int[2] { 100, 90 };
     }
 
     #region Load/Save

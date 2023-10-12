@@ -40,8 +40,11 @@ namespace currency.watcher {
       this.colSale = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.tabControl = new System.Windows.Forms.TabControl();
       this.tabPageMain = new System.Windows.Forms.TabPage();
+      this.splitter2 = new System.Windows.Forms.Splitter();
+      this.lstNbuRates = new System.Windows.Forms.ListView();
+      this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.splitter1 = new System.Windows.Forms.Splitter();
-      this.panPrivat24Business = new System.Windows.Forms.GroupBox();
       this.tabPageGraphic = new System.Windows.Forms.TabPage();
       this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
       this.tabTaxes = new System.Windows.Forms.TabPage();
@@ -61,7 +64,6 @@ namespace currency.watcher {
       this.cbxStickEdges = new System.Windows.Forms.CheckBox();
       this.tabControl.SuspendLayout();
       this.tabPageMain.SuspendLayout();
-      this.panPrivat24Business.SuspendLayout();
       this.tabPageGraphic.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.chart)).BeginInit();
       this.tabTaxes.SuspendLayout();
@@ -105,7 +107,7 @@ namespace currency.watcher {
       this.lstFinanceHistory.FullRowSelect = true;
       this.lstFinanceHistory.GridLines = true;
       this.lstFinanceHistory.HideSelection = false;
-      this.lstFinanceHistory.Location = new System.Drawing.Point(0, 0);
+      this.lstFinanceHistory.Location = new System.Drawing.Point(179, 0);
       this.lstFinanceHistory.Name = "lstFinanceHistory";
       this.lstFinanceHistory.Size = new System.Drawing.Size(159, 201);
       this.lstFinanceHistory.TabIndex = 1;
@@ -139,9 +141,9 @@ namespace currency.watcher {
       this.lstHistory.FullRowSelect = true;
       this.lstHistory.GridLines = true;
       this.lstHistory.HideSelection = false;
-      this.lstHistory.Location = new System.Drawing.Point(3, 21);
+      this.lstHistory.Location = new System.Drawing.Point(341, 0);
       this.lstHistory.Name = "lstHistory";
-      this.lstHistory.Size = new System.Drawing.Size(393, 177);
+      this.lstHistory.Size = new System.Drawing.Size(217, 201);
       this.lstHistory.TabIndex = 0;
       this.lstHistory.UseCompatibleStateImageBehavior = false;
       this.lstHistory.View = System.Windows.Forms.View.Details;
@@ -178,9 +180,11 @@ namespace currency.watcher {
       // 
       // tabPageMain
       // 
-      this.tabPageMain.Controls.Add(this.splitter1);
-      this.tabPageMain.Controls.Add(this.panPrivat24Business);
+      this.tabPageMain.Controls.Add(this.lstHistory);
+      this.tabPageMain.Controls.Add(this.splitter2);
       this.tabPageMain.Controls.Add(this.lstFinanceHistory);
+      this.tabPageMain.Controls.Add(this.splitter1);
+      this.tabPageMain.Controls.Add(this.lstNbuRates);
       this.tabPageMain.Location = new System.Drawing.Point(4, 4);
       this.tabPageMain.Name = "tabPageMain";
       this.tabPageMain.Size = new System.Drawing.Size(558, 201);
@@ -188,24 +192,48 @@ namespace currency.watcher {
       this.tabPageMain.Text = "Rates";
       this.tabPageMain.UseVisualStyleBackColor = true;
       // 
+      // splitter2
+      // 
+      this.splitter2.Location = new System.Drawing.Point(338, 0);
+      this.splitter2.Name = "splitter2";
+      this.splitter2.Size = new System.Drawing.Size(3, 201);
+      this.splitter2.TabIndex = 3;
+      this.splitter2.TabStop = false;
+      // 
+      // lstNbuRates
+      // 
+      this.lstNbuRates.BorderStyle = System.Windows.Forms.BorderStyle.None;
+      this.lstNbuRates.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader4,
+            this.columnHeader5});
+      this.lstNbuRates.Dock = System.Windows.Forms.DockStyle.Left;
+      this.lstNbuRates.FullRowSelect = true;
+      this.lstNbuRates.GridLines = true;
+      this.lstNbuRates.HideSelection = false;
+      this.lstNbuRates.Location = new System.Drawing.Point(0, 0);
+      this.lstNbuRates.Name = "lstNbuRates";
+      this.lstNbuRates.Size = new System.Drawing.Size(176, 201);
+      this.lstNbuRates.TabIndex = 2;
+      this.lstNbuRates.UseCompatibleStateImageBehavior = false;
+      this.lstNbuRates.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader4
+      // 
+      this.columnHeader4.Text = "Day";
+      this.columnHeader4.Width = 90;
+      // 
+      // columnHeader5
+      // 
+      this.columnHeader5.Text = "Rate";
+      this.columnHeader5.Width = 80;
+      // 
       // splitter1
       // 
-      this.splitter1.Location = new System.Drawing.Point(159, 0);
+      this.splitter1.Location = new System.Drawing.Point(176, 0);
       this.splitter1.Name = "splitter1";
       this.splitter1.Size = new System.Drawing.Size(3, 201);
       this.splitter1.TabIndex = 1;
       this.splitter1.TabStop = false;
-      // 
-      // panPrivat24Business
-      // 
-      this.panPrivat24Business.Controls.Add(this.lstHistory);
-      this.panPrivat24Business.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.panPrivat24Business.Location = new System.Drawing.Point(159, 0);
-      this.panPrivat24Business.Name = "panPrivat24Business";
-      this.panPrivat24Business.Size = new System.Drawing.Size(399, 201);
-      this.panPrivat24Business.TabIndex = 18;
-      this.panPrivat24Business.TabStop = false;
-      this.panPrivat24Business.Text = "Privat 24 business";
       // 
       // tabPageGraphic
       // 
@@ -414,7 +442,6 @@ namespace currency.watcher {
       this.ResizeEnd += new System.EventHandler(this.MainForm_ResizeEnd);
       this.tabControl.ResumeLayout(false);
       this.tabPageMain.ResumeLayout(false);
-      this.panPrivat24Business.ResumeLayout(false);
       this.tabPageGraphic.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.chart)).EndInit();
       this.tabTaxes.ResumeLayout(false);
@@ -450,7 +477,6 @@ namespace currency.watcher {
     private TabPage tabPageGraphic;
     private TabPage tabPageMain;
     private Panel panGridOptions;
-    private GroupBox panPrivat24Business;
     private DateTimePicker dtTaxesSource;
     private NumericUpDown numTaxesSource;
     private TextBox txtTaxesResult;
@@ -461,5 +487,9 @@ namespace currency.watcher {
     private TextBox txtUahResult;
     private TabPage tabTaxes;
     private Splitter splitter1;
+    private Splitter splitter2;
+    private ListView lstNbuRates;
+    private ColumnHeader columnHeader4;
+    private ColumnHeader columnHeader5;
   }
 }

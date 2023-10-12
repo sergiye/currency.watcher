@@ -40,6 +40,15 @@ namespace currency {
       return IsEmpty(index) ? null : nbuRates[index].FirstOrDefault(i => i.Date.Date == date.Date);
     }
 
+    public NbuRateItem[] GetFirstItems(int index, int count) {
+      return IsEmpty(index) ? null : nbuRates[index].Take(count).ToArray();
+    }
+
+    public NbuRateItem[] GetLastItems(int index, int count) {
+      return IsEmpty(index) ? null : nbuRates[index]
+        .Skip(Math.Max(0, nbuRates[index].Length - count)).ToArray();
+    }
+
     public event EventHandler<int> OnDataChanged;
 
     private void LoadNbuRates() {
