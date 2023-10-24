@@ -1,4 +1,6 @@
 # Currency Watcher
+[![Stars](https://img.shields.io/github/stars/sergiye/currency.watcher?style=flat-square)](https://github.com/sergiye/currency.watcher/stargazers)
+[![Fork](https://img.shields.io/github/forks/sergiye/currency.watcher?style=flat-square)](https://github.com/sergiye/currency.watcher/fork)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/sergiye/currency.watcher?style=plastic)
 ![GitHub all releases](https://img.shields.io/github/downloads/sergiye/currency.watcher/total?style=plastic)
 ![GitHub last commit](https://img.shields.io/github/last-commit/sergiye/currency.watcher?style=plastic)
