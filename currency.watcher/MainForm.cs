@@ -12,6 +12,10 @@ namespace currency.watcher {
 
   internal partial class MainForm : Form {
 
+    private readonly Color[] seriesColors = { Color.Green, Color.Blue, Color.Orange };
+    private static Color ColorGreater => ColorScheme.AppsUseLightTheme ? Color.FromArgb(0xF7CF18) : Color.FromArgb(0xF48443);
+    private static Color ColorLower => ColorScheme.AppsUseLightTheme ? Color.FromArgb(0x8AB1F2) : Color.FromArgb(0x6579FF);
+
     private readonly string appTitle;
     private readonly Timer timer;
     private DateTime lastCurrencyChanged;
@@ -101,7 +105,6 @@ namespace currency.watcher {
       chartArea.Name = "ChartArea1";
       this.chart.ChartAreas.Add(chartArea);
 
-      var seriesColors = new[]{ Color.Green, Color.Blue, Color.Orange };
       for(var i = 0; i < seriesColors.Length; i++) {
         chart.Series.Add(new Series {
           ChartArea = chart.ChartAreas[0].Name,
@@ -247,10 +250,6 @@ namespace currency.watcher {
         }
       });
     }
-
-    private Color ColorGreater => ColorScheme.AppsUseLightTheme ? Color.FromArgb(0xF7CF18) : Color.DarkGreen;
-
-    private Color ColorLower => ColorScheme.AppsUseLightTheme ? Color.FromArgb(0x8AB1F2) : Color.DarkRed;
 
     private Color GetDiffColor(IComparable lastValue, IComparable prevValue) {
       if (lastValue == null || prevValue == null)
