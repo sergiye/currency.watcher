@@ -31,8 +31,8 @@ namespace currency.watcher {
     static ColorScheme() {
 
       if (AppsUseLightTheme) return;
-      
-      InputBackColor = Color.FromArgb(255, 0x17, 0x16, 0x15);
+
+      InputBackColor = Color.DimGray;//FromArgb(255, 0x17, 0x16, 0x15);
       InputForeColor = Color.White;
       PanelBackColor = Color.DimGray;
       PanelForeColor = Color.White;
