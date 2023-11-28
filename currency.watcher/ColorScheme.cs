@@ -10,21 +10,18 @@ namespace currency.watcher {
 
     [DllImport("dwmapi.dll")]
     private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+    
+    [DllImport("uxtheme.dll", SetLastError=true, ExactSpelling=true, CharSet=CharSet.Unicode)]
 
+    public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
+    
     private const int DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1 = 19;
     private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
-
+    private const int DWWMA_BORDER_COLOR = 34;
+    private const int DWMWA_MICA_EFFECT = 1029;
+    
     private static bool IsWindows10OrGreater(int build = -1) {
       return Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= build;
-    }
-
-    private static bool UseImmersiveDarkMode(IntPtr handle, bool enabled) {
-      if (!IsWindows10OrGreater(17763)) return false;
-      var attribute = DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1;
-      if (IsWindows10OrGreater(18985))
-        attribute = DWMWA_USE_IMMERSIVE_DARK_MODE;
-      var useImmersiveDarkMode = enabled ? 1 : 0;
-      return DwmSetWindowAttribute(handle, attribute, ref useImmersiveDarkMode, sizeof(int)) == 0;
     }
 
     public static Color InputBackColor { get; } = SystemColors.Window;
@@ -54,20 +51,33 @@ namespace currency.watcher {
 
       if (AppsUseLightTheme) return;
 
-      InputBackColor = Color.DimGray;//FromArgb(255, 0x17, 0x16, 0x15);
+      InputBackColor = Color.DimGray;//Color.FromArgb(32, 32, 32);
       InputForeColor = Color.White;
       PanelBackColor = Color.DimGray;
       PanelForeColor = Color.White;
     }
     
+    private static string ToBgr(Color c) => $"{c.B:X2}{c.G:X2}{c.R:X2}";
+    
     public static void ApplyColorScheme(this Control component) {
       if (AppsUseLightTheme) return;
 
-      UseImmersiveDarkMode(component.Handle, true);
+      SetWindowTheme(component.Handle, "DarkMode_Explorer", null);
+      if (IsWindows10OrGreater(17763)) {
+        var attribute = IsWindows10OrGreater(18985)
+          ? DWMWA_USE_IMMERSIVE_DARK_MODE
+          : DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1;
+        var trueValue = 0x01;
+        DwmSetWindowAttribute(component.Handle, attribute, ref trueValue, sizeof(int));
+        DwmSetWindowAttribute(component.Handle, DWMWA_MICA_EFFECT, ref trueValue, sizeof(int));
+      }
+      // var border = int.Parse(ToBgr(InputBackColor), System.Globalization.NumberStyles.HexNumber);
+      // DwmSetWindowAttribute(component.Handle, DWWMA_BORDER_COLOR, ref border, sizeof(int));
         
       switch (component) {
         case TabPage tabPage:
           tabPage.UseVisualStyleBackColor = true;
+          tabPage.BorderStyle = BorderStyle.None;
           component.BackColor = PanelBackColor;
           component.ForeColor = PanelForeColor;
           break;
