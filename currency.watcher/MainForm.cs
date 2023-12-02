@@ -12,10 +12,6 @@ namespace currency.watcher {
 
   internal partial class MainForm : Form {
 
-    private readonly Color[] seriesColors = { Color.Green, Color.Blue, Color.Orange };
-    private static Color ColorGreater => ColorScheme.AppsUseLightTheme ? Color.FromArgb(0xF7CF18) : Color.FromArgb(0xF48443);
-    private static Color ColorLower => ColorScheme.AppsUseLightTheme ? Color.FromArgb(0x8AB1F2) : Color.FromArgb(0x6579FF);
-
     private readonly string appTitle;
     private readonly Timer timer;
     private DateTime lastCurrencyChanged;
@@ -105,11 +101,11 @@ namespace currency.watcher {
       chartArea.Name = "ChartArea1";
       this.chart.ChartAreas.Add(chartArea);
 
-      for(var i = 0; i < seriesColors.Length; i++) {
+      for(var i = 0; i < ColorScheme.SeriesColors.Length; i++) {
         chart.Series.Add(new Series {
           ChartArea = chart.ChartAreas[0].Name,
           ChartType = SeriesChartType.Spline,
-          Color = seriesColors[i],
+          Color = ColorScheme.SeriesColors[i],
           MarkerStyle = MarkerStyle.Circle,
           Name = $"Series{i}",
           //XValueType = ChartValueType.Date,
@@ -254,14 +250,14 @@ namespace currency.watcher {
     private Color GetDiffColor(IComparable lastValue, IComparable prevValue) {
       if (lastValue == null || prevValue == null)
         return ColorScheme.InputBackColor;
-      return lastValue.CompareTo(prevValue) == 1 ? ColorGreater
-          : lastValue.CompareTo(prevValue) == -1 ? ColorLower
+      return lastValue.CompareTo(prevValue) == 1 ? ColorScheme.ColorGreater
+          : lastValue.CompareTo(prevValue) == -1 ? ColorScheme.ColorLower
           : ColorScheme.InputBackColor;
     }
 
     private Color GetDiffColor(decimal delta) {
-      return delta > 0 ? ColorGreater
-          : delta < 0 ? ColorLower
+      return delta > 0 ? ColorScheme.ColorGreater
+          : delta < 0 ? ColorScheme.ColorLower
           : ColorScheme.InputBackColor;
     }
 

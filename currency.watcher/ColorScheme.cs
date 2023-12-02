@@ -24,11 +24,18 @@ namespace currency.watcher {
       return Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= build;
     }
 
+    #region Colors
+    
     public static Color InputBackColor { get; } = SystemColors.Window;
     public static Color InputForeColor { get; } = SystemColors.WindowText;
     public static Color PanelBackColor { get; } = SystemColors.Control;
     public static Color PanelForeColor { get; } = SystemColors.ControlText;
+    public static readonly Color[] SeriesColors = { Color.Green, Color.Blue, Color.Orange };
+    public static Color ColorGreater => AppsUseLightTheme ? Color.FromArgb(0xF7CF18) : Color.FromArgb(0xD55500);
+    public static Color ColorLower => AppsUseLightTheme ? Color.FromArgb(0x8AB1F2) : Color.FromArgb(0x5070FF);
 
+    #endregion
+    
     private static int? appsUseLightTheme;
     public static bool AppsUseLightTheme {
       get {
