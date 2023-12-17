@@ -72,7 +72,7 @@ namespace currency.watcher {
     }
 
     private static AppSettings Load() {
-      var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\sergiye\\currency.watcher");
+      var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\sergiye\\currency.watcher");
       var result = new AppSettings();
       if (key == null) {
         LoadFromFile();
