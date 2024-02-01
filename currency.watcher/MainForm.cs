@@ -157,7 +157,7 @@ namespace currency.watcher {
         Opacity = AppSettings.Instance.Opacity;
 
 
-        lstFinanceHistory.Width = AppSettings.Instance.MainPanWidth;
+        lstHistory.Width = AppSettings.Instance.MainPanWidth;
         for (var i = 0; i < 3; i++) {
           lstFinanceHistory.Columns[i].Width = AppSettings.Instance.FinanceHistorySizes[i];
           lstHistory.Columns[i].Width = AppSettings.Instance.HistorySizes[i];
@@ -181,7 +181,7 @@ namespace currency.watcher {
         AppSettings.Instance.Width = Width;
         AppSettings.Instance.Opacity = Opacity;
 
-        AppSettings.Instance.MainPanWidth = lstFinanceHistory.Width;
+        AppSettings.Instance.MainPanWidth = lstHistory.Width;
         for (var i = 0; i < 3; i++) {
           AppSettings.Instance.FinanceHistorySizes[i] = lstFinanceHistory.Columns[i].Width;
           AppSettings.Instance.HistorySizes[i] = lstHistory.Columns[i].Width;
