@@ -41,10 +41,10 @@ namespace currency.watcher {
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageMain = new System.Windows.Forms.TabPage();
             this.splitter2 = new System.Windows.Forms.Splitter();
-            this.splitter1 = new System.Windows.Forms.Splitter();
             this.lstNbuRates = new System.Windows.Forms.ListView();
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.splitter1 = new System.Windows.Forms.Splitter();
             this.tabPageGraphic = new System.Windows.Forms.TabPage();
             this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tabTaxes = new System.Windows.Forms.TabPage();
@@ -141,7 +141,7 @@ namespace currency.watcher {
             this.lstHistory.FullRowSelect = true;
             this.lstHistory.GridLines = true;
             this.lstHistory.HideSelection = false;
-            this.lstHistory.Location = new System.Drawing.Point(0, 0);
+            this.lstHistory.Location = new System.Drawing.Point(179, 0);
             this.lstHistory.Name = "lstHistory";
             this.lstHistory.Size = new System.Drawing.Size(217, 190);
             this.lstHistory.TabIndex = 0;
@@ -182,9 +182,9 @@ namespace currency.watcher {
             // 
             this.tabPageMain.Controls.Add(this.lstFinanceHistory);
             this.tabPageMain.Controls.Add(this.splitter2);
-            this.tabPageMain.Controls.Add(this.lstNbuRates);
-            this.tabPageMain.Controls.Add(this.splitter1);
             this.tabPageMain.Controls.Add(this.lstHistory);
+            this.tabPageMain.Controls.Add(this.splitter1);
+            this.tabPageMain.Controls.Add(this.lstNbuRates);
             this.tabPageMain.Location = new System.Drawing.Point(4, 4);
             this.tabPageMain.Name = "tabPageMain";
             this.tabPageMain.Size = new System.Drawing.Size(558, 190);
@@ -200,14 +200,6 @@ namespace currency.watcher {
             this.splitter2.TabIndex = 3;
             this.splitter2.TabStop = false;
             // 
-            // splitter1
-            // 
-            this.splitter1.Location = new System.Drawing.Point(217, 0);
-            this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(3, 190);
-            this.splitter1.TabIndex = 1;
-            this.splitter1.TabStop = false;
-            // 
             // lstNbuRates
             // 
             this.lstNbuRates.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -218,7 +210,7 @@ namespace currency.watcher {
             this.lstNbuRates.FullRowSelect = true;
             this.lstNbuRates.GridLines = true;
             this.lstNbuRates.HideSelection = false;
-            this.lstNbuRates.Location = new System.Drawing.Point(220, 0);
+            this.lstNbuRates.Location = new System.Drawing.Point(0, 0);
             this.lstNbuRates.Name = "lstNbuRates";
             this.lstNbuRates.Size = new System.Drawing.Size(176, 190);
             this.lstNbuRates.TabIndex = 2;
@@ -234,6 +226,14 @@ namespace currency.watcher {
             // 
             this.columnHeader5.Text = "Rate";
             this.columnHeader5.Width = 80;
+            // 
+            // splitter1
+            // 
+            this.splitter1.Location = new System.Drawing.Point(176, 0);
+            this.splitter1.Name = "splitter1";
+            this.splitter1.Size = new System.Drawing.Size(3, 190);
+            this.splitter1.TabIndex = 1;
+            this.splitter1.TabStop = false;
             // 
             // tabPageGraphic
             // 
@@ -436,7 +436,7 @@ namespace currency.watcher {
             this.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MaximizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(582, 300);
+            this.MinimumSize = new System.Drawing.Size(400, 300);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.ResizeEnd += new System.EventHandler(this.MainForm_ResizeEnd);
