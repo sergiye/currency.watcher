@@ -1,6 +1,7 @@
 ﻿using System;
 
 namespace currency.watcher {
+  
   public class CombinedRatesItem {
     
     //[JsonConverter(typeof(DateFormatConverter), "yyyy-MM-dd")]

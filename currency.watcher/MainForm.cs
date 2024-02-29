@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -15,6 +16,7 @@ namespace currency.watcher {
     private readonly string appTitle;
     private readonly Timer timer;
     private DateTime lastMinfinStats;
+    private readonly List<CombinedTradeItem> combinedTradeItems = new List<CombinedTradeItem>();
     
     private DataProvider dataProvider;
 
@@ -244,8 +246,12 @@ namespace currency.watcher {
         UpdateMinfinChartData();
       }
 
-      GetJsonData($"http://resources.finance.ua/chart/data?for=currency-order&currency=usd", OnFinanceUaResponse);
-      //GetJsonData($"http://resources.finance.ua/chart/data?for=currency-order&currency=eur", OnFinanceUaResponse);
+      GetJsonData("http://resources.finance.ua/chart/data?for=currency-order&currency=usd",
+        data => { OnFinanceUaResponse(true, data);}
+      );
+      GetJsonData("http://resources.finance.ua/chart/data?for=currency-order&currency=eur",
+        data => { OnFinanceUaResponse(false, data);}
+      );
     }
 
     private void UpdateRates() {
@@ -352,33 +358,79 @@ namespace currency.watcher {
       chart.ChartAreas[0].AxisY.Maximum = chartMax + space;
     }
 
-    private void OnFinanceUaResponse(string response) {
+    private void OnFinanceUaResponse(bool usd, string response) {
       if (string.IsNullOrEmpty(response)) return;
       var chartData = response.FromJson<string[][]>();
-      if (chartData == null || chartData.Length <= 0) return;
+      if (chartData == null || chartData.Length <= 1) return;
 
-      lstFinanceHistory.Items.Clear();
-      if (chartData.Length > 1) {
-        var currentItem = chartData[chartData.Length - 1];
-        for (var i = chartData.Length - 2; i >= 0; i--) {
-          var prevItem = chartData[i];
-          if (currentItem[1] == prevItem[1] && currentItem[2] == prevItem[2])
-            continue;
-          var timePart = currentItem[0].Split(' ')[1];
-          var lvItem = new ListViewItem(timePart, 0) {
-            UseItemStyleForSubItems = !ColorScheme.AppsUseLightTheme
-          };
-          decimal.TryParse(currentItem[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var buy);
-          decimal.TryParse(currentItem[2], NumberStyles.Float, CultureInfo.InvariantCulture, out var sell);
-          lvItem.SubItems.Add(buy.ToString("n3"), lstFinanceHistory.ForeColor, ColorScheme.GetDiffColor(currentItem[1], prevItem[1]), lstFinanceHistory.Font);
-          lvItem.SubItems.Add(sell.ToString("n3"), ColorScheme.InputForeColor, ColorScheme.GetDiffColor(currentItem[2], prevItem[2]), lstFinanceHistory.Font);
-          if (!ColorScheme.AppsUseLightTheme)
-            lvItem.BackColor = ColorScheme.GetDiffColor(currentItem[2], prevItem[2]);
-
-          lstFinanceHistory.Items.Add(lvItem);
-
-          currentItem = prevItem;
+      var dataChanged = false;
+      lock (combinedTradeItems) {
+        foreach (var current in chartData) {
+          var timePart = current[0].Split(' ')[1];
+          decimal.TryParse(current[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var buy);
+          decimal.TryParse(current[2], NumberStyles.Float, CultureInfo.InvariantCulture, out var sell);
+          var old = combinedTradeItems.FirstOrDefault(t => t.Date == timePart);
+          if (old == null) {
+            if (usd) {
+              combinedTradeItems.Add(new CombinedTradeItem {
+                Date = timePart,
+                UsdB = buy,
+                UsdS = sell
+              });
+            }
+            else {
+              combinedTradeItems.Add(new CombinedTradeItem {
+                Date = timePart,
+                EurB = buy,
+                EurS = sell
+              });
+            }
+            dataChanged = true;
+          }
+          else {
+            if (usd) {
+              if (old.UsdB == buy && old.UsdS == sell) continue;
+              old.UsdB = buy;
+              old.UsdS = sell;
+              dataChanged = true;
+            }
+            else {
+              if (old.EurB == buy && old.EurS == sell) continue;
+              old.EurB = buy;
+              old.EurS = sell;
+              dataChanged = true;
+            }
+          } 
         }
+
+        if (dataChanged) {
+          combinedTradeItems.Sort((t1, t2) => string.CompareOrdinal(t2.Date, t1.Date));
+        }
+      }
+
+      if (!dataChanged) return;
+      
+      CombinedTradeItem[] unlockedData;
+      lock(combinedTradeItems)
+        unlockedData = combinedTradeItems.ToArray();
+      
+      lstFinanceHistory.Items.Clear();
+      for (var i = 0; i < unlockedData.Length - 1; i++) {
+        var currentItem = unlockedData[i];
+        var prevItem = unlockedData[i + 1];
+        if (prevItem.RatesEquals(currentItem)) continue;
+        var lvItem = lstFinanceHistory.Items.Add(currentItem.Date);
+        lvItem.UseItemStyleForSubItems = !ColorScheme.AppsUseLightTheme;
+        lvItem.SubItems.Add(currentItem.UsdB.ToString("n3"), lstFinanceHistory.ForeColor,
+          ColorScheme.GetDiffColor(currentItem.UsdB, prevItem.UsdB), lstFinanceHistory.Font);
+        lvItem.SubItems.Add(currentItem.UsdS.ToString("n3"), ColorScheme.InputForeColor,
+          ColorScheme.GetDiffColor(currentItem.UsdS, prevItem.UsdS), lstFinanceHistory.Font);
+        lvItem.SubItems.Add(currentItem.EurB.ToString("n3"), lstFinanceHistory.ForeColor,
+          ColorScheme.GetDiffColor(currentItem.EurB, prevItem.EurB), lstFinanceHistory.Font);
+        lvItem.SubItems.Add(currentItem.EurS.ToString("n3"), ColorScheme.InputForeColor,
+          ColorScheme.GetDiffColor(currentItem.EurS, prevItem.EurS), lstFinanceHistory.Font);
+        if (!ColorScheme.AppsUseLightTheme)
+          lvItem.BackColor = ColorScheme.GetDiffColor(currentItem.UsdB, prevItem.UsdB);
       }
     }
 

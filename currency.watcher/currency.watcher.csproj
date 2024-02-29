@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\CombinedTradeItem.cs" />
     <Compile Include="Services\AppSettings.cs" />
     <Compile Include="Services\ColorScheme.cs" />
     <Compile Include="Services\Common.cs" />

@@ -107,25 +107,22 @@ namespace currency.watcher {
       // columnHeader1
       // 
       this.columnHeader1.Text = "Time";
-      this.columnHeader1.Width = 40;
       // 
       // columnHeader2
       // 
-      this.columnHeader2.Text = "B-Usd";
-      this.columnHeader2.Width = 50;
+      this.columnHeader2.Text = "Usd/B";
       // 
       // columnHeader3
       // 
-      this.columnHeader3.Text = "S-Usd";
-      this.columnHeader3.Width = 50;
+      this.columnHeader3.Text = "Usd/S";
       // 
       // columnHeader4
       // 
-      this.columnHeader4.Text = "B-Eur";
+      this.columnHeader4.Text = "Eur/B";
       // 
       // columnHeader5
       // 
-      this.columnHeader5.Text = "S-Eur";
+      this.columnHeader5.Text = "Eur/S";
       // 
       // tabControl
       // 
@@ -187,12 +184,10 @@ namespace currency.watcher {
       // columnHeaderDate
       // 
       this.columnHeaderDate.Text = "Day";
-      this.columnHeaderDate.Width = 90;
       // 
       // columnHeaderUsd
       // 
       this.columnHeaderUsd.Text = "Usd";
-      this.columnHeaderUsd.Width = 80;
       // 
       // columnHeader6
       // 
@@ -205,7 +200,6 @@ namespace currency.watcher {
       // columnHeaderEur
       // 
       this.columnHeaderEur.Text = "Eur";
-      this.columnHeaderEur.Width = 80;
       // 
       // columnHeader8
       // 
