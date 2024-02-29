@@ -134,7 +134,7 @@ namespace currency.watcher {
 
       this.Load += (sender, args) => {
 
-        dataProvider = new DataProvider(null);//AppSettings.GetAppPath());
+        dataProvider = new DataProvider(AppSettings.GetAppPath());
         dataProvider.OnDataChanged += () => {
           UpdateRates();
           UpdateMinfinChartData();

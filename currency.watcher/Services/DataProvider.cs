@@ -75,11 +75,12 @@ namespace currency {
           var newRatesUsd = dataUsd.FromJson<NbuRateItem[]>();
           if (newRatesUsd != null && newRatesUsd.Length > 0) {
             for (var i = 0; i < newRatesUsd.Length; i++) {
-              var old = GetByDate(newRatesUsd[i].Date);
+              var date = DateTime.SpecifyKind(newRatesUsd[i].Date, DateTimeKind.Utc);
+              var old = GetByDate(date);
               if (old == null) {
                 lock (rates) {
                   rates.Add(new CombinedRatesItem {
-                    Date = newRatesUsd[i].Date.Date,
+                    Date = date,
                     NbuRateUsd = newRatesUsd[i].Rate,
                   });
                 }
@@ -99,11 +100,12 @@ namespace currency {
           var newRatesEur = dataEur.FromJson<NbuRateItem[]>();
           if (newRatesEur != null && newRatesEur.Length > 0) {
             for (var i = 0; i < newRatesEur.Length; i++) {
-              var old = GetByDate(newRatesEur[i].Date);
+              var date = DateTime.SpecifyKind(newRatesEur[i].Date, DateTimeKind.Utc);
+              var old = GetByDate(date);
               if (old == null) {
                 lock (rates) {
                   rates.Add(new CombinedRatesItem {
-                    Date = newRatesEur[i].Date.Date,
+                    Date = date,
                     NbuRateEur = newRatesEur[i].Rate,
                   });
                 }
@@ -127,7 +129,7 @@ namespace currency {
               var filteredItems = historyData.Data.History.Where(i => currencyCodes.Contains(i.CurrencyCode))
                 .OrderByDescending(x => {
                   DateTime.TryParseExact(x.Date, "dd-MM-yyyy", null, DateTimeStyles.AllowWhiteSpaces, out var dt);
-                  x.DateParsed = dt;
+                  x.DateParsed = DateTime.SpecifyKind(dt, DateTimeKind.Utc);
                   return dt;
                 }).ToArray();
               if (filteredItems.Length != 0) {
