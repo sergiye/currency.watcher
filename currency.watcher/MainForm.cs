@@ -15,9 +15,8 @@ namespace currency.watcher {
     private readonly string appTitle;
     private readonly Timer timer;
     private DateTime lastMinfinStats;
-    private DateTime lastPrivat24HistoryGet;
     
-    private NbuProvider nbuProvider;
+    private DataProvider dataProvider;
 
     #region form decoration
 
@@ -135,9 +134,9 @@ namespace currency.watcher {
 
       this.Load += (sender, args) => {
 
-        nbuProvider = new NbuProvider(null);//AppSettings.GetAppPath());
-        nbuProvider.OnDataChanged += () => {
-          UpdateNbuRates();
+        dataProvider = new DataProvider(null);//AppSettings.GetAppPath());
+        dataProvider.OnDataChanged += () => {
+          UpdateRates();
           UpdateMinfinChartData();
         };
 
@@ -148,16 +147,13 @@ namespace currency.watcher {
         Opacity = AppSettings.Instance.Opacity;
 
 
-        lstHistory.Width = AppSettings.Instance.MainPanWidth;
+        lstRates.Width = AppSettings.Instance.HistoryWidth;
         for (var i = 0; i < 5; i++) {
           lstFinanceHistory.Columns[i].Width = AppSettings.Instance.FinanceHistorySizes[i];
-          lstHistory.Columns[i].Width = AppSettings.Instance.HistorySizes[i];
         }
-
-        lstNbuRates.Width = AppSettings.Instance.NbuHistoryWidth;
-        lstNbuRates.Columns[0].Width = AppSettings.Instance.NbuHistorySizes[0];
-        lstNbuRates.Columns[1].Width = AppSettings.Instance.NbuHistorySizes[1];
-        lstNbuRates.Columns[2].Width = AppSettings.Instance.NbuHistorySizes[2];
+        for (var i = 0; i < 7; i++) {
+          lstRates.Columns[i].Width = AppSettings.Instance.HistorySizes[i];
+        }
 
         timer.Interval = AppSettings.Instance.RefreshInterval * 60 * 1000;
         cmbChartMode.SelectedIndex = AppSettings.Instance.ChartViewMode;
@@ -176,18 +172,13 @@ namespace currency.watcher {
         AppSettings.Instance.Width = Width;
         AppSettings.Instance.Opacity = Opacity;
 
-        AppSettings.Instance.MainPanWidth = lstHistory.Width;
+        AppSettings.Instance.HistoryWidth = lstRates.Width;
         for (var i = 0; i < 5; i++) {
           AppSettings.Instance.FinanceHistorySizes[i] = lstFinanceHistory.Columns[i].Width;
-          AppSettings.Instance.HistorySizes[i] = lstHistory.Columns[i].Width;
         }
-
-        AppSettings.Instance.NbuHistoryWidth = lstNbuRates.Width;
-        AppSettings.Instance.NbuHistorySizes[0] = lstNbuRates.Columns[0].Width;
-        AppSettings.Instance.NbuHistorySizes[1] = lstNbuRates.Columns[1].Width;
-        AppSettings.Instance.NbuHistorySizes[2] = lstNbuRates.Columns[2].Width;
-
-        // AppSettings.Instance.CurrencyIndex = cmbCurrency.SelectedIndex;
+        for (var i = 0; i < 7; i++) {
+          AppSettings.Instance.HistorySizes[i] = lstRates.Columns[i].Width;
+        }
 
         AppSettings.Instance.ChartViewMode = cmbChartMode.SelectedIndex;
         AppSettings.Instance.ChartLines = cbxChartGridMode.Checked;
@@ -226,7 +217,7 @@ namespace currency.watcher {
       lstFinanceHistory.DoubleClick += (s, e) => {
         Process.Start("https://tables.finance.ua/ua/currency/official/-/1");
       };
-      lstHistory.DoubleClick += (s, e) => {
+      lstRates.DoubleClick += (s, e) => {
         Process.Start("https://minfin.com.ua/currency/auction/usd/sell/kharkov/?compact=true");
       };
     }
@@ -242,6 +233,14 @@ namespace currency.watcher {
             onResponse(result);
         }
       });
+    }
+
+    private Color GetDiffColor(decimal lastValue, decimal prevValue) {
+      if (lastValue == 0 || prevValue == 0)
+        return ColorScheme.InputBackColor;
+      return lastValue.CompareTo(prevValue) == 1 ? ColorScheme.ColorGreater
+          : lastValue.CompareTo(prevValue) == -1 ? ColorScheme.ColorLower
+          : ColorScheme.InputBackColor;
     }
 
     private Color GetDiffColor(IComparable lastValue, IComparable prevValue) {
@@ -260,14 +259,10 @@ namespace currency.watcher {
 
     private void UpdateData() {
       
-      var task = nbuProvider.Refresh();
+      UpdateRates();
+      dataProvider.Refresh();
 
-      var nowDate = DateTime.Now;
-      if (lastPrivat24HistoryGet.Date != nowDate.Date) {
-        GetJsonData("https://otp24.privatbank.ua/v3/api/1/info/currency/history", OnPrivat24HistoryResponse, 30, "POST");
-      }
-
-      if (lastMinfinStats.AddMinutes(30) < nowDate) {
+      if (lastMinfinStats.AddMinutes(30) < DateTime.Now) {
         UpdateMinfinChartData();
       }
 
@@ -275,20 +270,20 @@ namespace currency.watcher {
       //GetJsonData($"http://resources.finance.ua/chart/data?for=currency-order&currency=eur", OnFinanceUaResponse);
     }
 
-    private void UpdateNbuRates() {
+    private void UpdateRates() {
 
-      if (nbuProvider.IsEmpty()) return;
+      if (dataProvider.IsEmpty()) return;
 
       if (InvokeRequired) {
-        Invoke(new Action(UpdateNbuRates));
+        Invoke(new Action(UpdateRates));
         return;
       }
 
       //Text = $"{appTitle} (NBU: {lastItem.Rate:n3} {lastItem.Date:M})";
 
-      lstNbuRates.Items.Clear();
+      lstRates.Items.Clear();
 
-      var data = nbuProvider.Take(100);
+      var data = dataProvider.Take(100);
       if (data == null || data.Length == 0) return;
 
       var currentItem = data[data.Length - 1];
@@ -298,56 +293,21 @@ namespace currency.watcher {
         var lvItem = new ListViewItem(timePart.ToString("dd:MM"), 0) {
           UseItemStyleForSubItems = !ColorScheme.AppsUseLightTheme
         };
-        lvItem.SubItems.Add(currentItem.RateUsd.ToString("n3"), lstNbuRates.ForeColor, GetDiffColor(currentItem.RateUsd, prevItem.RateUsd), lstNbuRates.Font);
-        lvItem.SubItems.Add(currentItem.RateEur.ToString("n3"), lstNbuRates.ForeColor, GetDiffColor(currentItem.RateEur, prevItem.RateEur), lstNbuRates.Font);
-        if (!ColorScheme.AppsUseLightTheme)
-          lvItem.BackColor = GetDiffColor(currentItem.RateUsd, prevItem.RateUsd);
+        lvItem.SubItems.Add(currentItem.NbuRateUsd.ToString("n3"), lstRates.ForeColor, GetDiffColor(currentItem.NbuRateUsd, prevItem.NbuRateUsd), lstRates.Font);
+        lvItem.SubItems.Add(currentItem.PbRateUsdB == 0 ? "" : currentItem.PbRateUsdB.ToString("n3"), lstRates.ForeColor, GetDiffColor(currentItem.PbRateUsdB, prevItem.PbRateUsdB), lstRates.Font);
+        lvItem.SubItems.Add(currentItem.PbRateUsdS == 0 ? "" : currentItem.PbRateUsdS.ToString("n3"), lstRates.ForeColor, GetDiffColor(currentItem.PbRateUsdS, prevItem.PbRateUsdS), lstRates.Font);
+        
+        lvItem.SubItems.Add(currentItem.NbuRateEur.ToString("n3"), lstRates.ForeColor, GetDiffColor(currentItem.NbuRateEur, prevItem.NbuRateEur), lstRates.Font);
+        lvItem.SubItems.Add(currentItem.PbRateEurB == 0 ? "" : currentItem.PbRateEurB.ToString("n3"), lstRates.ForeColor, GetDiffColor(currentItem.PbRateEurB, prevItem.PbRateEurB), lstRates.Font);
+        lvItem.SubItems.Add(currentItem.PbRateEurS == 0 ? "" : currentItem.PbRateEurS.ToString("n3"), lstRates.ForeColor, GetDiffColor(currentItem.PbRateEurS, prevItem.PbRateEurS), lstRates.Font);
 
-        lstNbuRates.Items.Add(lvItem);
+        if (!ColorScheme.AppsUseLightTheme)
+          lvItem.BackColor = GetDiffColor(currentItem.NbuRateUsd, prevItem.NbuRateUsd);
+
+        lstRates.Items.Add(lvItem);
 
         currentItem = prevItem;
       }
-    }
-
-    private void OnPrivat24HistoryResponse(string response) {
-      if (string.IsNullOrEmpty(response)) return;
-      var currencyCodes = new[] {"USD", "EUR"};
-      var historyData = response.FromJson<Privat24HistoryResponse>();
-      if (historyData?.Data?.History == null) return;
-      if (historyData.Data.History.Length <= 0) return;
-      
-      lstHistory.Items.Clear();
-      var filteredItems = historyData.Data.History.Where(i => currencyCodes.Contains(i.CurrencyCode))
-        .OrderByDescending(x => {
-          DateTime.TryParseExact(x.Date, "dd-MM-yyyy", null, DateTimeStyles.AllowWhiteSpaces, out var dt);
-          x.DateParsed = dt;
-          return dt;
-        }).ToArray();
-      if (filteredItems.Length == 0) return;
-        
-      for (var i = 0; i < filteredItems.Length; i+=2) {
-        var itemEur = filteredItems[i]; //todo: get by Date & CurrencyCode
-        var itemUsd = filteredItems[i+1]; //todo: get by Date & CurrencyCode
-
-        var lvItem = new ListViewItem(itemUsd.DateParsed.ToString("dd:MM"), 0) {
-          UseItemStyleForSubItems = !ColorScheme.AppsUseLightTheme
-        };
-        lvItem.SubItems.Add(itemUsd.Rate_B.ToString("n3"), lstNbuRates.ForeColor, GetDiffColor(itemUsd.Rate_B_Delta), lstNbuRates.Font);
-        lvItem.SubItems.Add(itemUsd.Rate_S.ToString("n3"), lstNbuRates.ForeColor, GetDiffColor(itemUsd.Rate_S_Delta), lstNbuRates.Font);
-        lvItem.SubItems.Add(itemEur.Rate_B.ToString("n3"), lstNbuRates.ForeColor, GetDiffColor(itemEur.Rate_B_Delta), lstNbuRates.Font);
-        lvItem.SubItems.Add(itemEur.Rate_S.ToString("n3"), lstNbuRates.ForeColor, GetDiffColor(itemEur.Rate_S_Delta), lstNbuRates.Font);
-        if (!ColorScheme.AppsUseLightTheme) {
-          var rateDelta = (i + 1 < filteredItems.Length) ? itemUsd.Rate_B - filteredItems[i + 1].Rate_B : itemUsd.Rate_B_Delta;
-          lvItem.BackColor = GetDiffColor(rateDelta);
-        }
-        lstHistory.Items.Add(lvItem);
-      }
-
-      if (filteredItems[0].DateParsed.Date == DateTime.Today)
-        lastPrivat24HistoryGet = DateTime.Now;
-      // if (_lastPrivat24HistoryGet < filteredItems[0].DateParsed) {
-      //   _lastPrivat24HistoryGet = filteredItems[0].DateParsed;
-      // }
     }
 
     private void UpdateMinfinChartData() {
@@ -382,9 +342,9 @@ namespace currency.watcher {
       foreach (var item in values) {
         chart.Series[0].Points.AddXY(item.Date, item.Buy);
         chart.Series[1].Points.AddXY(item.Date, item.Sell);
-        var nbuValue = nbuProvider.GetByDate(item.Date);
+        var nbuValue = dataProvider.GetByDate(item.Date);
         if (nbuValue != null) {
-          chart.Series[2].Points.AddXY(item.Date, nbuValue.RateUsd);
+          chart.Series[2].Points.AddXY(item.Date, nbuValue.NbuRateUsd);
         }
         //todo: process "count_sell": 3, "count_buy": 7,
       }
@@ -491,10 +451,10 @@ namespace currency.watcher {
     private void numTaxesSource_ValueChanged(object sender, EventArgs e) {
       var usd = numTaxesSource.Value;
       var date = dtTaxesSource.Value;
-      if (!nbuProvider.IsEmpty()) {
-        var nbuRate = nbuProvider.GetByDate(date);
+      if (!dataProvider.IsEmpty()) {
+        var nbuRate = dataProvider.GetByDate(date);
         if (nbuRate != null) {
-          var uah = usd * nbuRate.RateUsd;
+          var uah = usd * nbuRate.NbuRateUsd;
           txtUahResult.Text = uah.ToString("n2");
           txtTaxesResult.Text = (uah * (decimal)0.05).ToString("n2");
           return;

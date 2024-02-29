@@ -24,11 +24,9 @@ namespace currency.watcher {
     
     public readonly int RefreshInterval = 30;
 
-    public int MainPanWidth = 159;
     public int[] FinanceHistorySizes = { 40, 50, 50, 50, 50 };
-    public int[] HistorySizes = { 85, 55, 55, 55, 55 };
-    public int NbuHistoryWidth = 300;
-    public int[] NbuHistorySizes = { 100, 90, 90 };
+    public int[] HistorySizes = { 100, 90, 90, 55, 55, 55, 55 };
+    public int HistoryWidth = 300;
 
     #region Load/Save
 
@@ -58,7 +56,6 @@ namespace currency.watcher {
       key.SetValue("ChartViewMode", ChartViewMode);
       key.SetValue("ChartLines", ChartLines);
       key.SetValue("ShowNbu", ShowNbu);
-      key.SetValue("MainPanWidth", MainPanWidth);
       key.SetValue("FinanceHistorySizes1", FinanceHistorySizes[0]);
       key.SetValue("FinanceHistorySizes2", FinanceHistorySizes[1]);
       key.SetValue("FinanceHistorySizes3", FinanceHistorySizes[2]);
@@ -69,11 +66,10 @@ namespace currency.watcher {
       key.SetValue("HistorySizes3", HistorySizes[2]);
       key.SetValue("HistorySizes4", HistorySizes[3]);
       key.SetValue("HistorySizes5", HistorySizes[4]);
-      key.SetValue("NbuHistorySizes1", NbuHistorySizes[0]);
-      key.SetValue("NbuHistorySizes2", NbuHistorySizes[1]);
-      key.SetValue("NbuHistorySizes3", NbuHistorySizes[2]);
+      key.SetValue("HistorySizes6", HistorySizes[5]);
+      key.SetValue("HistorySizes7", HistorySizes[6]);
 
-      key.SetValue("NbuHistoryWidth", NbuHistoryWidth);
+      key.SetValue("HistoryWidth", HistoryWidth);
     }
 
     private static AppSettings Load() {
@@ -83,36 +79,40 @@ namespace currency.watcher {
         LoadFromFile();
         return result;
       }
-      int.TryParse(key.GetValue("Height")?.ToString(), out result.Height);
-      int.TryParse(key.GetValue("Width")?.ToString(), out result.Width);
-      int.TryParse(key.GetValue("Top")?.ToString(), out result.Top);
-      int.TryParse(key.GetValue("Left")?.ToString(), out result.Left);
+      result.Height = TryGetInt(key.GetValue("Height")?.ToString(), result.Height);
+      result.Width = TryGetInt(key.GetValue("Width")?.ToString(), result.Width);
+      result.Top = TryGetInt(key.GetValue("Top")?.ToString(), result.Top);
+      result.Left = TryGetInt(key.GetValue("Left")?.ToString(), result.Left);
       double.TryParse(key.GetValue("Opacity")?.ToString(), out result.Opacity);
       bool.TryParse(key.GetValue("StickToEdges")?.ToString(), out result.StickToEdges);
-        
+
       // int.TryParse(key.GetValue("RefreshInterval")?.ToString(), out result.RefreshInterval);
 
-      int.TryParse(key.GetValue("ChartViewMode")?.ToString(), out result.ChartViewMode);
+      result.ChartViewMode = TryGetInt(key.GetValue("ChartViewMode")?.ToString(), result.ChartViewMode);
       bool.TryParse(key.GetValue("ChartLines")?.ToString(), out result.ChartLines);
       bool.TryParse(key.GetValue("ShowNbu")?.ToString(), out result.ShowNbu);
-      int.TryParse(key.GetValue("MainPanWidth")?.ToString(), out result.MainPanWidth);
-      int.TryParse(key.GetValue("FinanceHistorySizes1")?.ToString(), out result.FinanceHistorySizes[0]);
-      int.TryParse(key.GetValue("FinanceHistorySizes2")?.ToString(), out result.FinanceHistorySizes[1]);
-      int.TryParse(key.GetValue("FinanceHistorySizes3")?.ToString(), out result.FinanceHistorySizes[2]);
-      int.TryParse(key.GetValue("FinanceHistorySizes4")?.ToString(), out result.FinanceHistorySizes[3]);
-      int.TryParse(key.GetValue("FinanceHistorySizes5")?.ToString(), out result.FinanceHistorySizes[4]);
-      int.TryParse(key.GetValue("HistorySizes1")?.ToString(), out result.HistorySizes[0]);
-      int.TryParse(key.GetValue("HistorySizes2")?.ToString(), out result.HistorySizes[1]);
-      int.TryParse(key.GetValue("HistorySizes3")?.ToString(), out result.HistorySizes[2]);
-      int.TryParse(key.GetValue("HistorySizes4")?.ToString(), out result.HistorySizes[3]);
-      int.TryParse(key.GetValue("HistorySizes5")?.ToString(), out result.HistorySizes[4]);
-      int.TryParse(key.GetValue("NbuHistorySizes1")?.ToString(), out result.NbuHistorySizes[0]);
-      int.TryParse(key.GetValue("NbuHistorySizes2")?.ToString(), out result.NbuHistorySizes[1]);
-      int.TryParse(key.GetValue("NbuHistorySizes3")?.ToString(), out result.NbuHistorySizes[2]);
-        
-      int.TryParse(key.GetValue("NbuHistoryWidth")?.ToString(), out result.NbuHistoryWidth);
+      result.FinanceHistorySizes[0] = TryGetInt(key.GetValue("FinanceHistorySizes1")?.ToString(), result.FinanceHistorySizes[0]);
+      result.FinanceHistorySizes[1] = TryGetInt(key.GetValue("FinanceHistorySizes2")?.ToString(), result.FinanceHistorySizes[1]);
+      result.FinanceHistorySizes[2] = TryGetInt(key.GetValue("FinanceHistorySizes3")?.ToString(), result.FinanceHistorySizes[2]);
+      result.FinanceHistorySizes[3] = TryGetInt(key.GetValue("FinanceHistorySizes4")?.ToString(), result.FinanceHistorySizes[3]);
+      result.FinanceHistorySizes[4] = TryGetInt(key.GetValue("FinanceHistorySizes5")?.ToString(), result.FinanceHistorySizes[4]);
+      result.HistorySizes[0] = TryGetInt(key.GetValue("HistorySizes1")?.ToString(), result.HistorySizes[0]);
+      result.HistorySizes[1] = TryGetInt(key.GetValue("HistorySizes2")?.ToString(), result.HistorySizes[1]);
+      result.HistorySizes[2] = TryGetInt(key.GetValue("HistorySizes3")?.ToString(), result.HistorySizes[2]);
+      result.HistorySizes[3] = TryGetInt(key.GetValue("HistorySizes4")?.ToString(), result.HistorySizes[3]);
+      result.HistorySizes[4] = TryGetInt(key.GetValue("HistorySizes5")?.ToString(), result.HistorySizes[4]);
+      result.HistorySizes[5] = TryGetInt(key.GetValue("HistorySizes6")?.ToString(), result.HistorySizes[5]);
+      result.HistorySizes[6] = TryGetInt(key.GetValue("HistorySizes7")?.ToString(), result.HistorySizes[6]);
+
+      result.HistoryWidth = TryGetInt(key.GetValue("HistoryWidth")?.ToString(), result.HistoryWidth);
 
       return result;
+    }
+
+    private static int TryGetInt(string value, int defaultResult) {
+      if (int.TryParse(value, out var intRes))
+        return intRes;
+      return defaultResult;
     }
 
     internal void SaveToFile() {
