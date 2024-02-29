@@ -20,15 +20,15 @@ namespace currency.watcher {
     
     public int ChartViewMode;
     public bool ChartLines;
+    public bool ShowNbu;
     
-    public int CurrencyIndex;
     public readonly int RefreshInterval = 30;
 
     public int MainPanWidth = 159;
-    public int[] FinanceHistorySizes = { 40, 50, 50 };
-    public int[] HistorySizes = { 85, 55, 55 };
-    public int NbuHistoryWidth = 200;
-    public int[] NbuHistorySizes = { 100, 90 };
+    public int[] FinanceHistorySizes = { 40, 50, 50, 50, 50 };
+    public int[] HistorySizes = { 85, 55, 55, 55, 55 };
+    public int NbuHistoryWidth = 300;
+    public int[] NbuHistorySizes = { 100, 90, 90 };
 
     #region Load/Save
 
@@ -55,18 +55,23 @@ namespace currency.watcher {
         
       // key.SetValue("RefreshInterval")?.ToString(), out result.RefreshInterval);
 
-      key.SetValue("CurrencyIndex", CurrencyIndex);
       key.SetValue("ChartViewMode", ChartViewMode);
       key.SetValue("ChartLines", ChartLines);
+      key.SetValue("ShowNbu", ShowNbu);
       key.SetValue("MainPanWidth", MainPanWidth);
       key.SetValue("FinanceHistorySizes1", FinanceHistorySizes[0]);
       key.SetValue("FinanceHistorySizes2", FinanceHistorySizes[1]);
       key.SetValue("FinanceHistorySizes3", FinanceHistorySizes[2]);
+      key.SetValue("FinanceHistorySizes4", FinanceHistorySizes[3]);
+      key.SetValue("FinanceHistorySizes5", FinanceHistorySizes[4]);
       key.SetValue("HistorySizes1", HistorySizes[0]);
       key.SetValue("HistorySizes2", HistorySizes[1]);
       key.SetValue("HistorySizes3", HistorySizes[2]);
+      key.SetValue("HistorySizes4", HistorySizes[3]);
+      key.SetValue("HistorySizes5", HistorySizes[4]);
       key.SetValue("NbuHistorySizes1", NbuHistorySizes[0]);
       key.SetValue("NbuHistorySizes2", NbuHistorySizes[1]);
+      key.SetValue("NbuHistorySizes3", NbuHistorySizes[2]);
 
       key.SetValue("NbuHistoryWidth", NbuHistoryWidth);
     }
@@ -87,18 +92,23 @@ namespace currency.watcher {
         
       // int.TryParse(key.GetValue("RefreshInterval")?.ToString(), out result.RefreshInterval);
 
-      int.TryParse(key.GetValue("CurrencyIndex")?.ToString(), out result.CurrencyIndex);
       int.TryParse(key.GetValue("ChartViewMode")?.ToString(), out result.ChartViewMode);
       bool.TryParse(key.GetValue("ChartLines")?.ToString(), out result.ChartLines);
+      bool.TryParse(key.GetValue("ShowNbu")?.ToString(), out result.ShowNbu);
       int.TryParse(key.GetValue("MainPanWidth")?.ToString(), out result.MainPanWidth);
       int.TryParse(key.GetValue("FinanceHistorySizes1")?.ToString(), out result.FinanceHistorySizes[0]);
       int.TryParse(key.GetValue("FinanceHistorySizes2")?.ToString(), out result.FinanceHistorySizes[1]);
       int.TryParse(key.GetValue("FinanceHistorySizes3")?.ToString(), out result.FinanceHistorySizes[2]);
+      int.TryParse(key.GetValue("FinanceHistorySizes4")?.ToString(), out result.FinanceHistorySizes[3]);
+      int.TryParse(key.GetValue("FinanceHistorySizes5")?.ToString(), out result.FinanceHistorySizes[4]);
       int.TryParse(key.GetValue("HistorySizes1")?.ToString(), out result.HistorySizes[0]);
       int.TryParse(key.GetValue("HistorySizes2")?.ToString(), out result.HistorySizes[1]);
       int.TryParse(key.GetValue("HistorySizes3")?.ToString(), out result.HistorySizes[2]);
+      int.TryParse(key.GetValue("HistorySizes4")?.ToString(), out result.HistorySizes[3]);
+      int.TryParse(key.GetValue("HistorySizes5")?.ToString(), out result.HistorySizes[4]);
       int.TryParse(key.GetValue("NbuHistorySizes1")?.ToString(), out result.NbuHistorySizes[0]);
       int.TryParse(key.GetValue("NbuHistorySizes2")?.ToString(), out result.NbuHistorySizes[1]);
+      int.TryParse(key.GetValue("NbuHistorySizes3")?.ToString(), out result.NbuHistorySizes[2]);
         
       int.TryParse(key.GetValue("NbuHistoryWidth")?.ToString(), out result.NbuHistoryWidth);
 
