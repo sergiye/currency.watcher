@@ -118,7 +118,6 @@ namespace currency.watcher {
           }
         }
 
-
         var dataPrivat24 = await Common.GetJsonData("https://otp24.privatbank.ua/v3/api/1/info/currency/history", 30, "POST");
         if (!string.IsNullOrEmpty(dataPrivat24)) {
           var historyData = dataPrivat24.FromJson<Privat24HistoryResponse>();
@@ -149,7 +148,7 @@ namespace currency.watcher {
                   dataChanged = true;
                 }
                 else if (old.PbRateUsdB != itemUsd.Rate_B || old.PbRateUsdS != itemUsd.Rate_S || 
-                          old.PbRateEurB != itemEur.Rate_B || old.PbRateEurS != itemEur.Rate_S) {
+                         old.PbRateEurB != itemEur.Rate_B || old.PbRateEurS != itemEur.Rate_S) {
                   old.PbRateUsdB = itemUsd.Rate_B;
                   old.PbRateUsdS = itemUsd.Rate_S;
                   old.PbRateEurB = itemEur.Rate_B;
@@ -162,6 +161,25 @@ namespace currency.watcher {
         }
 
         if (dataChanged) {
+
+          //fix missed pb dates
+          lock (rates) {
+            CombinedRatesItem current = null;
+            for (int i = 0; i < rates.Count; i++) {
+              if (rates[i].PbRateUsdB == 0) {
+                if (current != null) {
+                  rates[i].PbRateUsdB = current.PbRateUsdB;
+                  rates[i].PbRateUsdS = current.PbRateUsdS;
+                  rates[i].PbRateEurB = current.PbRateEurB;
+                  rates[i].PbRateEurS = current.PbRateEurS;
+                }
+              }
+              else {
+                current = rates[i];
+              }
+            }
+          }
+
           SaveNbuRates();
           OnDataChanged?.Invoke();
         }
