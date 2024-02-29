@@ -39,6 +39,7 @@ namespace currency.watcher {
     private static int? appsUseLightTheme;
     public static bool AppsUseLightTheme {
       get {
+        return true;
         if (!appsUseLightTheme.HasValue) {
           try {
             // 0 : dark theme, 1 : light theme, -1 : undefined

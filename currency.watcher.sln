@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.33027.164
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "currency.watcher", "currency.watcher\currency.watcher.csproj", "{B43658C9-450C-4726-A760-7C385527C98D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "currency.common", "currency.common\currency.common.csproj", "{147B4FD0-D5F5-4B44-B726-EE4582612838}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,14 +21,6 @@ Global
 		{B43658C9-450C-4726-A760-7C385527C98D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B43658C9-450C-4726-A760-7C385527C98D}.Release|x86.ActiveCfg = Release|Any CPU
 		{B43658C9-450C-4726-A760-7C385527C98D}.Release|x86.Build.0 = Release|Any CPU
-		{147B4FD0-D5F5-4B44-B726-EE4582612838}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{147B4FD0-D5F5-4B44-B726-EE4582612838}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{147B4FD0-D5F5-4B44-B726-EE4582612838}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{147B4FD0-D5F5-4B44-B726-EE4582612838}.Debug|x86.Build.0 = Debug|Any CPU
-		{147B4FD0-D5F5-4B44-B726-EE4582612838}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{147B4FD0-D5F5-4B44-B726-EE4582612838}.Release|Any CPU.Build.0 = Release|Any CPU
-		{147B4FD0-D5F5-4B44-B726-EE4582612838}.Release|x86.ActiveCfg = Release|Any CPU
-		{147B4FD0-D5F5-4B44-B726-EE4582612838}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
