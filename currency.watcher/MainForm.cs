@@ -259,9 +259,8 @@ namespace currency.watcher {
     }
 
     private void UpdateData() {
-      UpdateNbuRates();
+      
       var task = nbuProvider.Refresh();
-      GetJsonData($"http://resources.finance.ua/chart/data?for=currency-order&currency={Helper.GetCurrencyName(0)}", OnFinanceUaResponse);
 
       var nowDate = DateTime.Now;
       if (lastPrivat24HistoryGet.Date != nowDate.Date) {
@@ -271,6 +270,9 @@ namespace currency.watcher {
       if (lastMinfinStats.AddMinutes(30) < nowDate) {
         UpdateMinfinChartData();
       }
+
+      GetJsonData($"http://resources.finance.ua/chart/data?for=currency-order&currency=usd", OnFinanceUaResponse);
+      //GetJsonData($"http://resources.finance.ua/chart/data?for=currency-order&currency=eur", OnFinanceUaResponse);
     }
 
     private void UpdateNbuRates() {
@@ -286,7 +288,7 @@ namespace currency.watcher {
 
       lstNbuRates.Items.Clear();
 
-      var data = nbuProvider.GetLastItems(100);
+      var data = nbuProvider.Take(100);
       if (data == null || data.Length == 0) return;
 
       var currentItem = data[data.Length - 1];
@@ -349,7 +351,6 @@ namespace currency.watcher {
     }
 
     private void UpdateMinfinChartData() {
-      var currencyCode = Helper.GetCurrencyName(0).ToLower();
       var city = 22;
       string filter;
       switch (cmbChartMode.SelectedIndex) {
@@ -363,7 +364,7 @@ namespace currency.watcher {
           filter = "period=week"; //&group=hour
           break;
       }
-      GetJsonData($"https://va-rates.treeumapp.net/api/v1/rates?currency={currencyCode}&{filter}&city={city}", OnMinfinHistoryResponse);
+      GetJsonData($"https://va-rates.treeumapp.net/api/v1/rates?currency=usd&{filter}&city={city}", OnMinfinHistoryResponse);
     }
 
     private void OnMinfinHistoryResponse(string response) {

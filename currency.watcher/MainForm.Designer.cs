@@ -33,6 +33,8 @@ namespace currency.watcher {
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.lstHistory = new System.Windows.Forms.ListView();
       this.colDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.colBuy = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -121,6 +123,14 @@ namespace currency.watcher {
       // 
       this.columnHeader3.Text = "S-Usd";
       this.columnHeader3.Width = 50;
+      // 
+      // columnHeader4
+      // 
+      this.columnHeader4.Text = "B-Eur";
+      // 
+      // columnHeader5
+      // 
+      this.columnHeader5.Text = "S-Eur";
       // 
       // lstHistory
       // 

@@ -10,13 +10,6 @@ namespace currency {
 
     #region Common methods
 
-    public static string GetCurrencyName(int currencyIndex, bool lower = true) {
-      var result = currencyIndex == 0 ? "USD" : "EUR";
-      if (lower)
-        result = result.ToLower();
-      return result;
-    }
-
     public static async Task<string> GetJsonData(string uri, int timeout = 10, string method = "GET") {
       var request = (HttpWebRequest)WebRequest.Create(uri);
       request.Method = method;

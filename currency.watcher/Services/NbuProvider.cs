@@ -32,22 +32,12 @@ namespace currency {
         return nbuRates.Count == 0;
     }
 
-    public NbuRateCombinedItem GetLastItem() {
-      lock (nbuRates)
-        return IsEmpty() ? null : nbuRates[nbuRates.Count - 1];
-    }
-
     public NbuRateCombinedItem GetByDate(DateTime date) {
       lock (nbuRates)
         return IsEmpty() ? null : nbuRates.FirstOrDefault(i => i.Date.Date == date.Date);
     }
 
-    public NbuRateCombinedItem[] GetFirstItems(int count) {
-      lock (nbuRates)
-        return IsEmpty() ? null : nbuRates.Take(count).ToArray();
-    }
-
-    public NbuRateCombinedItem[] GetLastItems(int count) {
+    public NbuRateCombinedItem[] Take(int count) {
       lock (nbuRates)
         return IsEmpty() ? null : nbuRates
         .Skip(Math.Max(0, nbuRates.Count - count)).ToArray();
@@ -96,9 +86,6 @@ namespace currency {
               old.RateUsd = newRatesUsd[i].Rate;
               dataChanged = true;
             }
-            //else {
-            //  break;
-            //}
           }
         }
       }
@@ -123,9 +110,6 @@ namespace currency {
               old.RateEur = newRatesEur[i].Rate;
               dataChanged = true;
             }
-            //else {
-            //  break;
-            //}
           }
         }
       }
