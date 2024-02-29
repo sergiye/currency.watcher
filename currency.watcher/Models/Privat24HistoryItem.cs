@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace currency {
+namespace currency.watcher {
 
   public class Privat24HistoryResponse {
     public Privat24HistoryData Data { get; set; }

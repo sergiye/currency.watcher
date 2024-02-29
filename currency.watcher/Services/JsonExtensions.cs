@@ -1,6 +1,7 @@
 ﻿using System.Web.Script.Serialization;
 
-namespace currency {
+namespace currency.watcher {
+
   public static class JsonExtensions {
 
     public static string ToJson(this object obj) {

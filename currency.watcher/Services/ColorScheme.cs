@@ -141,5 +141,27 @@ namespace currency.watcher {
       
       foreach (Control c in component.Controls) ApplyColorScheme(c);
     }
+
+    public static Color GetDiffColor(decimal lastValue, decimal prevValue) {
+      if (lastValue == 0 || prevValue == 0)
+        return ColorScheme.InputBackColor;
+      return lastValue.CompareTo(prevValue) == 1 ? ColorScheme.ColorGreater
+          : lastValue.CompareTo(prevValue) == -1 ? ColorScheme.ColorLower
+          : ColorScheme.InputBackColor;
+    }
+
+    public static Color GetDiffColor(IComparable lastValue, IComparable prevValue) {
+      if (lastValue == null || prevValue == null)
+        return ColorScheme.InputBackColor;
+      return lastValue.CompareTo(prevValue) == 1 ? ColorScheme.ColorGreater
+          : lastValue.CompareTo(prevValue) == -1 ? ColorScheme.ColorLower
+          : ColorScheme.InputBackColor;
+    }
+
+    public static Color GetDiffColor(decimal delta) {
+      return delta > 0 ? ColorScheme.ColorGreater
+          : delta < 0 ? ColorScheme.ColorLower
+          : ColorScheme.InputBackColor;
+    }
   }
 }

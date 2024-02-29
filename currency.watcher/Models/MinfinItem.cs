@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace currency {
+namespace currency.watcher {
 
   public class MinfinHistoryResponse {
     public string Start { get; set; }

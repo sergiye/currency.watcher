@@ -41,7 +41,11 @@ namespace currency.watcher {
       this.lstRates = new System.Windows.Forms.ListView();
       this.columnHeaderDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeaderUsd = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeaderEur = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.tabPageGraphic = new System.Windows.Forms.TabPage();
       this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
       this.tabTaxes = new System.Windows.Forms.TabPage();
@@ -59,10 +63,6 @@ namespace currency.watcher {
       this.cmbChartMode = new System.Windows.Forms.ComboBox();
       this.cbxChartGridMode = new System.Windows.Forms.CheckBox();
       this.cbxStickEdges = new System.Windows.Forms.CheckBox();
-      this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.tabControl.SuspendLayout();
       this.tabPageMain.SuspendLayout();
       this.tabPageGraphic.SuspendLayout();
@@ -194,10 +194,26 @@ namespace currency.watcher {
       this.columnHeaderUsd.Text = "Usd";
       this.columnHeaderUsd.Width = 80;
       // 
+      // columnHeader6
+      // 
+      this.columnHeader6.Text = "Pb/B";
+      // 
+      // columnHeader7
+      // 
+      this.columnHeader7.Text = "Pb/S";
+      // 
       // columnHeaderEur
       // 
       this.columnHeaderEur.Text = "Eur";
       this.columnHeaderEur.Width = 80;
+      // 
+      // columnHeader8
+      // 
+      this.columnHeader8.Text = "Pb/B";
+      // 
+      // columnHeader9
+      // 
+      this.columnHeader9.Text = "Pb/S";
       // 
       // tabPageGraphic
       // 
@@ -390,22 +406,6 @@ namespace currency.watcher {
       this.cbxStickEdges.TabIndex = 3;
       this.cbxStickEdges.Text = "Stick edges";
       this.cbxStickEdges.UseVisualStyleBackColor = true;
-      // 
-      // columnHeader6
-      // 
-      this.columnHeader6.Text = "Pb/B";
-      // 
-      // columnHeader7
-      // 
-      this.columnHeader7.Text = "Pb/S";
-      // 
-      // columnHeader8
-      // 
-      this.columnHeader8.Text = "Pb/B";
-      // 
-      // columnHeader9
-      // 
-      this.columnHeader9.Text = "Pb/S";
       // 
       // MainForm
       // 

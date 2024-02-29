@@ -6,13 +6,12 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace currency {
+namespace currency.watcher {
 
   public class DataProvider {
 
     private readonly string nbuRatesFile;
     private List<CombinedRatesItem> rates;
-    private DateTime lastPrivat24HistoryGet;
 
     static DataProvider() {
       ServicePointManager.Expect100Continue = false;
@@ -69,7 +68,7 @@ namespace currency {
       Task.Factory.StartNew(async () => {
         var dataChanged = false;
 
-        var dataUsd = await Helper.GetJsonData($"https://minfin.com.ua/data/currency/nbu/nbu.usd.stock.json")
+        var dataUsd = await Common.GetJsonData($"https://minfin.com.ua/data/currency/nbu/nbu.usd.stock.json")
           .ConfigureAwait(false);
         if (!string.IsNullOrEmpty(dataUsd)) {
           var newRatesUsd = dataUsd.FromJson<NbuRateItem[]>();
@@ -94,7 +93,7 @@ namespace currency {
           }
         }
 
-        var dataEur = await Helper.GetJsonData($"https://minfin.com.ua/data/currency/nbu/nbu.eur.stock.json")
+        var dataEur = await Common.GetJsonData($"https://minfin.com.ua/data/currency/nbu/nbu.eur.stock.json")
   .ConfigureAwait(false);
         if (!string.IsNullOrEmpty(dataEur)) {
           var newRatesEur = dataEur.FromJson<NbuRateItem[]>();
@@ -119,51 +118,44 @@ namespace currency {
           }
         }
 
-        if (lastPrivat24HistoryGet.Date != DateTime.Now.Date) {
 
-          var dataPrivat24 = await Helper.GetJsonData("https://otp24.privatbank.ua/v3/api/1/info/currency/history", 30, "POST");
-          if (!string.IsNullOrEmpty(dataPrivat24)) {
-            var historyData = dataPrivat24.FromJson<Privat24HistoryResponse>();
-            if ((historyData?.Data?.History) != null && historyData.Data.History.Length > 0) {
-              var currencyCodes = new[] { "USD", "EUR" };
-              var filteredItems = historyData.Data.History.Where(i => currencyCodes.Contains(i.CurrencyCode))
-                .OrderByDescending(x => {
-                  DateTime.TryParseExact(x.Date, "dd-MM-yyyy", null, DateTimeStyles.AllowWhiteSpaces, out var dt);
-                  x.DateParsed = DateTime.SpecifyKind(dt, DateTimeKind.Utc);
-                  return dt;
-                }).ToArray();
-              if (filteredItems.Length != 0) {
-                for (var i = 0; i < filteredItems.Length; i += 2) {
-                  var itemEur = filteredItems[i]; //todo: get by Date & CurrencyCode
-                  var itemUsd = filteredItems[i + 1]; //todo: get by Date & CurrencyCode
+        var dataPrivat24 = await Common.GetJsonData("https://otp24.privatbank.ua/v3/api/1/info/currency/history", 30, "POST");
+        if (!string.IsNullOrEmpty(dataPrivat24)) {
+          var historyData = dataPrivat24.FromJson<Privat24HistoryResponse>();
+          if ((historyData?.Data?.History) != null && historyData.Data.History.Length > 0) {
+            var currencyCodes = new[] { "USD", "EUR" };
+            var filteredItems = historyData.Data.History.Where(i => currencyCodes.Contains(i.CurrencyCode))
+              .OrderByDescending(x => {
+                DateTime.TryParseExact(x.Date, "dd-MM-yyyy", null, DateTimeStyles.AllowWhiteSpaces, out var dt);
+                x.DateParsed = DateTime.SpecifyKind(dt, DateTimeKind.Utc);
+                return dt;
+              }).ToArray();
+            if (filteredItems.Length != 0) {
+              for (var i = 0; i < filteredItems.Length; i += 2) {
+                var itemEur = filteredItems[i]; //todo: get by Date & CurrencyCode
+                var itemUsd = filteredItems[i + 1]; //todo: get by Date & CurrencyCode
 
-                  var old = GetByDate(itemUsd.DateParsed);
-                  if (old == null) {
-                    lock (rates) {
-                      rates.Add(new CombinedRatesItem {
-                        Date = itemUsd.DateParsed.Date,
-                        PbRateUsdB = itemUsd.Rate_B,
-                        PbRateUsdS = itemUsd.Rate_S,
-                        PbRateEurB = itemEur.Rate_B,
-                        PbRateEurS = itemEur.Rate_S,
-                      });
-                    }
-                    dataChanged = true;
+                var old = GetByDate(itemUsd.DateParsed);
+                if (old == null) {
+                  lock (rates) {
+                    rates.Add(new CombinedRatesItem {
+                      Date = itemUsd.DateParsed.Date,
+                      PbRateUsdB = itemUsd.Rate_B,
+                      PbRateUsdS = itemUsd.Rate_S,
+                      PbRateEurB = itemEur.Rate_B,
+                      PbRateEurS = itemEur.Rate_S,
+                    });
                   }
-                  else if (old.PbRateUsdB != itemUsd.Rate_B || old.PbRateUsdS != itemUsd.Rate_S || 
-                           old.PbRateEurB != itemEur.Rate_B || old.PbRateEurS != itemEur.Rate_S) {
-                    old.PbRateUsdB = itemUsd.Rate_B;
-                    old.PbRateUsdS = itemUsd.Rate_S;
-                    old.PbRateEurB = itemEur.Rate_B;
-                    old.PbRateEurS = itemEur.Rate_S;
-                    dataChanged = true;
-                  }
+                  dataChanged = true;
                 }
-
-                if (filteredItems[0].DateParsed.Date == DateTime.Today)
-                  lastPrivat24HistoryGet = DateTime.Now;
-                //if (lastPrivat24HistoryGet < filteredItems[0].DateParsed)
-                //  lastPrivat24HistoryGet = filteredItems[0].DateParsed;
+                else if (old.PbRateUsdB != itemUsd.Rate_B || old.PbRateUsdS != itemUsd.Rate_S || 
+                          old.PbRateEurB != itemEur.Rate_B || old.PbRateEurS != itemEur.Rate_S) {
+                  old.PbRateUsdB = itemUsd.Rate_B;
+                  old.PbRateUsdS = itemUsd.Rate_S;
+                  old.PbRateEurB = itemEur.Rate_B;
+                  old.PbRateEurS = itemEur.Rate_S;
+                  dataChanged = true;
+                }
               }
             }
           }

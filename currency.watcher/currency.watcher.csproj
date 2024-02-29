@@ -64,9 +64,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppSettings.cs" />
-    <Compile Include="ColorScheme.cs" />
-    <Compile Include="Common.cs" />
+    <Compile Include="Services\AppSettings.cs" />
+    <Compile Include="Services\ColorScheme.cs" />
+    <Compile Include="Services\Common.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -79,7 +79,6 @@
     <Compile Include="Models\Privat24HistoryItem.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\Helper.cs" />
     <Compile Include="Services\JsonExtensions.cs" />
     <Compile Include="Services\DataProvider.cs" />
     <EmbeddedResource Include="MainForm.resx">

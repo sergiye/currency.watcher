@@ -225,7 +225,7 @@ namespace currency.watcher {
     private void GetJsonData(string uri, Action<string> onResponse, int timeout = 10, string method = "GET") {
 
       Task.Factory.StartNew(async () => {
-        var result = await Helper.GetJsonData(uri, timeout, method);
+        var result = await Common.GetJsonData(uri, timeout, method);
         if (result != null) {
           if (InvokeRequired)
             Invoke(new Action<string>(onResponse), result);
@@ -233,28 +233,6 @@ namespace currency.watcher {
             onResponse(result);
         }
       });
-    }
-
-    private Color GetDiffColor(decimal lastValue, decimal prevValue) {
-      if (lastValue == 0 || prevValue == 0)
-        return ColorScheme.InputBackColor;
-      return lastValue.CompareTo(prevValue) == 1 ? ColorScheme.ColorGreater
-          : lastValue.CompareTo(prevValue) == -1 ? ColorScheme.ColorLower
-          : ColorScheme.InputBackColor;
-    }
-
-    private Color GetDiffColor(IComparable lastValue, IComparable prevValue) {
-      if (lastValue == null || prevValue == null)
-        return ColorScheme.InputBackColor;
-      return lastValue.CompareTo(prevValue) == 1 ? ColorScheme.ColorGreater
-          : lastValue.CompareTo(prevValue) == -1 ? ColorScheme.ColorLower
-          : ColorScheme.InputBackColor;
-    }
-
-    private Color GetDiffColor(decimal delta) {
-      return delta > 0 ? ColorScheme.ColorGreater
-          : delta < 0 ? ColorScheme.ColorLower
-          : ColorScheme.InputBackColor;
     }
 
     private void UpdateData() {
@@ -293,16 +271,16 @@ namespace currency.watcher {
         var lvItem = new ListViewItem(timePart.ToString("dd:MM"), 0) {
           UseItemStyleForSubItems = !ColorScheme.AppsUseLightTheme
         };
-        lvItem.SubItems.Add(currentItem.NbuRateUsd.ToString("n3"), lstRates.ForeColor, GetDiffColor(currentItem.NbuRateUsd, prevItem.NbuRateUsd), lstRates.Font);
-        lvItem.SubItems.Add(currentItem.PbRateUsdB == 0 ? "" : currentItem.PbRateUsdB.ToString("n3"), lstRates.ForeColor, GetDiffColor(currentItem.PbRateUsdB, prevItem.PbRateUsdB), lstRates.Font);
-        lvItem.SubItems.Add(currentItem.PbRateUsdS == 0 ? "" : currentItem.PbRateUsdS.ToString("n3"), lstRates.ForeColor, GetDiffColor(currentItem.PbRateUsdS, prevItem.PbRateUsdS), lstRates.Font);
+        lvItem.SubItems.Add(currentItem.NbuRateUsd.ToString("n3"), lstRates.ForeColor, ColorScheme.GetDiffColor(currentItem.NbuRateUsd, prevItem.NbuRateUsd), lstRates.Font);
+        lvItem.SubItems.Add(currentItem.PbRateUsdB == 0 ? "" : currentItem.PbRateUsdB.ToString("n3"), lstRates.ForeColor, ColorScheme.GetDiffColor(currentItem.PbRateUsdB, prevItem.PbRateUsdB), lstRates.Font);
+        lvItem.SubItems.Add(currentItem.PbRateUsdS == 0 ? "" : currentItem.PbRateUsdS.ToString("n3"), lstRates.ForeColor, ColorScheme.GetDiffColor(currentItem.PbRateUsdS, prevItem.PbRateUsdS), lstRates.Font);
         
-        lvItem.SubItems.Add(currentItem.NbuRateEur.ToString("n3"), lstRates.ForeColor, GetDiffColor(currentItem.NbuRateEur, prevItem.NbuRateEur), lstRates.Font);
-        lvItem.SubItems.Add(currentItem.PbRateEurB == 0 ? "" : currentItem.PbRateEurB.ToString("n3"), lstRates.ForeColor, GetDiffColor(currentItem.PbRateEurB, prevItem.PbRateEurB), lstRates.Font);
-        lvItem.SubItems.Add(currentItem.PbRateEurS == 0 ? "" : currentItem.PbRateEurS.ToString("n3"), lstRates.ForeColor, GetDiffColor(currentItem.PbRateEurS, prevItem.PbRateEurS), lstRates.Font);
+        lvItem.SubItems.Add(currentItem.NbuRateEur.ToString("n3"), lstRates.ForeColor, ColorScheme.GetDiffColor(currentItem.NbuRateEur, prevItem.NbuRateEur), lstRates.Font);
+        lvItem.SubItems.Add(currentItem.PbRateEurB == 0 ? "" : currentItem.PbRateEurB.ToString("n3"), lstRates.ForeColor, ColorScheme.GetDiffColor(currentItem.PbRateEurB, prevItem.PbRateEurB), lstRates.Font);
+        lvItem.SubItems.Add(currentItem.PbRateEurS == 0 ? "" : currentItem.PbRateEurS.ToString("n3"), lstRates.ForeColor, ColorScheme.GetDiffColor(currentItem.PbRateEurS, prevItem.PbRateEurS), lstRates.Font);
 
         if (!ColorScheme.AppsUseLightTheme)
-          lvItem.BackColor = GetDiffColor(currentItem.NbuRateUsd, prevItem.NbuRateUsd);
+          lvItem.BackColor = ColorScheme.GetDiffColor(currentItem.NbuRateUsd, prevItem.NbuRateUsd);
 
         lstRates.Items.Add(lvItem);
 
@@ -392,10 +370,10 @@ namespace currency.watcher {
           };
           decimal.TryParse(currentItem[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var buy);
           decimal.TryParse(currentItem[2], NumberStyles.Float, CultureInfo.InvariantCulture, out var sell);
-          lvItem.SubItems.Add(buy.ToString("n3"), lstFinanceHistory.ForeColor, GetDiffColor(currentItem[1], prevItem[1]), lstFinanceHistory.Font);
-          lvItem.SubItems.Add(sell.ToString("n3"), ColorScheme.InputForeColor, GetDiffColor(currentItem[2], prevItem[2]), lstFinanceHistory.Font);
+          lvItem.SubItems.Add(buy.ToString("n3"), lstFinanceHistory.ForeColor, ColorScheme.GetDiffColor(currentItem[1], prevItem[1]), lstFinanceHistory.Font);
+          lvItem.SubItems.Add(sell.ToString("n3"), ColorScheme.InputForeColor, ColorScheme.GetDiffColor(currentItem[2], prevItem[2]), lstFinanceHistory.Font);
           if (!ColorScheme.AppsUseLightTheme)
-            lvItem.BackColor = GetDiffColor(currentItem[2], prevItem[2]);
+            lvItem.BackColor = ColorScheme.GetDiffColor(currentItem[2], prevItem[2]);
 
           lstFinanceHistory.Items.Add(lvItem);
 
