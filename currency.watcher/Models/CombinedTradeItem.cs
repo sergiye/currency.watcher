@@ -1,11 +1,21 @@
-﻿namespace currency.watcher {
+﻿using System.ComponentModel;
+
+namespace currency.watcher {
 
   public class CombinedTradeItem {
     
     public string Date { get; set; }
+    
+    [DefaultValue(0)]
     public decimal UsdB { get; set; }
+    
+    [DefaultValue(0)]
     public decimal UsdS { get; set; }
+    
+    [DefaultValue(0)]
     public decimal EurB { get; set; }
+
+    [DefaultValue(0)]
     public decimal EurS { get; set; }
 
     public bool RatesEquals(CombinedTradeItem other) {
