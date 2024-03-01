@@ -274,9 +274,12 @@ namespace currency.watcher {
       for (var i = data.Length - 2; i >= 0; i--) {
         var prevItem = data[i];
         var timePart = currentItem.Date;
-        var lvItem = new ListViewItem(timePart.ToString("dd:MM"), 0) {
-          UseItemStyleForSubItems = !ColorScheme.AppsUseLightTheme
-        };
+        var lvItem = lstRates.Items.Add(timePart.ToString("dd:MM"));
+
+        lvItem.UseItemStyleForSubItems = !ColorScheme.AppsUseLightTheme;
+        if (!ColorScheme.AppsUseLightTheme)
+          lvItem.BackColor = ColorScheme.GetDiffColor(currentItem.NbuRateUsd, prevItem.NbuRateUsd);
+        
         lvItem.SubItems.Add(currentItem.NbuRateUsd.ToString("n3"), lstRates.ForeColor, ColorScheme.GetDiffColor(currentItem.NbuRateUsd, prevItem.NbuRateUsd), lstRates.Font);
         lvItem.SubItems.Add(currentItem.PbRateUsdB == 0 ? "" : currentItem.PbRateUsdB.ToString("n3"), lstRates.ForeColor, ColorScheme.GetDiffColor(currentItem.PbRateUsdB, prevItem.PbRateUsdB), lstRates.Font);
         lvItem.SubItems.Add(currentItem.PbRateUsdS == 0 ? "" : currentItem.PbRateUsdS.ToString("n3"), lstRates.ForeColor, ColorScheme.GetDiffColor(currentItem.PbRateUsdS, prevItem.PbRateUsdS), lstRates.Font);
@@ -284,12 +287,7 @@ namespace currency.watcher {
         lvItem.SubItems.Add(currentItem.NbuRateEur.ToString("n3"), lstRates.ForeColor, ColorScheme.GetDiffColor(currentItem.NbuRateEur, prevItem.NbuRateEur), lstRates.Font);
         lvItem.SubItems.Add(currentItem.PbRateEurB == 0 ? "" : currentItem.PbRateEurB.ToString("n3"), lstRates.ForeColor, ColorScheme.GetDiffColor(currentItem.PbRateEurB, prevItem.PbRateEurB), lstRates.Font);
         lvItem.SubItems.Add(currentItem.PbRateEurS == 0 ? "" : currentItem.PbRateEurS.ToString("n3"), lstRates.ForeColor, ColorScheme.GetDiffColor(currentItem.PbRateEurS, prevItem.PbRateEurS), lstRates.Font);
-
-        if (!ColorScheme.AppsUseLightTheme)
-          lvItem.BackColor = ColorScheme.GetDiffColor(currentItem.NbuRateUsd, prevItem.NbuRateUsd);
-
-        lstRates.Items.Add(lvItem);
-
+        
         currentItem = prevItem;
       }
     }
@@ -421,6 +419,8 @@ namespace currency.watcher {
         if (prevItem.RatesEquals(currentItem)) continue;
         var lvItem = lstFinanceHistory.Items.Add(currentItem.Date);
         lvItem.UseItemStyleForSubItems = !ColorScheme.AppsUseLightTheme;
+        if (!ColorScheme.AppsUseLightTheme)
+          lvItem.BackColor = ColorScheme.GetDiffColor(currentItem.UsdB, prevItem.UsdB);
         lvItem.SubItems.Add(currentItem.UsdB.ToString("n3"), lstFinanceHistory.ForeColor,
           ColorScheme.GetDiffColor(currentItem.UsdB, prevItem.UsdB), lstFinanceHistory.Font);
         lvItem.SubItems.Add(currentItem.UsdS.ToString("n3"), ColorScheme.InputForeColor,
@@ -429,8 +429,6 @@ namespace currency.watcher {
           ColorScheme.GetDiffColor(currentItem.EurB, prevItem.EurB), lstFinanceHistory.Font);
         lvItem.SubItems.Add(currentItem.EurS.ToString("n3"), ColorScheme.InputForeColor,
           ColorScheme.GetDiffColor(currentItem.EurS, prevItem.EurS), lstFinanceHistory.Font);
-        if (!ColorScheme.AppsUseLightTheme)
-          lvItem.BackColor = ColorScheme.GetDiffColor(currentItem.UsdB, prevItem.UsdB);
       }
     }
 

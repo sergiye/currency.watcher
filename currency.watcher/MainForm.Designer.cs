@@ -96,7 +96,7 @@ namespace currency.watcher {
       this.lstFinanceHistory.Dock = System.Windows.Forms.DockStyle.Fill;
       this.lstFinanceHistory.FullRowSelect = true;
       this.lstFinanceHistory.GridLines = true;
-      this.lstFinanceHistory.HideSelection = false;
+      this.lstFinanceHistory.HideSelection = true;
       this.lstFinanceHistory.Location = new System.Drawing.Point(502, 0);
       this.lstFinanceHistory.Name = "lstFinanceHistory";
       this.lstFinanceHistory.Size = new System.Drawing.Size(267, 201);
@@ -173,7 +173,7 @@ namespace currency.watcher {
       this.lstRates.Dock = System.Windows.Forms.DockStyle.Left;
       this.lstRates.FullRowSelect = true;
       this.lstRates.GridLines = true;
-      this.lstRates.HideSelection = false;
+      this.lstRates.HideSelection = true;
       this.lstRates.Location = new System.Drawing.Point(0, 0);
       this.lstRates.Name = "lstRates";
       this.lstRates.Size = new System.Drawing.Size(499, 201);

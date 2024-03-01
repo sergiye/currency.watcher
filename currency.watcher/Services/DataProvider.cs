@@ -121,7 +121,7 @@ namespace currency.watcher {
         var dataPrivat24 = await Common.GetJsonData("https://otp24.privatbank.ua/v3/api/1/info/currency/history", 30, "POST");
         if (!string.IsNullOrEmpty(dataPrivat24)) {
           var historyData = dataPrivat24.FromJson<Privat24HistoryResponse>();
-          if ((historyData?.Data?.History) != null && historyData.Data.History.Length > 0) {
+          if (historyData?.Data?.History != null && historyData.Data.History.Length > 0) {
             var currencyCodes = new[] { "USD", "EUR" };
             var filteredItems = historyData.Data.History.Where(i => currencyCodes.Contains(i.CurrencyCode))
               .OrderByDescending(x => {

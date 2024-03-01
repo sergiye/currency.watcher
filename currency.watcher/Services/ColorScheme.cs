@@ -39,7 +39,6 @@ namespace currency.watcher {
     private static int? appsUseLightTheme;
     public static bool AppsUseLightTheme {
       get {
-        return true;
         if (!appsUseLightTheme.HasValue) {
           try {
             // 0 : dark theme, 1 : light theme, -1 : undefined
@@ -64,9 +63,7 @@ namespace currency.watcher {
       PanelBackColor = Color.DimGray;
       PanelForeColor = Color.White;
     }
-    
-    private static string ToBgr(Color c) => $"{c.B:X2}{c.G:X2}{c.R:X2}";
-    
+
     public static void ApplyColorScheme(this Control component) {
       if (AppsUseLightTheme) return;
 
@@ -124,12 +121,65 @@ namespace currency.watcher {
           listView.DrawColumnHeader += (sender, e) => {
             using (var backBrush = new SolidBrush(InputBackColor))
               e.Graphics.FillRectangle(backBrush, e.Bounds);
-            // e.DrawText();
             using (var foreBrush = new SolidBrush(InputForeColor))
               e.Graphics.DrawString(e.Header.Text, e.Font, foreBrush, e.Bounds);
           };
-          listView.DrawItem += (sender, e) => {
-            e.DrawDefault = true;
+          // listView.DrawItem += (sender, e) => {
+          //   if (e.Item.UseItemStyleForSubItems && !e.Item.Selected) {
+          //
+          //     var rowBounds = e.Bounds;
+          //     var leftMargin = e.Item.GetBounds(ItemBoundsPortion.Label).Left;
+          //     // e.Graphics.FillRectangle(SystemBrushes.Highlight,
+          //     //   new Rectangle(leftMargin, rowBounds.Top, rowBounds.Width - leftMargin, rowBounds.Height));
+          //     
+          //     using (var backBrush = new SolidBrush(e.Item.BackColor))
+          //       e.Graphics.FillRectangle(backBrush, new Rectangle(leftMargin, rowBounds.Top, rowBounds.Width - leftMargin, rowBounds.Height));
+          //       // e.Graphics.FillRectangle(backBrush, e.Item.Bounds);
+          //     // e.DrawText();
+          //     // using (var foreBrush = new SolidBrush(e.Item.ForeColor))
+          //     //   e.Graphics.DrawString(e.Item.Text, e.Item.Font, foreBrush, e.Item.Bounds);
+          //   }
+          //   else {
+          //     e.DrawDefault = true;              
+          //   }
+          // };
+          listView.DrawSubItem += (sender, e) => {
+            // if (e.Item.UseItemStyleForSubItems) {
+            //   using (var backBrush = new SolidBrush(e.SubItem.BackColor))
+            //     e.Graphics.FillRectangle(backBrush, e.SubItem.Bounds);
+            //   // e.DrawText();
+            //   using (var foreBrush = new SolidBrush(e.SubItem.ForeColor))
+            //     e.Graphics.DrawString(e.SubItem.Text, e.SubItem.Font, foreBrush, e.SubItem.Bounds);
+            // }
+            // else {
+            //   e.DrawDefault = true;              
+            // }
+            
+            // const int TEXT_OFFSET = 1;    // I don't know why the text is located at 1px to the right. Maybe it's only for me.
+            // var lv = (ListView)sender;
+            // Check if e.Item is selected and the ListView has a focus.
+            // if (e.Item.Selected) {
+            //   var rowBounds = e.SubItem.Bounds;
+            //   var labelBounds = e.Item.GetBounds(ItemBoundsPortion.Label);
+            //   var leftMargin = labelBounds.Left - TEXT_OFFSET;
+            //   var bounds = new Rectangle(rowBounds.Left + leftMargin, rowBounds.Top, e.ColumnIndex == 0 ? labelBounds.Width : rowBounds.Width - leftMargin - TEXT_OFFSET, rowBounds.Height);
+            //   TextFormatFlags align;
+            //   switch (lv.Columns[e.ColumnIndex].TextAlign) {
+            //     case HorizontalAlignment.Right:
+            //       align = TextFormatFlags.Right;
+            //       break;
+            //     case HorizontalAlignment.Center:
+            //       align = TextFormatFlags.HorizontalCenter;
+            //       break;
+            //     default:
+            //       align = TextFormatFlags.Left;
+            //       break;
+            //   }
+            //   TextRenderer.DrawText(e.Graphics, e.SubItem.Text, lv.Font, bounds, SystemColors.HighlightText,
+            //     align | TextFormatFlags.SingleLine | TextFormatFlags.GlyphOverhangPadding | TextFormatFlags.VerticalCenter | TextFormatFlags.WordEllipsis);
+            // }
+            // else
+              e.DrawDefault = true;
           };
           break;
         default:
@@ -144,24 +194,24 @@ namespace currency.watcher {
 
     public static Color GetDiffColor(decimal lastValue, decimal prevValue) {
       if (lastValue == 0 || prevValue == 0)
-        return ColorScheme.InputBackColor;
-      return lastValue.CompareTo(prevValue) == 1 ? ColorScheme.ColorGreater
-          : lastValue.CompareTo(prevValue) == -1 ? ColorScheme.ColorLower
-          : ColorScheme.InputBackColor;
+        return InputBackColor;
+      return lastValue.CompareTo(prevValue) == 1 ? ColorGreater
+          : lastValue.CompareTo(prevValue) == -1 ? ColorLower
+          : InputBackColor;
     }
 
     public static Color GetDiffColor(IComparable lastValue, IComparable prevValue) {
       if (lastValue == null || prevValue == null)
-        return ColorScheme.InputBackColor;
-      return lastValue.CompareTo(prevValue) == 1 ? ColorScheme.ColorGreater
-          : lastValue.CompareTo(prevValue) == -1 ? ColorScheme.ColorLower
-          : ColorScheme.InputBackColor;
+        return InputBackColor;
+      return lastValue.CompareTo(prevValue) == 1 ? ColorGreater
+          : lastValue.CompareTo(prevValue) == -1 ? ColorLower
+          : InputBackColor;
     }
 
     public static Color GetDiffColor(decimal delta) {
-      return delta > 0 ? ColorScheme.ColorGreater
-          : delta < 0 ? ColorScheme.ColorLower
-          : ColorScheme.InputBackColor;
+      return delta > 0 ? ColorGreater
+          : delta < 0 ? ColorLower
+          : InputBackColor;
     }
   }
 }
