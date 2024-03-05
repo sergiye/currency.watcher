@@ -217,10 +217,11 @@ namespace currency.watcher {
       };
 
       lstFinanceHistory.DoubleClick += (s, e) => {
-        Process.Start("https://tables.finance.ua/ua/currency/official/-/1");
+        Process.Start("https://minfin.com.ua/currency/auction/usd/sell/kharkov/?compact=true");
+        //Process.Start("https://tables.finance.ua/ua/currency/official/-/1");
       };
       lstRates.DoubleClick += (s, e) => {
-        Process.Start("https://minfin.com.ua/currency/auction/usd/sell/kharkov/?compact=true");
+        Process.Start("https://next.privat24.ua/exchange-rates");
       };
     }
 
