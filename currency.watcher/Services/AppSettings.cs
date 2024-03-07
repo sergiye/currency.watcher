@@ -16,7 +16,8 @@ namespace currency.watcher {
     public int Height = 245;
     public int Width = 175;
     public double Opacity = 1;
-    public bool StickToEdges = true;
+    public bool TopMost = false;
+    public bool StickToEdges = false;
     
     public int ChartViewMode;
     public bool ChartLines;
@@ -49,6 +50,7 @@ namespace currency.watcher {
       key.SetValue("Top", Top);
       key.SetValue("Left", Left);
       key.SetValue("Opacity", Opacity);
+      key.SetValue("TopMost", TopMost);
       key.SetValue("StickToEdges", StickToEdges);
         
       // key.SetValue("RefreshInterval")?.ToString(), out result.RefreshInterval);
@@ -84,6 +86,7 @@ namespace currency.watcher {
       result.Top = TryGetInt(key.GetValue("Top")?.ToString(), result.Top);
       result.Left = TryGetInt(key.GetValue("Left")?.ToString(), result.Left);
       double.TryParse(key.GetValue("Opacity")?.ToString(), out result.Opacity);
+      bool.TryParse(key.GetValue("TopMost")?.ToString(), out result.TopMost);
       bool.TryParse(key.GetValue("StickToEdges")?.ToString(), out result.StickToEdges);
 
       // int.TryParse(key.GetValue("RefreshInterval")?.ToString(), out result.RefreshInterval);

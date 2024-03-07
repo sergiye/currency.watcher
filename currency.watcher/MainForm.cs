@@ -24,6 +24,7 @@ namespace currency.watcher {
 
     private const int SysMenuAboutId = 0x1;
     private const int SysMenuTopMost = 0x2;
+    private const int SysMenuStickEdges = 0x3;
 
     protected override void OnHandleCreated(EventArgs e) {
 
@@ -37,12 +38,14 @@ namespace currency.watcher {
 
       Common.AppendMenu(hSysMenu, Common.MfSeparator, 0, string.Empty);
       Common.AppendMenu(hSysMenu, Common.MfString, SysMenuTopMost, "&Always on top");
+      Common.AppendMenu(hSysMenu, Common.MfString, SysMenuStickEdges, "&Stick edges");
       Common.AppendMenu(hSysMenu, Common.MfString, SysMenuAboutId, "&About…");
     }
 
     protected override void WndProc(ref Message m) {
 
       base.WndProc(ref m);
+      IntPtr hSysMenu;
       if (m.Msg == Common.WmSysCommand) {
         switch ((int)m.WParam) {
           case SysMenuAboutId:
@@ -51,8 +54,14 @@ namespace currency.watcher {
             break;
           case SysMenuTopMost:
             TopMost = !TopMost;
-            var hSysMenu = Common.GetSystemMenu(Handle, false);
+            AppSettings.Instance.TopMost = TopMost;
+            hSysMenu = Common.GetSystemMenu(Handle, false);
             Common.CheckMenuItem(hSysMenu, SysMenuTopMost, TopMost ? Common.MfChecked : Common.MfUnchecked);
+            break;
+          case SysMenuStickEdges:
+            AppSettings.Instance.StickToEdges = !AppSettings.Instance.StickToEdges;
+            hSysMenu = Common.GetSystemMenu(Handle, false);
+            Common.CheckMenuItem(hSysMenu, SysMenuStickEdges, AppSettings.Instance.StickToEdges ? Common.MfChecked : Common.MfUnchecked);
             break;
         }
       } else if (m.Msg == Common.WM_SHOWME) {
@@ -161,7 +170,15 @@ namespace currency.watcher {
         cmbChartMode.SelectedIndex = AppSettings.Instance.ChartViewMode;
         cbxChartGridMode.Checked = AppSettings.Instance.ChartLines;
         cbxShowNbu.Checked = AppSettings.Instance.ShowNbu;
-        cbxStickEdges.Checked = AppSettings.Instance.StickToEdges;
+
+        var hSysMenu = Common.GetSystemMenu(Handle, false);
+        if (AppSettings.Instance.TopMost) {
+          TopMost = true;
+          Common.CheckMenuItem(hSysMenu, SysMenuTopMost, Common.MfChecked);
+        }
+        if (AppSettings.Instance.StickToEdges) {
+          Common.CheckMenuItem(hSysMenu, SysMenuStickEdges, Common.MfChecked);
+        }
 
         UpdateData();
         numTaxesSource_ValueChanged(this, EventArgs.Empty);
@@ -210,10 +227,6 @@ namespace currency.watcher {
       cbxShowNbu.CheckedChanged += (s, e) => {
         chart.Series[2].Enabled = cbxShowNbu.Checked;
         UpdateChartBounds();
-      };
-
-      cbxStickEdges.CheckedChanged += (s, e) => {
-        AppSettings.Instance.StickToEdges = cbxStickEdges.Checked;
       };
 
       lstFinanceHistory.DoubleClick += (s, e) => {

@@ -62,7 +62,6 @@ namespace currency.watcher {
       this.cbxShowNbu = new System.Windows.Forms.CheckBox();
       this.cmbChartMode = new System.Windows.Forms.ComboBox();
       this.cbxChartGridMode = new System.Windows.Forms.CheckBox();
-      this.cbxStickEdges = new System.Windows.Forms.CheckBox();
       this.tabControl.SuspendLayout();
       this.tabPageMain.SuspendLayout();
       this.tabPageGraphic.SuspendLayout();
@@ -332,7 +331,6 @@ namespace currency.watcher {
       // panStatus
       // 
       this.panStatus.Controls.Add(this.panGridOptions);
-      this.panStatus.Controls.Add(this.cbxStickEdges);
       this.panStatus.Controls.Add(this.btnRefresh);
       this.panStatus.Dock = System.Windows.Forms.DockStyle.Bottom;
       this.panStatus.Location = new System.Drawing.Point(0, 231);
@@ -390,17 +388,6 @@ namespace currency.watcher {
       this.cbxChartGridMode.Text = "Grid lines";
       this.cbxChartGridMode.UseVisualStyleBackColor = true;
       // 
-      // cbxStickEdges
-      // 
-      this.cbxStickEdges.AutoSize = true;
-      this.cbxStickEdges.Dock = System.Windows.Forms.DockStyle.Left;
-      this.cbxStickEdges.Location = new System.Drawing.Point(25, 0);
-      this.cbxStickEdges.Name = "cbxStickEdges";
-      this.cbxStickEdges.Size = new System.Drawing.Size(96, 30);
-      this.cbxStickEdges.TabIndex = 3;
-      this.cbxStickEdges.Text = "Stick edges";
-      this.cbxStickEdges.UseVisualStyleBackColor = true;
-      // 
       // MainForm
       // 
       this.ClientSize = new System.Drawing.Size(777, 261);
@@ -439,7 +426,6 @@ namespace currency.watcher {
     private Panel panStatus;
     private ComboBox cmbChartMode;
     private CheckBox cbxChartGridMode;
-    private CheckBox cbxStickEdges;
     private CheckBox cbxShowNbu;
     private TabControl tabControl;
     private TabPage tabPageGraphic;
