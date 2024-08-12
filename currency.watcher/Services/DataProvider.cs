@@ -46,6 +46,30 @@ namespace currency.watcher {
 
     public event Action OnDataChanged;
 
+    private bool AddOrUpdate(CombinedRatesItem item) {
+
+      lock (rates) {
+        var oldIndex = rates.FindLastIndex(i => i.Date.Date <= item.Date);
+        if (oldIndex == -1) {
+          rates.Insert(0, item);
+          return true;
+        }
+        else {
+          var old = rates[oldIndex];
+          if (old.Date == item.Date) {
+            if (old.UpdateFrom(item))
+              return true;
+          }
+          else {
+            if (old.DataEqualsOrNoNewValues(item))
+              return false;
+            rates.Insert(oldIndex + 1, item);
+          }
+        }
+      }
+      return false;
+    }
+
     private void LoadNbuRates() {
       if (!string.IsNullOrEmpty(nbuRatesFile) && File.Exists(nbuRatesFile))
         rates = File.ReadAllText(nbuRatesFile).FromJson<List<CombinedRatesItem>>();
@@ -55,10 +79,24 @@ namespace currency.watcher {
     }
 
     private void SaveNbuRates() {
-      if (!string.IsNullOrEmpty(nbuRatesFile)) {
-        lock (rates) {
-          var data = rates.ToJson();
-          File.WriteAllText(nbuRatesFile, data);
+      if (string.IsNullOrEmpty(nbuRatesFile)) return;
+      OptimizeRates();
+      lock (rates) {
+        var data = rates.ToJson();
+        File.WriteAllText(nbuRatesFile, data);
+      }
+    }
+
+    private void OptimizeRates() {
+      lock (rates) {
+        var i = 1;
+        while (i < rates.Count) {
+          var prev = rates[i - 1];
+          var item = rates[i];
+          if (prev.DataEquals(item))
+            rates.RemoveAt(i);
+          else
+            i++;
         }
       }
     }
@@ -75,18 +113,10 @@ namespace currency.watcher {
           if (newRatesUsd != null && newRatesUsd.Length > 0) {
             for (var i = 0; i < newRatesUsd.Length; i++) {
               var date = DateTime.SpecifyKind(newRatesUsd[i].Date, DateTimeKind.Utc);
-              var old = GetByDate(date);
-              if (old == null) {
-                lock (rates) {
-                  rates.Add(new CombinedRatesItem {
-                    Date = date,
-                    NbuRateUsd = newRatesUsd[i].Rate,
-                  });
-                }
-                dataChanged = true;
-              }
-              else if (old.NbuRateUsd != newRatesUsd[i].Rate) {
-                old.NbuRateUsd = newRatesUsd[i].Rate;
+              if (AddOrUpdate(new CombinedRatesItem {
+                Date = date,
+                NbuRateUsd = newRatesUsd[i].Rate,
+              })) {
                 dataChanged = true;
               }
             }
@@ -100,18 +130,10 @@ namespace currency.watcher {
           if (newRatesEur != null && newRatesEur.Length > 0) {
             for (var i = 0; i < newRatesEur.Length; i++) {
               var date = DateTime.SpecifyKind(newRatesEur[i].Date, DateTimeKind.Utc);
-              var old = GetByDate(date);
-              if (old == null) {
-                lock (rates) {
-                  rates.Add(new CombinedRatesItem {
-                    Date = date,
-                    NbuRateEur = newRatesEur[i].Rate,
-                  });
-                }
-                dataChanged = true;
-              }
-              else if (old.NbuRateEur != newRatesEur[i].Rate) {
-                old.NbuRateEur = newRatesEur[i].Rate;
+              if (AddOrUpdate(new CombinedRatesItem {
+                Date = date,
+                NbuRateEur = newRatesEur[i].Rate,
+              })) {
                 dataChanged = true;
               }
             }
@@ -133,26 +155,13 @@ namespace currency.watcher {
               for (var i = 0; i < filteredItems.Length; i += 2) {
                 var itemEur = filteredItems[i]; //todo: get by Date & CurrencyCode
                 var itemUsd = filteredItems[i + 1]; //todo: get by Date & CurrencyCode
-
-                var old = GetByDate(itemUsd.DateParsed);
-                if (old == null) {
-                  lock (rates) {
-                    rates.Add(new CombinedRatesItem {
-                      Date = itemUsd.DateParsed.Date,
-                      PbRateUsdB = itemUsd.Rate_B,
-                      PbRateUsdS = itemUsd.Rate_S,
-                      PbRateEurB = itemEur.Rate_B,
-                      PbRateEurS = itemEur.Rate_S,
-                    });
-                  }
-                  dataChanged = true;
-                }
-                else if (old.PbRateUsdB != itemUsd.Rate_B || old.PbRateUsdS != itemUsd.Rate_S || 
-                         old.PbRateEurB != itemEur.Rate_B || old.PbRateEurS != itemEur.Rate_S) {
-                  old.PbRateUsdB = itemUsd.Rate_B;
-                  old.PbRateUsdS = itemUsd.Rate_S;
-                  old.PbRateEurB = itemEur.Rate_B;
-                  old.PbRateEurS = itemEur.Rate_S;
+                if (AddOrUpdate(new CombinedRatesItem {
+                  Date = itemUsd.DateParsed.Date,
+                  PbRateUsdB = itemUsd.Rate_B,
+                  PbRateUsdS = itemUsd.Rate_S,
+                  PbRateEurB = itemEur.Rate_B,
+                  PbRateEurS = itemEur.Rate_S,
+                })) {
                   dataChanged = true;
                 }
               }
