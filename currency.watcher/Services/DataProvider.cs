@@ -80,25 +80,32 @@ namespace currency.watcher {
 
     private void SaveNbuRates() {
       if (string.IsNullOrEmpty(nbuRatesFile)) return;
-      OptimizeRates();
+      if (OptimizeRates() == false)
+        return;
       lock (rates) {
         var data = rates.ToJson();
         File.WriteAllText(nbuRatesFile, data);
       }
     }
 
-    private void OptimizeRates() {
+    private bool OptimizeRates() {
+
+      var hasModifiedItems = false;
       lock (rates) {
         var i = 1;
         while (i < rates.Count) {
           var prev = rates[i - 1];
           var item = rates[i];
-          if (prev.DataEquals(item))
+          if (prev.DataEquals(item)) {
             rates.RemoveAt(i);
-          else
+          }
+          else {
             i++;
+            hasModifiedItems = item.Modified;
+          }
         }
       }
+      return hasModifiedItems;
     }
 
     public void Refresh() {

@@ -45,4 +45,15 @@ namespace currency.watcher {
       writer.WriteRawValue(((decimal)value).ToString("0.####", CultureInfo.InvariantCulture));
     }
   }
+
+  public static class DecimalExtensions {
+
+    public static bool AlmostEquals(this decimal value1, decimal value2, decimal precision = (decimal)0.0001) {
+      return (Math.Abs(value1 - value2) < precision);
+    }
+
+    public static bool Differs(this decimal value1, decimal value2, decimal precision = (decimal)0.0001) {
+      return (Math.Abs(value1 - value2) > precision);
+    }
+  }
 }

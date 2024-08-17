@@ -21,6 +21,9 @@ namespace currency.watcher {
     [JsonProperty(PropertyName = "EurS")]
     public decimal PbRateEurS { get; set; }
 
+    [JsonIgnore]
+    public bool Modified { get; private set; }
+
     public bool DataEquals(CombinedRatesItem item) {
       if (item == null) return false;
       return NbuRateUsd == item.NbuRateUsd && NbuRateEur == item.NbuRateEur &&
@@ -41,32 +44,31 @@ namespace currency.watcher {
     public bool UpdateFrom(CombinedRatesItem item) {
       if (item == null) return false;
 
-      var dataChanged = false;
-      if (NbuRateUsd != item.NbuRateUsd && item.NbuRateUsd != 0) {
+      if (NbuRateUsd.Differs(item.NbuRateUsd) && item.NbuRateUsd != 0) {
         NbuRateUsd = item.NbuRateUsd;
-        dataChanged = true;
+        Modified = true;
       }
-      if (NbuRateEur != item.NbuRateEur && item.NbuRateEur != 0) {
+      if (NbuRateEur.Differs(item.NbuRateEur) && item.NbuRateEur != 0) {
         NbuRateEur = item.NbuRateEur;
-        dataChanged = true;
+        Modified = true;
       }
-      if (PbRateUsdB != item.PbRateUsdB && item.PbRateUsdB != 0) {
+      if (PbRateUsdB.Differs(item.PbRateUsdB) && item.PbRateUsdB != 0) {
         PbRateUsdB = item.PbRateUsdB;
-        dataChanged = true;
+        Modified = true;
       }
-      if (PbRateUsdS != item.PbRateUsdS && item.PbRateUsdS != 0) {
+      if (PbRateUsdS.Differs(item.PbRateUsdS) && item.PbRateUsdS != 0) {
         PbRateUsdS = item.PbRateUsdS;
-        dataChanged = true;
+        Modified = true;
       }
-      if (PbRateEurB != item.PbRateEurB && item.PbRateEurB != 0) {
+      if (PbRateEurB.Differs(item.PbRateEurB) && item.PbRateEurB != 0) {
         PbRateEurB = item.PbRateEurB;
-        dataChanged = true;
+        Modified = true;
       }
-      if (PbRateEurS != item.PbRateEurS && item.PbRateEurS != 0) {
+      if (PbRateEurS.Differs(item.PbRateEurS) && item.PbRateEurS != 0) {
         PbRateEurS = item.PbRateEurS;
-        dataChanged = true;
+        Modified = true;
       }
-      return dataChanged;
+      return Modified;
     }
   }
 }
