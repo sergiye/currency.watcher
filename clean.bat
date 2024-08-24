@@ -9,3 +9,4 @@ rmdir /s /q .\currency.watcher\obj
 del /S ".\currency.watcher\bin\*.dll"
 del /S ".\currency.watcher\bin\*.pdb"
 del /S ".\currency.watcher\bin\*.xml"
+del /S ".\currency.watcher\FodyWeavers.xsd"
