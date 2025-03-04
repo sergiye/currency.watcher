@@ -31,8 +31,8 @@ namespace currency.watcher {
     public static Color PanelBackColor { get; } = SystemColors.Control;
     public static Color PanelForeColor { get; } = SystemColors.ControlText;
     public static readonly Color[] SeriesColors = { Color.Green, Color.Blue, Color.Orange };
-    public static Color ColorGreater => AppsUseLightTheme ? Color.FromArgb(0xF7CF18) : Color.FromArgb(0xD55500);
-    public static Color ColorLower => AppsUseLightTheme ? Color.FromArgb(0x8AB1F2) : Color.FromArgb(0x5070FF);
+    public static Color ColorGreater => AppsUseLightTheme ? Color.FromArgb(0xF7CF18) : Color.FromArgb(0xBF652E);
+    public static Color ColorLower => AppsUseLightTheme ? Color.FromArgb(0x8AB1F2) : Color.FromArgb(0x2170CF);
 
     #endregion
     
@@ -58,9 +58,9 @@ namespace currency.watcher {
 
       if (AppsUseLightTheme) return;
 
-      InputBackColor = Color.DimGray;//Color.FromArgb(32, 32, 32);
+      InputBackColor = Color.FromArgb(0x3c, 0x3c, 0x3c);
       InputForeColor = Color.White;
-      PanelBackColor = Color.DimGray;
+      PanelBackColor = Color.FromArgb(0x3c, 0x3c, 0x3c);
       PanelForeColor = Color.White;
     }
 
