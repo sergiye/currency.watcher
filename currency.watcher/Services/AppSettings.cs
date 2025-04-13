@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
@@ -8,16 +7,17 @@ namespace currency.watcher {
 
   public class AppSettings {
 
-    private static readonly Lazy<AppSettings> InstanceField = new Lazy<AppSettings>(Load);
-    internal static AppSettings Instance => InstanceField.Value;
+    private static readonly Lazy<AppSettings> instanceField = new Lazy<AppSettings>(Load);
+    internal static AppSettings Instance => instanceField.Value;
+    private static readonly string settingsPath;
 
     public int Left = Screen.PrimaryScreen.WorkingArea.Left; // Screen.PrimaryScreen.WorkingArea.Right - Width;
     public int Top = Screen.PrimaryScreen.WorkingArea.Top;
     public int Height = 245;
     public int Width = 175;
     public double Opacity = 1;
-    public bool TopMost = false;
-    public bool StickToEdges = false;
+    public bool TopMost;
+    public bool StickToEdges;
     
     public int ChartViewMode;
     public bool ChartLines;
@@ -28,23 +28,26 @@ namespace currency.watcher {
     public int[] FinanceHistorySizes = { 40, 50, 50, 50, 50 };
     public int[] HistorySizes = { 100, 90, 90, 55, 55, 55, 55 };
     public int HistoryWidth = 300;
+    public bool PortableMode = true;
+    public static readonly string AppPath;
 
     #region Load/Save
-
-    public static string GetAppPath() {
-      return Assembly.GetExecutingAssembly().Location;
+    
+    static AppSettings() {
+      AppPath = typeof(AppSettings).Assembly.Location;
+      settingsPath = Path.ChangeExtension(AppPath, ".json");
     }
-
-    private static string GetSettingsFilePath() {
-      return Path.ChangeExtension(GetAppPath(), ".json");
-    }
-
+    
     internal void Save() {
-      var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\sergiye\\currency.watcher");
-      if (key == null) {
-        SaveToFile();
+
+      if (PortableMode) {
+        File.WriteAllText(settingsPath, this.ToJson());
         return;
       }
+      var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\sergiye\\currency.watcher");
+      if (key == null)
+        return;
+      
       key.SetValue("Height", Height);
       key.SetValue("Width", Width);
       key.SetValue("Top", Top);
@@ -75,10 +78,24 @@ namespace currency.watcher {
     }
 
     private static AppSettings Load() {
+      
+      AppSettings result;
+      try {
+        if (File.Exists(settingsPath)) {
+          var fileData = File.ReadAllText(settingsPath);
+          result = fileData.FromJson<AppSettings>();
+          if (result != null) {
+            return result;
+          }
+        }
+      }
+      catch {
+        // ignored
+      }
+
       var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\sergiye\\currency.watcher");
-      var result = new AppSettings();
+      result = new AppSettings();
       if (key == null) {
-        LoadFromFile();
         return result;
       }
       result.Height = TryGetInt(key.GetValue("Height")?.ToString(), result.Height);
@@ -88,7 +105,7 @@ namespace currency.watcher {
       double.TryParse(key.GetValue("Opacity")?.ToString(), out result.Opacity);
       bool.TryParse(key.GetValue("TopMost")?.ToString(), out result.TopMost);
       bool.TryParse(key.GetValue("StickToEdges")?.ToString(), out result.StickToEdges);
-
+      
       // int.TryParse(key.GetValue("RefreshInterval")?.ToString(), out result.RefreshInterval);
 
       result.ChartViewMode = TryGetInt(key.GetValue("ChartViewMode")?.ToString(), result.ChartViewMode);
@@ -116,29 +133,6 @@ namespace currency.watcher {
       if (int.TryParse(value, out var intRes))
         return intRes;
       return defaultResult;
-    }
-
-    internal void SaveToFile() {
-      var fileName = GetSettingsFilePath();
-      GC.Collect(GC.MaxGeneration);
-      File.WriteAllText(fileName, this.ToJson());
-    }
-
-    private static AppSettings LoadFromFile() {
-      var fileName = GetSettingsFilePath();
-      try {
-        if (File.Exists(fileName)) {
-          var fileData = File.ReadAllText(fileName);
-          var result = fileData.FromJson<AppSettings>();
-          if (result != null)
-            return result;
-        }
-      }
-      catch {
-        // ignored
-      }
-
-      return new AppSettings();
     }
 
     #endregion Load/Save

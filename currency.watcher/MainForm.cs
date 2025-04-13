@@ -89,7 +89,7 @@ namespace currency.watcher {
 
       InitializeComponent();
 
-      Icon = Icon.ExtractAssociatedIcon(AppSettings.GetAppPath());
+      Icon = Icon.ExtractAssociatedIcon(AppSettings.AppPath);
 
       this.ApplyColorScheme();
         
@@ -145,7 +145,7 @@ namespace currency.watcher {
 
       this.Load += (sender, args) => {
 
-        dataProvider = new DataProvider(AppSettings.GetAppPath());
+        dataProvider = new DataProvider(AppSettings.AppPath);
         dataProvider.OnDataChanged += () => {
           UpdateRates();
           UpdateMinfinChartData();
