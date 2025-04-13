@@ -316,6 +316,9 @@ namespace currency.watcher {
         case 2:
           filter = "period=3month&group=day"; //group=week
           break;
+        case 3:
+          filter = "period=6month&group=day"; //group=week
+          break;
         default:
           filter = "period=week"; //&group=hour
           break;
