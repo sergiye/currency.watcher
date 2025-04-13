@@ -13,6 +13,7 @@ namespace currency.watcher {
         DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
         NullValueHandling = NullValueHandling.Ignore,
         // DateFormatHandling = DateFormatHandling.IsoDateFormat,
+        DateFormatString = "yyyy-MM-dd",
         Converters = {
           new DecimalJsonConverter(),
         }
