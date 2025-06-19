@@ -16,7 +16,7 @@ namespace currency.watcher {
 
       if (!mutex.WaitOne(TimeSpan.Zero, true)) {
         MessageBox.Show("Another instance of the application is already running.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-        Common.PostMessage((IntPtr)Common.HWND_BROADCAST, Common.WM_SHOWME, IntPtr.Zero, IntPtr.Zero);
+        WinApiHelper.PostMessage((IntPtr)WinApiHelper.HWND_BROADCAST, WinApiHelper.WM_SHOWME, IntPtr.Zero, IntPtr.Zero);
         Environment.Exit(0);
       }
 

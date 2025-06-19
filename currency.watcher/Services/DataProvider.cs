@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace currency.watcher {
@@ -114,7 +115,7 @@ namespace currency.watcher {
       Task.Factory.StartNew(async () => {
         var dataChanged = false;
 
-        var dataUsd = await Common.GetJsonData($"https://minfin.com.ua/data/currency/nbu/nbu.usd.stock.json")
+        var dataUsd = await GetJsonData($"https://minfin.com.ua/data/currency/nbu/nbu.usd.stock.json")
           .ConfigureAwait(false);
         if (!string.IsNullOrEmpty(dataUsd)) {
           var newRatesUsd = dataUsd.FromJson<NbuRateItem[]>();
@@ -131,7 +132,7 @@ namespace currency.watcher {
           }
         }
 
-        var dataEur = await Common.GetJsonData($"https://minfin.com.ua/data/currency/nbu/nbu.eur.stock.json")
+        var dataEur = await GetJsonData($"https://minfin.com.ua/data/currency/nbu/nbu.eur.stock.json")
   .ConfigureAwait(false);
         if (!string.IsNullOrEmpty(dataEur)) {
           var newRatesEur = dataEur.FromJson<NbuRateItem[]>();
@@ -148,7 +149,7 @@ namespace currency.watcher {
           }
         }
 
-        var dataPrivat24 = await Common.GetJsonData("https://otp24.privatbank.ua/v3/api/1/info/currency/history", 30, "POST");
+        var dataPrivat24 = await GetJsonData("https://otp24.privatbank.ua/v3/api/1/info/currency/history", 30, "POST");
         if (!string.IsNullOrEmpty(dataPrivat24)) {
           var historyData = dataPrivat24.FromJson<Privat24HistoryResponse>();
           if (historyData?.Data?.History != null && historyData.Data.History.Length > 0) {
@@ -204,5 +205,31 @@ namespace currency.watcher {
       });
 
     }
+
+    public static async Task<string> GetJsonData(string uri, int timeout = 10, string method = "GET") {
+      var request = (HttpWebRequest)WebRequest.Create(uri);
+      request.Method = method;
+      request.Timeout = timeout * 1000;
+      request.UserAgent =
+        "Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.500.27 Safari/537.36";
+      //request.Accept = "text/xml,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
+      request.ContentType = "application/json; charset=utf-8";
+      try {
+        using (var webResp = await request.GetResponseAsync().ConfigureAwait(false)) {
+          using (var stream = webResp.GetResponseStream()) {
+            if (stream == null) return null;
+            var answer = new StreamReader(stream, Encoding.UTF8);
+            var result = await answer.ReadToEndAsync().ConfigureAwait(false);
+            return result;
+          }
+        }
+      }
+      catch (Exception ex) {
+        Console.WriteLine(ex);
+      }
+
+      return null;
+    }
+
   }
 }

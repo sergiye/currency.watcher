@@ -24,6 +24,7 @@
     <Compile Include="..\..\common\sergiye.Common.UI\Themes\LightTheme.cs" Link="Common\Themes\LightTheme.cs" />
     <Compile Include="..\..\common\sergiye.Common.UI\Themes\DarkTheme.cs" Link="Common\Themes\DarkTheme.cs" />
     <Compile Include="..\..\common\sergiye.Common.UI\Themes\CustomTheme.cs" Link="Common\Themes\CustomTheme.cs" />
+    <Compile Include="..\..\common\sergiye.Common.UI\ToolStripRadioButtonMenuItem.cs" Link="Common\ToolStripRadioButtonMenuItem.cs" />
     <EmbeddedResource Include="..\themes\*.json" Link="themes\%(Filename)%(Extension)" />
     <Compile Update="*Form.cs" SubType="Form" />
     <Compile Update="MainForm.Designer.cs" DependentUpon="MainForm.cs" />
