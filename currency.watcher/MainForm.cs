@@ -1,10 +1,10 @@
-﻿using System;
+﻿using sergiye.Common;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -16,7 +16,7 @@ namespace currency.watcher {
     private readonly string appTitle;
     private readonly Timer timer;
     private DateTime lastMinfinStats;
-    private readonly List<CombinedTradeItem> combinedTradeItems = new List<CombinedTradeItem>();
+    private readonly List<CombinedTradeItem> combinedTradeItems = [];
     
     private DataProvider dataProvider;
 
@@ -25,6 +25,8 @@ namespace currency.watcher {
     private const int SysMenuAboutId = 0x1;
     private const int SysMenuTopMost = 0x2;
     private const int SysMenuStickEdges = 0x3;
+    private const int SysMenuAppSite = 0x4;
+    private const int SysMenuCheckUpdates = 0x5;
 
     protected override void OnHandleCreated(EventArgs e) {
 
@@ -39,7 +41,9 @@ namespace currency.watcher {
       Common.AppendMenu(hSysMenu, Common.MfSeparator, 0, string.Empty);
       Common.AppendMenu(hSysMenu, Common.MfString, SysMenuTopMost, "&Always on top");
       Common.AppendMenu(hSysMenu, Common.MfString, SysMenuStickEdges, "&Stick edges");
-      Common.AppendMenu(hSysMenu, Common.MfString, SysMenuAboutId, "&About…");
+      Common.AppendMenu(hSysMenu, Common.MfString, SysMenuAppSite, "Site");
+      Common.AppendMenu(hSysMenu, Common.MfString, SysMenuCheckUpdates, "Check for updates");
+      Common.AppendMenu(hSysMenu, Common.MfString, SysMenuAboutId, "About…");
     }
 
     protected override void WndProc(ref Message m) {
@@ -49,8 +53,13 @@ namespace currency.watcher {
       if (m.Msg == Common.WmSysCommand) {
         switch ((int)m.WParam) {
           case SysMenuAboutId:
-            var asm = Assembly.GetExecutingAssembly();
-            MessageBox.Show($"{((AssemblyTitleAttribute)Attribute.GetCustomAttribute(asm, typeof(AssemblyTitleAttribute), false)).Title} {asm.GetName().Version.ToString(3)} {(Environment.Is64BitProcess ? "x64" : "x32")}\nWritten by Sergiy Egoshyn (egoshin.sergey@gmail.com)", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($"{Updater.ApplicationTitle} {Updater.CurrentVersion} {(Environment.Is64BitProcess ? "x64" : "x86")}\nWritten by Sergiy Egoshyn (egoshin.sergey@gmail.com)", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            break;
+          case SysMenuCheckUpdates:
+            Updater.CheckForUpdates(false);
+            break;
+          case SysMenuAppSite:
+            Updater.VisitAppSite();
             break;
           case SysMenuTopMost:
             TopMost = !TopMost;
@@ -90,11 +99,24 @@ namespace currency.watcher {
       InitializeComponent();
 
       Icon = Icon.ExtractAssociatedIcon(AppSettings.AppPath);
+      MinimizeBox = false;
 
       this.ApplyColorScheme();
-        
-      var asm = Assembly.GetExecutingAssembly();
-      appTitle = $"{((AssemblyTitleAttribute)Attribute.GetCustomAttribute(asm, typeof(AssemblyTitleAttribute), false)).Title} {(Environment.Is64BitProcess ? "x64" : "x32")} ";
+
+      Updater.Subscribe(
+        (message, isError) => MessageBox.Show(message, Updater.ApplicationTitle, MessageBoxButtons.OK, isError ? MessageBoxIcon.Warning : MessageBoxIcon.Information),
+        (message) => MessageBox.Show(message, Updater.ApplicationTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK,
+        Application.Exit
+      );
+      var updaterTimer = new Timer();
+      updaterTimer.Tick += async (_, _) => {
+        updaterTimer.Enabled = false;
+        updaterTimer.Enabled = !await Updater.CheckForUpdatesAsync(true);
+      };
+      updaterTimer.Interval = 10000;
+      updaterTimer.Enabled = true;
+
+      appTitle = $"{Updater.ApplicationTitle} {(Environment.Is64BitProcess ? "x64" : "x32")} ";
       Text = appTitle;
 
       //configure chart
@@ -236,7 +258,71 @@ namespace currency.watcher {
       lstRates.DoubleClick += (s, e) => {
         Process.Start("https://next.privat24.ua/exchange-rates");
       };
+
+      InitializeTheme();
     }
+
+    #region themes
+
+    private void OnThemeCurrentChecnged() {
+    }
+
+    private void InitializeTheme() {
+
+      Theme.OnCurrentChanged -= OnThemeCurrentChecnged;
+      OnThemeCurrentChecnged(); //apply current theme colors
+      Theme.OnCurrentChanged += OnThemeCurrentChecnged;
+
+      //themeMenuItem.DropDownItems.Clear();
+
+      if (Theme.SupportsAutoThemeSwitching()) {
+        //themeMenuItem.DropDownItems.Add(new ToolStripRadioButtonMenuItem("Auto", null, (o, e) => {
+        //  (o as ToolStripRadioButtonMenuItem).Checked = true;
+        //Theme.SetAutoTheme();
+        //  AppSettings.Instance.Theme = "auto";
+        //}));
+      }
+
+      var settingsTheme = AppSettings.Instance.Theme;
+      var allThemes = CustomTheme.GetAllThemes("themes", "winUpdateMiniTool.themes").OrderBy(x => x.DisplayName).ToList();
+      var setTheme = allThemes.FirstOrDefault(theme => settingsTheme == theme.Id);
+      if (setTheme != null) {
+        Theme.Current = setTheme;
+      }
+
+      AddThemeMenuItems(allThemes.Where(t => t is not CustomTheme));
+      var customThemes = allThemes.Where(t => t is CustomTheme).ToList();
+      if (customThemes.Count > 0) {
+        //themeMenuItem.DropDownItems.Add("-");
+        AddThemeMenuItems(customThemes);
+      }
+
+      //if (setTheme == null && themeMenuItem.DropDownItems.Count > 0)
+      //  themeMenuItem.DropDownItems[0].PerformClick();
+
+      //Theme.Current.Apply(this);
+    }
+
+    private void AddThemeMenuItems(IEnumerable<Theme> themes) {
+      //foreach (var theme in themes) {
+      //  var item = new ToolStripRadioButtonMenuItem(theme.DisplayName, null, OnThemeMenuItemClick);
+      //  item.Tag = theme;
+      //  themeMenuItem.DropDownItems.Add(item);
+      //  if (Theme.Current != null && Theme.Current.Id == theme.Id) {
+      //    item.Checked = true;
+      //  }
+      //}
+    }
+
+    private void OnThemeMenuItemClick(object sender, EventArgs e) {
+      //if (sender is not ToolStripRadioButtonMenuItem item || item.Tag is not Theme theme)
+      //  return;
+      //item.Checked = true;
+      //Theme.Current = theme;
+      //AppSettings.Instance.Theme = theme.Id;
+    }
+
+    #endregion
 
     private void GetJsonData(string uri, Action<string> onResponse, int timeout = 10, string method = "GET") {
 
@@ -290,8 +376,8 @@ namespace currency.watcher {
         var timePart = currentItem.Date;
         var lvItem = lstRates.Items.Add(timePart.ToString("dd:MM"));
 
-        lvItem.UseItemStyleForSubItems = !ColorScheme.AppsUseLightTheme;
-        if (!ColorScheme.AppsUseLightTheme)
+        lvItem.UseItemStyleForSubItems = !Theme.AppsUseLightTheme;
+        if (!Theme.AppsUseLightTheme)
           lvItem.BackColor = ColorScheme.GetDiffColor(currentItem.NbuRateUsd, prevItem.NbuRateUsd);
         
         lvItem.SubItems.Add(currentItem.NbuRateUsd.ToString("n3"), lstRates.ForeColor, ColorScheme.GetDiffColor(currentItem.NbuRateUsd, prevItem.NbuRateUsd), lstRates.Font);
@@ -435,8 +521,8 @@ namespace currency.watcher {
         var prevItem = unlockedData[i + 1];
         if (prevItem.RatesEquals(currentItem)) continue;
         var lvItem = lstFinanceHistory.Items.Add(currentItem.Date);
-        lvItem.UseItemStyleForSubItems = !ColorScheme.AppsUseLightTheme;
-        if (!ColorScheme.AppsUseLightTheme)
+        lvItem.UseItemStyleForSubItems = !Theme.AppsUseLightTheme;
+        if (!Theme.AppsUseLightTheme)
           lvItem.BackColor = ColorScheme.GetDiffColor(currentItem.UsdB, prevItem.UsdB);
         lvItem.SubItems.Add(currentItem.UsdB.ToString("n3"), lstFinanceHistory.ForeColor,
           ColorScheme.GetDiffColor(currentItem.UsdB, prevItem.UsdB), lstFinanceHistory.Font);

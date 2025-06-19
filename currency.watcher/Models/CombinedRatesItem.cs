@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using sergiye.Common;
 using System;
 
 namespace currency.watcher {

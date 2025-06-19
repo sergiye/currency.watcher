@@ -1,28 +1,11 @@
 ﻿using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Microsoft.Win32;
+using sergiye.Common;
 
 namespace currency.watcher {
   
   public static class ColorScheme {
-
-    [DllImport("dwmapi.dll")]
-    private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
-    
-    [DllImport("uxtheme.dll", SetLastError=true, ExactSpelling=true, CharSet=CharSet.Unicode)]
-
-    public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
-    
-    private const int DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1 = 19;
-    private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
-    private const int DWWMA_BORDER_COLOR = 34;
-    private const int DWMWA_MICA_EFFECT = 1029;
-    
-    private static bool IsWindows10OrGreater(int build = -1) {
-      return Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= build;
-    }
 
     #region Colors
     
@@ -31,32 +14,14 @@ namespace currency.watcher {
     public static Color PanelBackColor { get; } = SystemColors.Control;
     public static Color PanelForeColor { get; } = SystemColors.ControlText;
     public static readonly Color[] SeriesColors = { Color.Green, Color.Blue, Color.Orange };
-    public static Color ColorGreater => AppsUseLightTheme ? Color.FromArgb(0xF7CF18) : Color.FromArgb(0xBF652E);
-    public static Color ColorLower => AppsUseLightTheme ? Color.FromArgb(0x8AB1F2) : Color.FromArgb(0x2170CF);
+    public static Color ColorGreater => Theme.AppsUseLightTheme ? Color.FromArgb(0xF7CF18) : Color.FromArgb(0xBF652E);
+    public static Color ColorLower => Theme.AppsUseLightTheme ? Color.FromArgb(0x8AB1F2) : Color.FromArgb(0x2170CF);
 
     #endregion
     
-    private static int? appsUseLightTheme;
-    public static bool AppsUseLightTheme {
-      get {
-        if (!appsUseLightTheme.HasValue) {
-          try {
-            // 0 : dark theme, 1 : light theme, -1 : undefined
-            appsUseLightTheme = (int) Registry.GetValue(
-              "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme",
-              -1);
-          }
-          catch {
-            appsUseLightTheme = 1;
-          }
-        }
-        return appsUseLightTheme == 1;
-      }
-    }
-    
     static ColorScheme() {
 
-      if (AppsUseLightTheme) return;
+      if (Theme.AppsUseLightTheme) return;
 
       InputBackColor = Color.FromArgb(0x3c, 0x3c, 0x3c);
       InputForeColor = Color.White;
@@ -65,16 +30,16 @@ namespace currency.watcher {
     }
 
     public static void ApplyColorScheme(this Control component) {
-      if (AppsUseLightTheme) return;
+      if (Theme.AppsUseLightTheme) return;
 
-      SetWindowTheme(component.Handle, "DarkMode_Explorer", null);
-      if (IsWindows10OrGreater(17763)) {
-        var attribute = IsWindows10OrGreater(18985)
-          ? DWMWA_USE_IMMERSIVE_DARK_MODE
-          : DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1;
+      Theme.SetWindowTheme(component.Handle, "DarkMode_Explorer", null);
+      if (Theme.IsWindows10OrGreater(17763)) {
+        var attribute = Theme.IsWindows10OrGreater(18985)
+          ? Theme.DWMWA_USE_IMMERSIVE_DARK_MODE
+          : Theme.DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1;
         var trueValue = 0x01;
-        DwmSetWindowAttribute(component.Handle, attribute, ref trueValue, sizeof(int));
-        DwmSetWindowAttribute(component.Handle, DWMWA_MICA_EFFECT, ref trueValue, sizeof(int));
+        Theme.DwmSetWindowAttribute(component.Handle, attribute, ref trueValue, sizeof(int));
+        Theme.DwmSetWindowAttribute(component.Handle, Theme.DWMWA_MICA_EFFECT, ref trueValue, sizeof(int));
       }
       // var border = int.Parse(ToBgr(InputBackColor), System.Globalization.NumberStyles.HexNumber);
       // DwmSetWindowAttribute(component.Handle, DWWMA_BORDER_COLOR, ref border, sizeof(int));
@@ -106,12 +71,15 @@ namespace currency.watcher {
           component.ForeColor = PanelForeColor;
           tabControl.DrawMode = TabDrawMode.OwnerDrawFixed;
           tabControl.DrawItem += (sender, e) => {
-            var page = tabControl.TabPages[e.Index];
-            e.Graphics.FillRectangle(new SolidBrush(page.BackColor), e.Bounds);
-            var paddedBounds = e.Bounds;
-            var yOffset = (e.State == DrawItemState.Selected) ? -2 : 1;
-            paddedBounds.Offset(1, yOffset);
-            TextRenderer.DrawText(e.Graphics, page.Text, e.Font, paddedBounds, page.ForeColor);
+            e.Graphics.Clear(tabControl.TabPages[0].BackColor);
+            //var page = tabControl.TabPages[e.Index];
+            foreach (TabPage page in tabControl.TabPages) {
+              //e.Graphics.FillRectangle(new SolidBrush(page.BackColor), e.Bounds);
+              //var paddedBounds = e.Bounds;
+              //var yOffset = (e.State == DrawItemState.Selected) ? -2 : 1;
+              //paddedBounds.Offset(1, yOffset);
+              TextRenderer.DrawText(e.Graphics, page.Text, e.Font, page.Bounds, Color.White);
+            }
           };
           break;
         case ListView listView:

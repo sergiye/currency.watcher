@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using sergiye.Common;
 
 namespace currency.watcher {
 
@@ -18,7 +19,8 @@ namespace currency.watcher {
     public double Opacity = 1;
     public bool TopMost;
     public bool StickToEdges;
-    
+    public string Theme;
+
     public int ChartViewMode;
     public bool ChartLines;
     public bool ShowNbu;
@@ -55,6 +57,7 @@ namespace currency.watcher {
       key.SetValue("Opacity", Opacity);
       key.SetValue("TopMost", TopMost);
       key.SetValue("StickToEdges", StickToEdges);
+      key.SetValue("Theme", Theme);
         
       // key.SetValue("RefreshInterval")?.ToString(), out result.RefreshInterval);
 
@@ -105,6 +108,7 @@ namespace currency.watcher {
       double.TryParse(key.GetValue("Opacity")?.ToString(), out result.Opacity);
       bool.TryParse(key.GetValue("TopMost")?.ToString(), out result.TopMost);
       bool.TryParse(key.GetValue("StickToEdges")?.ToString(), out result.StickToEdges);
+      result.Theme = key.GetValue("Theme")?.ToString();
       
       // int.TryParse(key.GetValue("RefreshInterval")?.ToString(), out result.RefreshInterval);
 
