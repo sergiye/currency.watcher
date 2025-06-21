@@ -176,6 +176,7 @@ namespace currency.watcher {
       this.Load += (sender, args) => {
 
         dataProvider = new DataProvider(AppSettings.AppPath);
+        UpdateRates();
         dataProvider.OnDataChanged += () => {
           UpdateRates();
           UpdateMinfinChartData();
@@ -357,7 +358,6 @@ namespace currency.watcher {
 
     private void UpdateData() {
       
-      UpdateRates();
       dataProvider.Refresh();
 
       if (lastMinfinStats.AddMinutes(30) < DateTime.Now) {

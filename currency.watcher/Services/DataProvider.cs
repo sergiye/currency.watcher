@@ -80,14 +80,15 @@ namespace currency.watcher {
         rates = new List<CombinedRatesItem>();
     }
 
-    private void SaveNbuRates() {
-      if (string.IsNullOrEmpty(nbuRatesFile)) return;
+    private bool SaveNbuRates() {
+      if (string.IsNullOrEmpty(nbuRatesFile)) return false;
       if (OptimizeRates() == false)
-        return;
+        return false;
       lock (rates) {
         var data = rates.ToJson();
         File.WriteAllText(nbuRatesFile, data);
       }
+      return true;
     }
 
     private bool OptimizeRates() {
@@ -198,8 +199,8 @@ namespace currency.watcher {
             }
           }
 
-          SaveNbuRates();
-          OnDataChanged?.Invoke();
+          if (SaveNbuRates())
+            OnDataChanged?.Invoke();
         }
 
       });
