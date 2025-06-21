@@ -274,6 +274,8 @@ namespace currency.watcher {
 
     private void OnThemeCurrentChecnged() {
       btnRefresh.BackgroundImage = Theme.Current.GetBitmapFromImage((Image)resources.GetObject("btnRefresh.BackgroundImage"), new Size(25, 25));
+      UpdateRates();
+      UpdateTradeInfo();
     }
 
     private void InitializeTheme() {
@@ -372,16 +374,14 @@ namespace currency.watcher {
 
     private void UpdateRates() {
 
-      if (dataProvider.IsEmpty()) return;
-
       if (InvokeRequired) {
         Invoke(new Action(UpdateRates));
         return;
       }
 
-      //Text = $"{appTitle} (NBU: {lastItem.Rate:n3} {lastItem.Date:M})";
-
       lstRates.Items.Clear();
+      if (dataProvider == null || dataProvider.IsEmpty()) return;
+      //Text = $"{appTitle} (NBU: {lastItem.Rate:n3} {lastItem.Date:M})";
 
       var data = dataProvider.Take(100);
       if (data == null || data.Length == 0) return;
@@ -517,7 +517,7 @@ namespace currency.watcher {
               old.EurS = sell;
               dataChanged = true;
             }
-          } 
+          }
         }
 
         if (dataChanged) {
@@ -526,7 +526,11 @@ namespace currency.watcher {
       }
 
       if (!dataChanged) return;
-      
+      UpdateTradeInfo();
+    }
+
+    private void UpdateTradeInfo() {
+
       CombinedTradeItem[] unlockedData;
       lock(combinedTradeItems)
         unlockedData = combinedTradeItems.ToArray();
