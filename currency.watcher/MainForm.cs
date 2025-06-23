@@ -17,7 +17,7 @@ namespace currency.watcher {
     private readonly Timer timer;
     private DateTime lastMinfinStats;
     private readonly List<CombinedTradeItem> combinedTradeItems = [];
-    private readonly MenuItem themeMenuItem;
+    private readonly MenuItem themeMenuItem = new MenuItem("&Themes");
     private DataProvider dataProvider;
     private readonly ComponentResourceManager resources = new(typeof(MainForm));
 
@@ -35,11 +35,17 @@ namespace currency.watcher {
 
       var hSysMenu = WinApiHelper.GetSystemMenu(Handle, false);
 
-      //Common.DeleteMenu(hSysMenu, Common.SC_SIZE, Common.MfByCommand); // Disable resizing
-      WinApiHelper.DeleteMenu(hSysMenu, WinApiHelper.SC_MINIMIZE, WinApiHelper.MF_BY_COMMAND); // Disable minimizing
-      WinApiHelper.DeleteMenu(hSysMenu, WinApiHelper.SC_MAXIMIZE, WinApiHelper.MF_BY_COMMAND); // Disable maximizing
+      uint menuIndex = 4;
+      //WinApiHelper.DeleteMenu(hSysMenu, WinApiHelper.SC_SIZE, WinApiHelper.MF_BY_COMMAND);
+      if (!MinimizeBox) {
+        WinApiHelper.DeleteMenu(hSysMenu, WinApiHelper.SC_MINIMIZE, WinApiHelper.MF_BY_COMMAND);
+        menuIndex--;
+      }
+      if (!MaximizeBox) {
+        WinApiHelper.DeleteMenu(hSysMenu, WinApiHelper.SC_MAXIMIZE, WinApiHelper.MF_BY_COMMAND);
+        menuIndex--;
+      }
 
-      uint menuIndex = 2;
       WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION | WinApiHelper.MF_SEPARATOR, 0, string.Empty);
       WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION, SysMenuTopMost, "&Always on top");
       WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION, SysMenuStickEdges, "&Stick edges");
@@ -57,7 +63,7 @@ namespace currency.watcher {
       if (m.Msg == WinApiHelper.WM_SYS_COMMAND) {
         switch ((int)m.WParam) {
           case SysMenuAboutId:
-            MessageBox.Show($"{Updater.ApplicationTitle} {Updater.CurrentVersion} {(Environment.Is64BitProcess ? "x64" : "x86")}\nWritten by Sergiy Egoshyn (egoshin.sergey@gmail.com)", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Updater.ShowAbout();
             break;
           case SysMenuCheckUpdates:
             Updater.CheckForUpdates(false);
@@ -88,9 +94,7 @@ namespace currency.watcher {
     }
 
     private static bool DoSnap(int pos, int edge) {
-      const int snapDist = 50;
-      var delta = Math.Abs(pos - edge);
-      return delta <= snapDist;
+      return Math.Abs(pos - edge) <= 50;
     }
 
     private void MainForm_ResizeEnd(object sender, EventArgs e) {
@@ -109,8 +113,6 @@ namespace currency.watcher {
       InitializeComponent();
 
       Icon = Icon.ExtractAssociatedIcon(AppSettings.AppPath);
-      MinimizeBox = false;
-      themeMenuItem = new MenuItem("&Themes");
 
       Updater.Subscribe(
         (message, isError) => MessageBox.Show(message, Updater.ApplicationTitle, MessageBoxButtons.OK, isError ? MessageBoxIcon.Warning : MessageBoxIcon.Information),
@@ -187,7 +189,6 @@ namespace currency.watcher {
         Height = AppSettings.Instance.Height;
         Width = AppSettings.Instance.Width;
         Opacity = AppSettings.Instance.Opacity;
-
 
         lstRates.Width = AppSettings.Instance.HistoryWidth;
         for (var i = 0; i < 5; i++) {
@@ -273,7 +274,9 @@ namespace currency.watcher {
 
     #region themes
 
-    private void OnThemeCurrentChecnged() {
+    private void OnThemeCurrentChanged() {
+      AppSettings.Instance.Theme = Theme.IsAutoThemeEnabled ? "auto" : Theme.Current.Id;
+
       btnRefresh.BackgroundImage = Theme.Current.GetBitmapFromImage((Image)resources.GetObject("btnRefresh.BackgroundImage"), new Size(25, 25));
       UpdateRates();
       UpdateTradeInfo();
@@ -285,60 +288,19 @@ namespace currency.watcher {
       lstRates.Tag = Theme.SkipThemeSubItems;
       lstFinanceHistory.Tag = Theme.SkipThemeSubItems;
 
-      Theme.OnCurrentChanged -= OnThemeCurrentChecnged;
-      OnThemeCurrentChecnged(); //apply current theme colors
-      Theme.OnCurrentChanged += OnThemeCurrentChecnged;
-
-      var menuHandle = WinApiHelper.GetSystemMenu(Handle, false); // Note: to restore default set true
+      var menuHandle = WinApiHelper.GetSystemMenu(Handle, false);
       WinApiHelper.RemoveMenu(menuHandle, (uint)themeMenuItem.Tag, WinApiHelper.MF_BY_POSITION);
-      themeMenuItem.MenuItems.Clear(); //themeMenuItem.DropDownItems.Clear();
-
-      if (Theme.SupportsAutoThemeSwitching()) {
-        themeMenuItem.MenuItems.Add(new RadioButtonMenuItem("Auto", (o, e) => {
-          (o as RadioButtonMenuItem).Checked = true;
-          Theme.SetAutoTheme();
-          AppSettings.Instance.Theme = "auto";
-        }));
-      }
-
-      var settingsTheme = AppSettings.Instance.Theme;
-      var allThemes = CustomTheme.GetAllThemes("themes", "currency.watcher.themes").OrderBy(x => x.DisplayName).ToList();
-      var setTheme = allThemes.FirstOrDefault(theme => settingsTheme == theme.Id);
-      if (setTheme != null) {
-        Theme.Current = setTheme;
-      }
-
-      AddThemeMenuItems(allThemes.Where(t => t is not CustomTheme));
-      var customThemes = allThemes.Where(t => t is CustomTheme).ToList();
-      if (customThemes.Count > 0) {
-        themeMenuItem.MenuItems.Add("-");
-        AddThemeMenuItems(customThemes);
-      }
-
-      if (setTheme == null && themeMenuItem.MenuItems.Count > 0)
-        themeMenuItem.MenuItems[0].PerformClick();
-      WinApiHelper.InsertMenu(menuHandle, (uint)themeMenuItem.Tag, WinApiHelper.MF_BY_POSITION | WinApiHelper.MF_POPUP, (int)themeMenuItem.Handle, themeMenuItem.Text);
-
-      Theme.Current.Apply(this);
-    }
-
-    private void AddThemeMenuItems(IEnumerable<Theme> themes) {
-      foreach (var theme in themes) {
-        var item = new RadioButtonMenuItem(theme.DisplayName, OnThemeMenuItemClick);
+      //themeMenuItem.MenuItems.Clear();
+      var currentItem = CustomTheme.FillThemesMenu((text, theme, onClick) => {
+        var item = new RadioButtonMenuItem(text, onClick);
         themeMenuItem.MenuItems.Add(item);
         item.Tag = theme;
-        if (Theme.Current != null && Theme.Current.Id == theme.Id) {
-          item.Checked = true;
-        }
-      }
-    }
+        return item;
+      }, OnThemeCurrentChanged, AppSettings.Instance.Theme, "currency.watcher.themes");
+      WinApiHelper.InsertMenu(menuHandle, (uint)themeMenuItem.Tag, WinApiHelper.MF_BY_POSITION | WinApiHelper.MF_POPUP, (int)themeMenuItem.Handle, themeMenuItem.Text);
+      currentItem?.PerformClick();
 
-    private void OnThemeMenuItemClick(object sender, EventArgs e) {
-      if (sender is not RadioButtonMenuItem item || item.Tag is not Theme theme)
-        return;
-      item.Checked = true;
-      Theme.Current = theme;
-      AppSettings.Instance.Theme = theme.Id;
+      Theme.Current.Apply(this);
     }
 
     #endregion
