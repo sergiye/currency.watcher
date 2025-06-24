@@ -24,12 +24,14 @@ namespace currency.watcher {
     public int ChartViewMode;
     public bool ChartLines;
     public bool ShowNbu;
-    
+    public bool Taxes;
+
     public readonly int RefreshInterval = 30;
 
     public int[] FinanceHistorySizes = { 40, 50, 50, 50, 50 };
     public int[] HistorySizes = { 100, 90, 90, 55, 55, 55, 55 };
     public int HistoryWidth = 300;
+    public int HistoryHeight = 100;
     public bool PortableMode = true;
     public static readonly string AppPath;
 
@@ -64,6 +66,7 @@ namespace currency.watcher {
       key.SetValue("ChartViewMode", ChartViewMode);
       key.SetValue("ChartLines", ChartLines);
       key.SetValue("ShowNbu", ShowNbu);
+      key.SetValue("Taxes", Taxes);
       key.SetValue("FinanceHistorySizes1", FinanceHistorySizes[0]);
       key.SetValue("FinanceHistorySizes2", FinanceHistorySizes[1]);
       key.SetValue("FinanceHistorySizes3", FinanceHistorySizes[2]);
@@ -78,6 +81,7 @@ namespace currency.watcher {
       key.SetValue("HistorySizes7", HistorySizes[6]);
 
       key.SetValue("HistoryWidth", HistoryWidth);
+      key.SetValue("HistoryHeight", HistoryHeight);
     }
 
     private static AppSettings Load() {
@@ -115,6 +119,7 @@ namespace currency.watcher {
       result.ChartViewMode = TryGetInt(key.GetValue("ChartViewMode")?.ToString(), result.ChartViewMode);
       bool.TryParse(key.GetValue("ChartLines")?.ToString(), out result.ChartLines);
       bool.TryParse(key.GetValue("ShowNbu")?.ToString(), out result.ShowNbu);
+      bool.TryParse(key.GetValue("Taxes")?.ToString(), out result.Taxes);
       result.FinanceHistorySizes[0] = TryGetInt(key.GetValue("FinanceHistorySizes1")?.ToString(), result.FinanceHistorySizes[0]);
       result.FinanceHistorySizes[1] = TryGetInt(key.GetValue("FinanceHistorySizes2")?.ToString(), result.FinanceHistorySizes[1]);
       result.FinanceHistorySizes[2] = TryGetInt(key.GetValue("FinanceHistorySizes3")?.ToString(), result.FinanceHistorySizes[2]);
@@ -129,6 +134,7 @@ namespace currency.watcher {
       result.HistorySizes[6] = TryGetInt(key.GetValue("HistorySizes7")?.ToString(), result.HistorySizes[6]);
 
       result.HistoryWidth = TryGetInt(key.GetValue("HistoryWidth")?.ToString(), result.HistoryWidth);
+      result.HistoryHeight = TryGetInt(key.GetValue("HistoryHeight")?.ToString(), result.HistoryHeight);
 
       return result;
     }

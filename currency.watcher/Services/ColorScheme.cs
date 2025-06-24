@@ -8,8 +8,6 @@ namespace currency.watcher {
 
     #region Colors
     
-    public static readonly Color[] SeriesColors = { Color.Green, Color.Blue, Color.Orange };
-
     private static Color ColorGreater => Theme.Current.WindowTitleBarFallbackToImmersiveDarkMode ? Color.FromArgb(0xBF652E) : Color.FromArgb(0xF7CF18);
     private static Color ColorLower => Theme.Current.WindowTitleBarFallbackToImmersiveDarkMode ? Color.FromArgb(0x2170CF) : Color.FromArgb(0x8AB1F2);
 

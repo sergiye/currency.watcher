@@ -142,11 +142,11 @@ namespace currency.watcher {
       chartArea.Name = "ChartArea1";
       this.chart.ChartAreas.Add(chartArea);
 
-      for(var i = 0; i < ColorScheme.SeriesColors.Length; i++) {
+      for (var i = 0; i < 3; i++) {
         chart.Series.Add(new Series {
           ChartArea = chart.ChartAreas[0].Name,
           ChartType = SeriesChartType.Spline,
-          Color = ColorScheme.SeriesColors[i],
+          //Color = seriesColors[i],
           MarkerStyle = MarkerStyle.Circle,
           Name = $"Series{i}",
           //XValueType = ChartValueType.Date,
@@ -190,7 +190,8 @@ namespace currency.watcher {
         Width = AppSettings.Instance.Width;
         Opacity = AppSettings.Instance.Opacity;
 
-        lstRates.Width = AppSettings.Instance.HistoryWidth;
+        panRates.Width = AppSettings.Instance.HistoryWidth;
+        lstFinanceHistory.Height = AppSettings.Instance.HistoryHeight;
         for (var i = 0; i < 5; i++) {
           lstFinanceHistory.Columns[i].Width = AppSettings.Instance.FinanceHistorySizes[i];
         }
@@ -202,6 +203,7 @@ namespace currency.watcher {
         cmbChartMode.SelectedIndex = AppSettings.Instance.ChartViewMode;
         cbxChartGridMode.Checked = AppSettings.Instance.ChartLines;
         cbxShowNbu.Checked = AppSettings.Instance.ShowNbu;
+        cbxTaxes.Checked = AppSettings.Instance.Taxes;
 
         var hSysMenu = WinApiHelper.GetSystemMenu(Handle, false);
         if (AppSettings.Instance.TopMost) {
@@ -223,7 +225,8 @@ namespace currency.watcher {
         AppSettings.Instance.Width = Width;
         AppSettings.Instance.Opacity = Opacity;
 
-        AppSettings.Instance.HistoryWidth = lstRates.Width;
+        AppSettings.Instance.HistoryWidth = panRates.Width;
+        AppSettings.Instance.HistoryHeight = lstFinanceHistory.Height;
         for (var i = 0; i < 5; i++) {
           AppSettings.Instance.FinanceHistorySizes[i] = lstFinanceHistory.Columns[i].Width;
         }
@@ -234,6 +237,7 @@ namespace currency.watcher {
         AppSettings.Instance.ChartViewMode = cmbChartMode.SelectedIndex;
         AppSettings.Instance.ChartLines = cbxChartGridMode.Checked;
         AppSettings.Instance.ShowNbu = cbxShowNbu.Checked;
+        AppSettings.Instance.Taxes = cbxTaxes.Checked;
 
         AppSettings.Instance.Save();
       };
@@ -280,6 +284,23 @@ namespace currency.watcher {
       btnRefresh.BackgroundImage = Theme.Current.GetBitmapFromImage((Image)resources.GetObject("btnRefresh.BackgroundImage"), new Size(25, 25));
       UpdateRates();
       UpdateTradeInfo();
+      chart.ChartAreas[0].BackColor = Theme.Current.BackgroundColor;
+
+      chart.Series[0].Color = Theme.Current.MessageColor;
+      chart.Series[1].Color = Theme.Current.WarnColor;
+      chart.Series[2].Color = Theme.Current.InfoColor;
+
+      chart.ChartAreas[0].AxisY.MajorGrid.LineColor = Theme.Current.ForegroundColor;
+      chart.ChartAreas[0].AxisX.MajorGrid.LineColor = Theme.Current.ForegroundColor;
+      chart.ChartAreas[0].AxisY.LabelStyle.ForeColor = Theme.Current.ForegroundColor;
+      chart.ChartAreas[0].AxisX.LabelStyle.ForeColor = Theme.Current.ForegroundColor;
+      chart.ChartAreas[0].AxisX.TitleForeColor = Theme.Current.ForegroundColor;
+      chart.ChartAreas[0].AxisY.TitleForeColor = Theme.Current.ForegroundColor;
+      chart.ChartAreas[0].AxisX.LineColor = Theme.Current.StrongLineColor;
+      chart.ChartAreas[0].AxisY.LineColor = Theme.Current.StrongLineColor;
+      chart.ChartAreas[0].AxisX.InterlacedColor = Theme.Current.SelectedBackgroundColor;
+      chart.ChartAreas[0].AxisY.InterlacedColor = Theme.Current.SelectedBackgroundColor;
+      chart.ChartAreas[0].BackSecondaryColor = Theme.Current.ForegroundColor;
     }
 
     private void InitializeTheme() {
@@ -557,10 +578,6 @@ namespace currency.watcher {
       }
     }
 
-    private void tabControl_SelectedIndexChanged(object sender, EventArgs e) {
-      panGridOptions.Visible = tabControl.SelectedIndex == 1;
-    }
-
     private void numTaxesSource_ValueChanged(object sender, EventArgs e) {
       var usd = numTaxesSource.Value;
       var date = dtTaxesSource.Value;
@@ -575,6 +592,10 @@ namespace currency.watcher {
       }
       txtUahResult.Clear();
       txtTaxesResult.Clear();
+    }
+
+    private void cbxTaxes_CheckedChanged(object sender, EventArgs e) {
+      panTaxes.Visible = cbxTaxes.Checked;
     }
   }
 }
