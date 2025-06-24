@@ -333,7 +333,7 @@ namespace currency.watcher {
       this.cbxChartGridMode.Name = "cbxChartGridMode";
       this.cbxChartGridMode.Size = new System.Drawing.Size(120, 30);
       this.cbxChartGridMode.TabIndex = 2;
-      this.cbxChartGridMode.Text = "Grid lines";
+      this.cbxChartGridMode.Text = "Axis";
       this.cbxChartGridMode.UseVisualStyleBackColor = true;
       // 
       // gridSplitter
