@@ -2,7 +2,7 @@
 using System;
 using System.Globalization;
 
-namespace sergiye.Common {
+namespace currency.watcher {
 
   public static class JsonExtensions {
     

@@ -280,6 +280,8 @@ namespace currency.watcher {
 
     private void OnThemeCurrentChanged() {
       AppSettings.Instance.Theme = Theme.IsAutoThemeEnabled ? "auto" : Theme.Current.Id;
+      Visible = false;
+      Visible = true;
 
       btnRefresh.BackgroundImage = Theme.Current.GetBitmapFromImage((Image)resources.GetObject("btnRefresh.BackgroundImage"), new Size(25, 25));
       UpdateRates();
