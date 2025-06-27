@@ -28,6 +28,7 @@ namespace currency.watcher {
     private const int SysMenuStickEdges = 0x3;
     private const int SysMenuAppSite = 0x4;
     private const int SysMenuCheckUpdates = 0x5;
+    private const int SysMenuPortable = 0x6;
 
     protected override void OnHandleCreated(EventArgs e) {
 
@@ -47,8 +48,10 @@ namespace currency.watcher {
       }
 
       WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION | WinApiHelper.MF_SEPARATOR, 0, string.Empty);
-      WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION, SysMenuTopMost, "&Always on top");
-      WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION, SysMenuStickEdges, "&Stick edges");
+      WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, AppSettings.Instance.TopMost ? WinApiHelper.MF_CHECKED | WinApiHelper.MF_BY_POSITION : WinApiHelper.MF_BY_POSITION, SysMenuTopMost, "Always on top");
+      TopMost = AppSettings.Instance.TopMost;
+      WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, AppSettings.Instance.StickToEdges ? WinApiHelper.MF_CHECKED | WinApiHelper.MF_BY_POSITION : WinApiHelper.MF_BY_POSITION, SysMenuStickEdges, "Stick edges");
+      WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, AppSettings.Instance.PortableMode ? WinApiHelper.MF_CHECKED | WinApiHelper.MF_BY_POSITION : WinApiHelper.MF_BY_POSITION, SysMenuPortable, "Portable");
       WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION | WinApiHelper.MF_POPUP, (int)themeMenuItem.Handle, themeMenuItem.Text);
       themeMenuItem.Tag = menuIndex;
       WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION, SysMenuAppSite, "Site");
@@ -81,6 +84,11 @@ namespace currency.watcher {
             AppSettings.Instance.StickToEdges = !AppSettings.Instance.StickToEdges;
             hSysMenu = WinApiHelper.GetSystemMenu(Handle, false);
             WinApiHelper.CheckMenuItem(hSysMenu, SysMenuStickEdges, AppSettings.Instance.StickToEdges ? WinApiHelper.MF_CHECKED : WinApiHelper.MF_UNCHECKED);
+            break;
+          case SysMenuPortable:
+            AppSettings.Instance.PortableMode = !AppSettings.Instance.PortableMode;
+            hSysMenu = WinApiHelper.GetSystemMenu(Handle, false);
+            WinApiHelper.CheckMenuItem(hSysMenu, SysMenuPortable, AppSettings.Instance.PortableMode ? WinApiHelper.MF_CHECKED : WinApiHelper.MF_UNCHECKED);
             break;
         }
       } else if (m.Msg == WinApiHelper.WM_SHOWME) {
@@ -204,15 +212,6 @@ namespace currency.watcher {
         cbxChartGridMode.Checked = AppSettings.Instance.ChartLines;
         cbxShowNbu.Checked = AppSettings.Instance.ShowNbu;
         cbxTaxes.Checked = AppSettings.Instance.Taxes;
-
-        var hSysMenu = WinApiHelper.GetSystemMenu(Handle, false);
-        if (AppSettings.Instance.TopMost) {
-          TopMost = true;
-          WinApiHelper.CheckMenuItem(hSysMenu, SysMenuTopMost, WinApiHelper.MF_CHECKED);
-        }
-        if (AppSettings.Instance.StickToEdges) {
-          WinApiHelper.CheckMenuItem(hSysMenu, SysMenuStickEdges, WinApiHelper.MF_CHECKED);
-        }
 
         UpdateData();
         numTaxesSource_ValueChanged(this, EventArgs.Empty);

@@ -11,6 +11,7 @@ namespace currency.watcher {
     private static readonly Lazy<AppSettings> instanceField = new Lazy<AppSettings>(Load);
     internal static AppSettings Instance => instanceField.Value;
     private static readonly string settingsPath;
+    private static readonly string registryKey = $"SOFTWARE\\{Updater.ApplicationCompany}\\{Updater.ApplicationName}";
 
     public int Left = Screen.PrimaryScreen.WorkingArea.Left; // Screen.PrimaryScreen.WorkingArea.Right - Width;
     public int Top = Screen.PrimaryScreen.WorkingArea.Top;
@@ -44,11 +45,18 @@ namespace currency.watcher {
     
     internal void Save() {
 
+      Registry.CurrentUser.DeleteSubKey(registryKey, false);
       if (PortableMode) {
         File.WriteAllText(settingsPath, this.ToJson());
         return;
       }
-      var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\sergiye\\currency.watcher");
+
+      try {
+        File.Delete(settingsPath);
+      }
+      catch {
+      }
+      var key = Registry.CurrentUser.CreateSubKey(registryKey);
       if (key == null)
         return;
       
@@ -59,6 +67,7 @@ namespace currency.watcher {
       key.SetValue("Opacity", Opacity);
       key.SetValue("TopMost", TopMost);
       key.SetValue("StickToEdges", StickToEdges);
+      key.SetValue("PortableMode", PortableMode);
       key.SetValue("Theme", Theme);
         
       // key.SetValue("RefreshInterval")?.ToString(), out result.RefreshInterval);
@@ -100,7 +109,7 @@ namespace currency.watcher {
         // ignored
       }
 
-      var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\sergiye\\currency.watcher");
+      var key = Registry.CurrentUser.OpenSubKey(registryKey);
       result = new AppSettings();
       if (key == null) {
         return result;
@@ -112,6 +121,7 @@ namespace currency.watcher {
       double.TryParse(key.GetValue("Opacity")?.ToString(), out result.Opacity);
       bool.TryParse(key.GetValue("TopMost")?.ToString(), out result.TopMost);
       bool.TryParse(key.GetValue("StickToEdges")?.ToString(), out result.StickToEdges);
+      bool.TryParse(key.GetValue("PortableMode")?.ToString(), out result.PortableMode);
       result.Theme = key.GetValue("Theme")?.ToString();
       
       // int.TryParse(key.GetValue("RefreshInterval")?.ToString(), out result.RefreshInterval);
