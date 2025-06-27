@@ -1,13 +1,10 @@
 ﻿using sergiye.Common;
 using System;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace currency.watcher {
 
   static class Program {
-
-    static Mutex mutex = new Mutex(true, "{df1ad336-292a-4375-8fc6-109088e260df}");
 
     /// <summary>
     /// The main entry point for the application.
@@ -15,16 +12,26 @@ namespace currency.watcher {
     [STAThread]
     static void Main() {
 
-      if (!mutex.WaitOne(TimeSpan.Zero, true)) {
-        MessageBox.Show("Another instance of the application is already running.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-        WinApiHelper.PostMessage((IntPtr)WinApiHelper.HWND_BROADCAST, WinApiHelper.WM_SHOWME, IntPtr.Zero, IntPtr.Zero);
+      if (!OperatingSystemHelper.IsCompatible(true, out var errorMessage, out var fixAction)) {
+        if (fixAction != null) {
+          if (MessageBox.Show(errorMessage, Updater.ApplicationTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes) {
+            fixAction?.Invoke();
+          }
+        }
+        else {
+          MessageBox.Show(errorMessage, Updater.ApplicationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+        Environment.Exit(0);
+      }
+
+      if (WinApiHelper.CheckRunningInstances(true, true)) {
+        MessageBox.Show($"{Updater.ApplicationTitle} is already running.\nIt is recommended to close this instance.", Updater.ApplicationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
         Environment.Exit(0);
       }
 
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       Application.Run(new MainForm());
-      mutex.ReleaseMutex();
     }
   }
 }
