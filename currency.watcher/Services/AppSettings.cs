@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
 using Microsoft.Win32;
 using sergiye.Common;
 
@@ -13,26 +12,26 @@ namespace currency.watcher {
     private static readonly string settingsPath;
     private static readonly string registryKey = $"SOFTWARE\\{Updater.ApplicationCompany}\\{Updater.ApplicationName}";
 
-    public int Left = Screen.PrimaryScreen.WorkingArea.Left; // Screen.PrimaryScreen.WorkingArea.Right - Width;
-    public int Top = Screen.PrimaryScreen.WorkingArea.Top;
-    public int Height = 245;
-    public int Width = 175;
+    public int Left = 0;
+    public int Top = 0;
+    public int Height = 347;
+    public int Width = 400;
     public double Opacity = 1;
     public bool TopMost;
     public bool StickToEdges;
     public string Theme;
 
-    public int ChartViewMode;
+    public int ChartViewMode = 3;
     public bool ChartLines;
-    public bool ShowNbu;
+    public bool ShowNbu = true;
     public bool Taxes;
 
-    public readonly int RefreshInterval = 30;
+    public readonly int RefreshInterval = 10;
 
-    public int[] FinanceHistorySizes = { 40, 50, 50, 50, 50 };
-    public int[] HistorySizes = { 100, 90, 90, 55, 55, 55, 55 };
-    public int HistoryWidth = 300;
-    public int HistoryHeight = 100;
+    public int[] FinanceHistorySizes = { 60, 73, 73, 73, 73 };
+    public int[] HistorySizes = { 60, 73, 73, 0, 73, 73, 0 };
+    public int HistoryWidth = 378;
+    public int HistoryHeight = 0;
     public bool PortableMode = true;
     public static readonly string AppPath;
 
