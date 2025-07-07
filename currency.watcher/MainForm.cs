@@ -15,6 +15,7 @@ namespace currency.watcher {
   internal partial class MainForm : Form {
 
     private readonly Timer timer;
+    private readonly PersistentSettings settings;
     private DateTime lastMinfinStats;
     private readonly List<CombinedTradeItem> combinedTradeItems = [];
     private readonly MenuItem themeMenuItem = new MenuItem("&Themes");
@@ -48,10 +49,10 @@ namespace currency.watcher {
       }
 
       WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION | WinApiHelper.MF_SEPARATOR, 0, string.Empty);
-      WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, AppSettings.Instance.TopMost ? WinApiHelper.MF_CHECKED | WinApiHelper.MF_BY_POSITION : WinApiHelper.MF_BY_POSITION, SysMenuTopMost, "Always on top");
-      TopMost = AppSettings.Instance.TopMost;
-      WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, AppSettings.Instance.StickToEdges ? WinApiHelper.MF_CHECKED | WinApiHelper.MF_BY_POSITION : WinApiHelper.MF_BY_POSITION, SysMenuStickEdges, "Stick edges");
-      WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, AppSettings.Instance.PortableMode ? WinApiHelper.MF_CHECKED | WinApiHelper.MF_BY_POSITION : WinApiHelper.MF_BY_POSITION, SysMenuPortable, "Portable");
+      TopMost = settings.GetValue("TopMost", false);
+      WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, TopMost  ? WinApiHelper.MF_CHECKED | WinApiHelper.MF_BY_POSITION : WinApiHelper.MF_BY_POSITION, SysMenuTopMost, "Always on top");
+      WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, settings.GetValue("StickToEdges", false) ? WinApiHelper.MF_CHECKED | WinApiHelper.MF_BY_POSITION : WinApiHelper.MF_BY_POSITION, SysMenuStickEdges, "Stick edges");
+      WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, settings.IsPortable ? WinApiHelper.MF_CHECKED | WinApiHelper.MF_BY_POSITION : WinApiHelper.MF_BY_POSITION, SysMenuPortable, "Portable");
       WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION | WinApiHelper.MF_POPUP, (int)themeMenuItem.Handle, themeMenuItem.Text);
       themeMenuItem.Tag = menuIndex;
       WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION, SysMenuAppSite, "Site");
@@ -76,19 +77,20 @@ namespace currency.watcher {
             break;
           case SysMenuTopMost:
             TopMost = !TopMost;
-            AppSettings.Instance.TopMost = TopMost;
+            settings.SetValue("Instance", TopMost);
             hSysMenu = WinApiHelper.GetSystemMenu(Handle, false);
             WinApiHelper.CheckMenuItem(hSysMenu, SysMenuTopMost, TopMost ? WinApiHelper.MF_CHECKED : WinApiHelper.MF_UNCHECKED);
             break;
           case SysMenuStickEdges:
-            AppSettings.Instance.StickToEdges = !AppSettings.Instance.StickToEdges;
+            var stickEdges = !settings.GetValue("StickToEdges", false);
+            settings.SetValue("StickToEdges", stickEdges);
             hSysMenu = WinApiHelper.GetSystemMenu(Handle, false);
-            WinApiHelper.CheckMenuItem(hSysMenu, SysMenuStickEdges, AppSettings.Instance.StickToEdges ? WinApiHelper.MF_CHECKED : WinApiHelper.MF_UNCHECKED);
+            WinApiHelper.CheckMenuItem(hSysMenu, SysMenuStickEdges, stickEdges ? WinApiHelper.MF_CHECKED : WinApiHelper.MF_UNCHECKED);
             break;
           case SysMenuPortable:
-            AppSettings.Instance.PortableMode = !AppSettings.Instance.PortableMode;
+            settings.IsPortable = !settings.IsPortable;
             hSysMenu = WinApiHelper.GetSystemMenu(Handle, false);
-            WinApiHelper.CheckMenuItem(hSysMenu, SysMenuPortable, AppSettings.Instance.PortableMode ? WinApiHelper.MF_CHECKED : WinApiHelper.MF_UNCHECKED);
+            WinApiHelper.CheckMenuItem(hSysMenu, SysMenuPortable, settings.IsPortable ? WinApiHelper.MF_CHECKED : WinApiHelper.MF_UNCHECKED);
             break;
         }
       } else if (m.Msg == WinApiHelper.WM_SHOWME) {
@@ -106,7 +108,7 @@ namespace currency.watcher {
     }
 
     private void MainForm_ResizeEnd(object sender, EventArgs e) {
-      if (!AppSettings.Instance.StickToEdges) return;
+      if (!settings.GetValue("StickToEdges", false)) return;
       var scn = Screen.FromPoint(Location);
       if (DoSnap(Left, scn.WorkingArea.Left)) Left = scn.WorkingArea.Left;
       if (DoSnap(Top, scn.WorkingArea.Top)) Top = scn.WorkingArea.Top;
@@ -120,8 +122,11 @@ namespace currency.watcher {
 
       InitializeComponent();
 
-      Icon = Icon.ExtractAssociatedIcon(AppSettings.AppPath);
+      Icon = Icon.ExtractAssociatedIcon(Updater.CurrentFileLocation);
 
+      settings = new PersistentSettings();
+      settings.Load();
+      
       Updater.Subscribe(
         (message, isError) => MessageBox.Show(message, Updater.ApplicationTitle, MessageBoxButtons.OK, isError ? MessageBoxIcon.Warning : MessageBoxIcon.Information),
         (message) => MessageBox.Show(message, Updater.ApplicationTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK,
@@ -135,7 +140,7 @@ namespace currency.watcher {
       updaterTimer.Interval = 10000;
       updaterTimer.Enabled = true;
 
-      Text = $"{Updater.ApplicationTitle} {(Environment.Is64BitProcess ? "x64" : "x32")} ";
+      Text = Updater.ApplicationTitle;
 
       //configure chart
       var chartArea = new ChartArea();
@@ -185,60 +190,65 @@ namespace currency.watcher {
 
       this.Load += (sender, args) => {
 
-        dataProvider = new DataProvider(AppSettings.AppPath);
+        dataProvider = new DataProvider(Updater.CurrentFileLocation);
         UpdateRates();
         dataProvider.OnDataChanged += () => {
           UpdateRates();
           UpdateMinfinChartData();
         };
 
-        Left = AppSettings.Instance.Left;
-        Top = AppSettings.Instance.Top;
-        Height = AppSettings.Instance.Height;
-        Width = AppSettings.Instance.Width;
-        Opacity = AppSettings.Instance.Opacity;
+        Left = settings.GetValue("Left", 0);
+        Top = settings.GetValue("Top", 0);
+        Height = settings.GetValue("Height", 347);
+        Width = settings.GetValue("Width", 400);
+        Opacity = settings.GetValue("Opacity", 1.0);
 
-        panRates.Width = AppSettings.Instance.HistoryWidth;
-        lstFinanceHistory.Height = AppSettings.Instance.HistoryHeight;
+        panRates.Width = settings.GetValue("HistoryWidth", 378);
+        lstFinanceHistory.Height = settings.GetValue("HistoryHeight", 0);
+
+        int[] defaultFinanceHistorySizes = { 60, 73, 73, 73, 73 };
         for (var i = 0; i < 5; i++) {
-          lstFinanceHistory.Columns[i].Width = AppSettings.Instance.FinanceHistorySizes[i];
+          lstFinanceHistory.Columns[i].Width = settings.GetValue($"FinanceHistorySizes_{i}", defaultFinanceHistorySizes[i]);
         }
+        int[] defaultHistorySizes = { 60, 73, 73, 0, 73, 73, 0 };
         for (var i = 0; i < 7; i++) {
-          lstRates.Columns[i].Width = AppSettings.Instance.HistorySizes[i];
+          lstRates.Columns[i].Width = settings.GetValue($"HistorySizes_{i}", defaultHistorySizes[i]);
         }
 
-        timer.Interval = AppSettings.Instance.RefreshInterval * 60 * 1000;
-        cmbChartMode.SelectedIndex = AppSettings.Instance.ChartViewMode;
-        cbxChartGridMode.Checked = AppSettings.Instance.ChartLines;
-        cbxShowNbu.Checked = AppSettings.Instance.ShowNbu;
-        cbxTaxes.Checked = AppSettings.Instance.Taxes;
+        timer.Interval = settings.GetValue("RefreshInterval", 10) * 60 * 1000;
+        cmbChartMode.SelectedIndex = settings.GetValue("ChartViewMode", 3);
+        cbxChartGridMode.Checked = settings.GetValue("ChartLines", false);
+        cbxShowNbu.Checked = settings.GetValue("ShowNbu", true);
+        cbxTaxes.Checked = settings.GetValue("Taxes", false);
 
         UpdateData();
         numTaxesSource_ValueChanged(this, EventArgs.Empty);
       };
 
       this.Closing += (sender, args) => {
-        AppSettings.Instance.Left = Left;
-        AppSettings.Instance.Top = Top;
-        AppSettings.Instance.Height = Height;
-        AppSettings.Instance.Width = Width;
-        AppSettings.Instance.Opacity = Opacity;
+        settings.WaitCommit = true;
+        
+        settings.SetValue("Left", Left);
+        settings.SetValue("Top", Top);
+        settings.SetValue("Height", Height);
+        settings.SetValue("Width", Width);
+        settings.SetValue("Opacity", Opacity);
 
-        AppSettings.Instance.HistoryWidth = panRates.Width;
-        AppSettings.Instance.HistoryHeight = lstFinanceHistory.Height;
+        settings.SetValue("HistoryWidth", panRates.Width);
+        settings.SetValue("HistoryHeight", lstFinanceHistory.Height);
         for (var i = 0; i < 5; i++) {
-          AppSettings.Instance.FinanceHistorySizes[i] = lstFinanceHistory.Columns[i].Width;
+          settings.SetValue($"FinanceHistorySizes_{i}", lstFinanceHistory.Columns[i].Width);
         }
         for (var i = 0; i < 7; i++) {
-          AppSettings.Instance.HistorySizes[i] = lstRates.Columns[i].Width;
+          settings.SetValue($"HistorySizes_{i}", lstRates.Columns[i].Width);
         }
 
-        AppSettings.Instance.ChartViewMode = cmbChartMode.SelectedIndex;
-        AppSettings.Instance.ChartLines = cbxChartGridMode.Checked;
-        AppSettings.Instance.ShowNbu = cbxShowNbu.Checked;
-        AppSettings.Instance.Taxes = cbxTaxes.Checked;
+        settings.SetValue("ChartViewMode", cmbChartMode.SelectedIndex);
+        settings.SetValue("ChartLines", cbxChartGridMode.Checked);
+        settings.SetValue("ShowNbu", cbxShowNbu.Checked);
+        settings.SetValue("Taxes", cbxTaxes.Checked);
 
-        AppSettings.Instance.Save();
+        settings.Save(true);
       };
 
       //chart.ChartAreas[0].BackColor = Color.Black;
@@ -278,7 +288,7 @@ namespace currency.watcher {
     #region themes
 
     private void OnThemeCurrentChanged() {
-      AppSettings.Instance.Theme = Theme.IsAutoThemeEnabled ? "auto" : Theme.Current.Id;
+      settings.SetValue("Theme", Theme.IsAutoThemeEnabled ? "auto" : Theme.Current.Id);
       Visible = false;
       Visible = true;
 
@@ -318,7 +328,7 @@ namespace currency.watcher {
         themeMenuItem.MenuItems.Add(item);
         item.Tag = theme;
         return item;
-      }, OnThemeCurrentChanged, AppSettings.Instance.Theme, "currency.watcher.themes");
+      }, OnThemeCurrentChanged, settings.GetValue("Theme", ""), "currency.watcher.themes");
       WinApiHelper.InsertMenu(menuHandle, (uint)themeMenuItem.Tag, WinApiHelper.MF_BY_POSITION | WinApiHelper.MF_POPUP, (int)themeMenuItem.Handle, themeMenuItem.Text);
       currentItem?.PerformClick();
 

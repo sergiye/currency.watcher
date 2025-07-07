@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Globalization;
+using System.IO;
 
 namespace currency.watcher {
 
@@ -27,6 +28,10 @@ namespace currency.watcher {
 
     public static T FromJson<T>(this string json) where T : class {
       return JsonConvert.DeserializeObject<T>(json, settings);
+    }
+    
+    public static void ToJsonFile(this object value, string filePath) {
+      File.WriteAllText(filePath, value.ToJson());
     }
   }
 
