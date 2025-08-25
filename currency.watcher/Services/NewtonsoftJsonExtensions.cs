@@ -3,13 +3,13 @@ using System;
 using System.Globalization;
 using System.IO;
 
-namespace sergiye.Common {
+namespace currency.watcher {
 
-  public static class JsonExtensions {
+  public static class NewtonsoftJsonExtensions {
     
     private static readonly JsonSerializerSettings settings;
     
-    static JsonExtensions() {
+    static NewtonsoftJsonExtensions() {
       settings = new JsonSerializerSettings {
         DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
         NullValueHandling = NullValueHandling.Ignore,
@@ -31,7 +31,7 @@ namespace sergiye.Common {
     }
     
     public static void ToJsonFile(this object value, string filePath) {
-      File.WriteAllText(filePath, value.ToJson());
+      File.WriteAllText(filePath, ToJson(value));
     }
   }
 
