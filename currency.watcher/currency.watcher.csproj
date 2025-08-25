@@ -22,23 +22,14 @@
     <EmbeddedResource Include="..\themes\*.json" Link="themes\%(Filename)%(Extension)" />
     <Compile Update="*Form.cs" SubType="Form" />
     <Compile Update="MainForm.Designer.cs" DependentUpon="MainForm.cs" />
-    <Compile Include="..\..\common\sergiye.Common\Tools\ISettings.cs" Link="Common\ISettings.cs" />
-    <Compile Include="..\..\common\sergiye.Common\Tools\Updater.cs" Link="Common\Updater.cs" />
-    <Compile Include="..\..\common\sergiye.Common\Tools\OperatingSystemHelper.cs" Link="Common\OperatingSystemHelper.cs" />
-    <Compile Include="..\..\common\sergiye.Common\Win\WinApiHelper.cs" Link="Common\WinApiHelper.cs" />
-    <Compile Include="..\..\common\sergiye.Common.UI\Themes\Theme.cs" Link="Common\Themes\Theme.cs" />
-    <Compile Include="..\..\common\sergiye.Common.UI\Themes\LightTheme.cs" Link="Common\Themes\LightTheme.cs" />
-    <Compile Include="..\..\common\sergiye.Common.UI\Themes\DarkTheme.cs" Link="Common\Themes\DarkTheme.cs" />
-    <Compile Include="..\..\common\sergiye.Common.UI\Themes\CustomTheme.cs" Link="Common\Themes\CustomTheme.cs" />
-    <Compile Include="..\..\common\sergiye.Common.UI\RadioButtonMenuItem.cs" Link="Common\RadioButtonMenuItem.cs" />    
-    <Compile Include="..\..\common\sergiye.Common.UI\PersistentSettings.cs" Link="Common\PersistentSettings.cs" />    
     <EmbeddedResource Update="MainForm.resx" DependentUpon="MainForm.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.ico" />
   </ItemGroup>
   <ItemGroup>
-    <!-- <PackageReference Include="sergiye.Common.UI" Version="1.*" /> -->
+    <PackageReference Include="SergiyE.Common" Version="1.*" />
+    <PackageReference Include="SergiyE.Common.UI" Version="1.*" />
     <PackageReference Include="Costura.Fody" Version="4.1.0" />
     <PackageReference Include="Fody">
       <Version>6.9.2</Version>
